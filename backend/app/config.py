@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     LLM_PROVIDER: str = "mock"
     AB_SPLIT: int = 50
     DAILY_REQUEST_LIMIT: int = 5
+    DISABLE_DAILY_LIMIT: bool = True  # TODO: False при релизе + подключении нейросетей
 
 
 settings = Settings()

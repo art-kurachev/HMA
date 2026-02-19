@@ -1,15 +1,19 @@
 import type { Mix } from '../api'
+import { ScreenLayout } from './ScreenLayout'
 import styles from './MixesStep.module.css'
 
 interface MixesStepProps {
   mixes: Mix[]
   onSelect: (mix: Mix) => void
+  onBack: () => void
 }
 
-export function MixesStep({ mixes, onSelect }: MixesStepProps) {
+export function MixesStep({ mixes, onSelect, onBack }: MixesStepProps) {
   return (
+    <ScreenLayout onBack={onBack} progressStep={3} totalSteps={4}>
     <div className={styles.wrap}>
       <h2 className={styles.title}>Выбери микс</h2>
+      <p className={styles.subtitle}>3 предложения под твой сетап</p>
       <div className={styles.grid}>
         {mixes.map((mix) => (
           <button
@@ -34,5 +38,6 @@ export function MixesStep({ mixes, onSelect }: MixesStepProps) {
         ))}
       </div>
     </div>
+    </ScreenLayout>
   )
 }

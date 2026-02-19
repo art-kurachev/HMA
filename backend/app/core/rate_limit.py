@@ -11,6 +11,8 @@ async def check_and_increment_usage(db: AsyncSession, user_id: int) -> tuple[boo
     Check if user is within daily limit and increment count.
     Returns (allowed, current_count).
     """
+    if settings.DISABLE_DAILY_LIMIT:
+        return True, 0
     today = date.today()
     row = await db.execute(
         select(DailyUsage).where(DailyUsage.user_id == user_id, DailyUsage.usage_date == today)
@@ -20,9 +22,10 @@ async def check_and_increment_usage(db: AsyncSession, user_id: int) -> tuple[boo
         usage = DailyUsage(user_id=user_id, usage_date=today, count=0)
         db.add(usage)
         await db.flush()
-    if usage.count >= settings.DAILY_REQUEST_LIMIT:
+    if not settings.DISABLE_DAILY_LIMIT and usage.count >= settings.DAILY_REQUEST_LIMIT:
         return False, usage.count
-    usage.count += 1
+    if not settings.DISABLE_DAILY_LIMIT:
+        usage.count += 1
     await db.flush()
     return True, usage.count
 

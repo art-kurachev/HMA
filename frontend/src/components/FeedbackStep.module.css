@@ -28,9 +28,9 @@
 }
 
 .ratingBtn.active {
-  background: var(--tg-theme-button-color, #6366f1);
+  background: var(--accent, #e85d2a);
   border-color: transparent;
-  color: var(--tg-theme-button-text-color, #fff);
+  color: #fff;
 }
 
 .label {
@@ -59,9 +59,9 @@
 }
 
 .chip.active {
-  background: var(--tg-theme-button-color, #6366f1);
+  background: var(--accent, #e85d2a);
   border-color: transparent;
-  color: var(--tg-theme-button-text-color, #fff);
+  color: #fff;
 }
 
 .input {
@@ -84,8 +84,8 @@
   padding: 14px 24px;
   border-radius: 12px;
   border: none;
-  background: var(--tg-theme-button-color, #6366f1);
-  color: var(--tg-theme-button-text-color, #fff);
+  background: var(--accent, #e85d2a);
+  color: #fff;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;

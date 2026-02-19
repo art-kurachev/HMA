@@ -1,0 +1,54 @@
+.screen {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.progress {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  padding: 12px 0 8px;
+  flex-shrink: 0;
+}
+
+.progressDot {
+  width: 24px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  transition: background 0.2s;
+}
+
+.progressDot.active {
+  background: var(--accent, #e85d2a);
+}
+
+.back {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.back:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.content {
+  flex: 1;
+  padding: 56px 20px 100px;
+}

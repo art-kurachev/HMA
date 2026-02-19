@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ScreenLayout } from './ScreenLayout'
 import styles from './FeedbackStep.module.css'
 
 const REASONS = [
@@ -11,10 +12,11 @@ const REASONS = [
 
 interface FeedbackStepProps {
   onSubmit: (rating: boolean, reason: string) => void
+  onBack: () => void
   loading: boolean
 }
 
-export function FeedbackStep({ onSubmit, loading }: FeedbackStepProps) {
+export function FeedbackStep({ onSubmit, onBack, loading }: FeedbackStepProps) {
   const [rating, setRating] = useState<boolean | null>(null)
   const [reason, setReason] = useState('')
 
@@ -25,6 +27,7 @@ export function FeedbackStep({ onSubmit, loading }: FeedbackStepProps) {
   }
 
   return (
+    <ScreenLayout onBack={onBack} totalSteps={0}>
     <form className={styles.form} onSubmit={handleSubmit}>
       <h2 className={styles.title}>Как микса?</h2>
       <div className={styles.rating}>
@@ -69,5 +72,6 @@ export function FeedbackStep({ onSubmit, loading }: FeedbackStepProps) {
         {loading ? 'Отправка...' : 'Отправить'}
       </button>
     </form>
+    </ScreenLayout>
   )
 }

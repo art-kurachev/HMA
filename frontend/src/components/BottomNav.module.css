@@ -1,0 +1,60 @@
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 20px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(transparent, var(--tg-theme-bg-color, #1a1a2e) 60%);
+  z-index: 20;
+}
+
+.backBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.backBtn:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.primaryBtn {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: 24px;
+  border: none;
+  background: #fff;
+  color: #1a1a2e;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+}
+
+.primaryBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primaryBtn.accent {
+  background: var(--accent, #e85d2a);
+  color: #fff;
+}

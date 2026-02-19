@@ -1,14 +1,17 @@
 import type { InstructionResponse } from '../api'
+import { ScreenLayout } from './ScreenLayout'
 import styles from './InstructionStep.module.css'
 
 interface InstructionStepProps {
   instruction: InstructionResponse
   mixTitle: string
   onNext: () => void
+  onBack: () => void
 }
 
-export function InstructionStep({ instruction, mixTitle, onNext }: InstructionStepProps) {
+export function InstructionStep({ instruction, mixTitle, onNext, onBack }: InstructionStepProps) {
   return (
+    <ScreenLayout onBack={onBack} progressStep={4} totalSteps={4}>
     <div className={styles.wrap}>
       <h2 className={styles.title}>{instruction.headline}</h2>
       <p className={styles.mixTitle}>{mixTitle}</p>
@@ -62,5 +65,6 @@ export function InstructionStep({ instruction, mixTitle, onNext }: InstructionSt
         Оценить →
       </button>
     </div>
+    </ScreenLayout>
   )
 }
