@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+backend/.venv/
+
+# Env & secrets
+backend/.env
+frontend/.env
+frontend/.env.*
+
+# Build
+frontend/dist/
+
+# Python
+backend/__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+
+# DB
+*.db
+*.sqlite
+
+# OS
+.DS_Store

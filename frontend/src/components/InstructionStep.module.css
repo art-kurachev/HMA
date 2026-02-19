@@ -1,0 +1,46 @@
+.wrap {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 1.35rem;
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.mixTitle {
+  font-size: 1rem;
+  color: var(--tg-theme-hint-color, #999);
+  margin: 0 0 1.5rem;
+}
+
+.section {
+  margin-bottom: 1.25rem;
+}
+
+.section h3 {
+  font-size: 0.95rem;
+  color: var(--tg-theme-hint-color, #999);
+  margin: 0 0 6px;
+  font-weight: 500;
+}
+
+.section ul {
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.5;
+}
+
+.next {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: none;
+  background: var(--tg-theme-button-color, #6366f1);
+  color: var(--tg-theme-button-text-color, #fff);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}

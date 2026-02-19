@@ -1,0 +1,26 @@
+:root {
+  --tg-theme-bg-color: #1a1a2e;
+  --tg-theme-text-color: #eee;
+  --tg-theme-hint-color: #999;
+  --tg-theme-button-color: #6366f1;
+  --tg-theme-button-text-color: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--tg-theme-bg-color, #1a1a2e);
+  color: var(--tg-theme-text-color, #eee);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
+}
