@@ -1,3 +1,4 @@
+import { ArrowLeftIcon, LoginIcon } from './Icons'
 import styles from './BottomNav.module.css'
 
 interface BottomNavProps {
@@ -19,7 +20,7 @@ export function BottomNav({
     <div className={styles.nav}>
       {onBack && (
         <button type="button" className={styles.backBtn} onClick={onBack} aria-label="Назад">
-          ←
+          <ArrowLeftIcon size={20} />
         </button>
       )}
       <button
@@ -29,7 +30,7 @@ export function BottomNav({
         disabled={primaryDisabled}
       >
         {primaryLabel}
-        <span>→</span>
+        <LoginIcon size={18} />
       </button>
     </div>
   )

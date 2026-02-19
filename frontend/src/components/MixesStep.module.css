@@ -2,16 +2,45 @@
   max-width: 480px;
 }
 
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
 .title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: var(--text-hero, 43px);
+  font-weight: var(--font-thin, 100);
+  line-height: 100%;
+  color: #fff;
   margin: 0 0 4px;
 }
 
 .subtitle {
-  font-size: 0.95rem;
+  font-size: var(--text-subtitle, 22px);
   color: var(--tg-theme-hint-color, #999);
-  margin: 0 0 20px;
+  margin: 0;
+}
+
+.shareBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.shareBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .grid {
@@ -24,8 +53,9 @@
   text-align: left;
   padding: 20px;
   border-radius: 20px;
-  border: 1px solid var(--card-border);
-  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
   color: inherit;
   cursor: pointer;
   transition: all 0.2s;
@@ -36,9 +66,10 @@
 }
 
 .cardTitle {
-  font-size: 1.15rem;
+  font-size: var(--text-card-title, 36px);
+  font-weight: var(--font-thin, 100);
+  line-height: 100%;
   margin: 0 0 8px;
-  font-weight: 600;
 }
 
 .composition {

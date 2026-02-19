@@ -39,13 +39,16 @@
   border: none;
   background: #fff;
   color: #1a1a2e;
-  font-size: 1rem;
-  font-weight: 600;
+  font-family: 'Geologica', sans-serif;
+  font-size: var(--text-button, 14px);
+  font-weight: var(--font-extralight, 200);
+  line-height: 16px;
+  text-align: left;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-start;
+  gap: 10px;
   transition: opacity 0.2s;
 }
 

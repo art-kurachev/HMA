@@ -52,7 +52,10 @@ export default function App() {
     setError(null)
     setLoading(true)
     try {
-      const res = await suggestMixes(uid, params)
+      const apiParams = params.profiles.includes('any')
+        ? { ...params, profiles: [] }
+        : params
+      const res = await suggestMixes(uid, apiParams)
       setMixes(res.mixes)
       setStep('mixes')
     } catch (e) {

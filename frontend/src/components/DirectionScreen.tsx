@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ScreenLayout } from './ScreenLayout'
 import { BottomNav } from './BottomNav'
+import { LoginIcon, ShareIcon } from './Icons'
 import styles from './DirectionScreen.module.css'
 
 export type Direction = 'taste' | 'relax' | 'movie' | null
@@ -11,9 +12,9 @@ interface DirectionScreenProps {
 }
 
 const DIRECTIONS = [
-  { id: 'taste' as const, label: 'Вкусно покурить', subtitle: 'Hookah maker assistant' },
-  { id: 'relax' as const, label: 'Расслабиться', subtitle: 'Hookah maker assistant' },
-  { id: 'movie' as const, label: 'Под фильм', subtitle: 'Hookah maker assistant' },
+  { id: 'taste' as const, label: 'Вкусно покурить', subtitle: 'Hookah maker assistent' },
+  { id: 'relax' as const, label: 'Расслабиться', subtitle: 'Hookah maker assistent' },
+  { id: 'movie' as const, label: 'Под фильм', subtitle: 'Hookah maker assistent' },
 ]
 
 export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
@@ -24,8 +25,13 @@ export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
   }
 
   return (
-    <ScreenLayout onBack={onBack} progressStep={1} totalSteps={4}>
-      <h2 className={styles.title}>Твоя цель вечера?</h2>
+    <ScreenLayout onBack={onBack} progressStep={1} totalSteps={3}>
+      <div className={styles.titleRow}>
+        <h2 className={styles.title}>Твоя цель вечера?</h2>
+        <button type="button" className={styles.shareBtn} aria-label="Поделиться">
+          <ShareIcon size={20} />
+        </button>
+      </div>
       <div className={styles.cards}>
         {DIRECTIONS.map((d) => (
           <button
@@ -35,10 +41,10 @@ export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
             onClick={() => setSelected(d.id)}
           >
             <div>
-              <span className={styles.cardLabel}>{d.label}</span>
               <span className={styles.cardSubtitle}>{d.subtitle}</span>
+              <span className={styles.cardLabel}>{d.label}</span>
             </div>
-            <span className={styles.arrow}>→</span>
+            <span className={styles.arrow}><LoginIcon size={20} /></span>
           </button>
         ))}
       </div>

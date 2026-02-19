@@ -3,6 +3,7 @@ import type { FormState } from '../types'
 import { BOWL_OPTIONS, PROFILE_OPTIONS } from '../types'
 import { ScreenLayout } from './ScreenLayout'
 import { BottomNav } from './BottomNav'
+import { ShareIcon, BowlTurkaIcon, BowlPhunnelIcon, TobaccoIcon } from './Icons'
 import styles from './SetupScreen.module.css'
 
 const PROFILE_LABELS: Record<string, string> = {
@@ -12,6 +13,7 @@ const PROFILE_LABELS: Record<string, string> = {
   fruit: 'Фруктовый',
   fresh: 'Свежий',
   sour: 'Цитрусовый',
+  any: 'Любой',
 }
 
 interface SetupScreenProps {
@@ -35,12 +37,18 @@ export function SetupScreen({ onBack, onSubmit, loading }: SetupScreenProps) {
   const [hasTobacco, setHasTobacco] = useState(false)
 
   const toggleProfile = (p: string) => {
-    setParams((prev) => ({
-      ...prev,
-      profiles: prev.profiles.includes(p)
-        ? prev.profiles.filter((x) => x !== p)
-        : [...prev.profiles, p],
-    }))
+    setParams((prev) => {
+      const next = { ...prev }
+      if (p === 'any') {
+        next.profiles = prev.profiles.includes('any') ? [] : ['any']
+      } else {
+        const withoutAny = prev.profiles.filter((x) => x !== 'any')
+        next.profiles = withoutAny.includes(p)
+          ? withoutAny.filter((x) => x !== p)
+          : [...withoutAny, p]
+      }
+      return next
+    })
   }
 
   const handleSubmit = (e?: React.FormEvent) => {
@@ -49,9 +57,14 @@ export function SetupScreen({ onBack, onSubmit, loading }: SetupScreenProps) {
   }
 
   return (
-    <ScreenLayout onBack={onBack} progressStep={2} totalSteps={4}>
+    <ScreenLayout onBack={onBack} progressStep={2} totalSteps={3}>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <h2 className={styles.title}>Всего три параметра</h2>
+        <div className={styles.titleRow}>
+          <h2 className={styles.title}>Всего три параметра</h2>
+          <button type="button" className={styles.shareBtn} aria-label="Поделиться">
+            <ShareIcon size={20} />
+          </button>
+        </div>
 
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
@@ -66,6 +79,7 @@ export function SetupScreen({ onBack, onSubmit, loading }: SetupScreenProps) {
                 className={`${styles.pill} ${params.bowl === o.value ? styles.active : ''}`}
                 onClick={() => setParams((p) => ({ ...p, bowl: o.value }))}
               >
+                {o.value === 'turka' ? <BowlTurkaIcon size={28} /> : <BowlPhunnelIcon size={28} />}
                 {o.label}
               </button>
             ))}
@@ -102,6 +116,7 @@ export function SetupScreen({ onBack, onSubmit, loading }: SetupScreenProps) {
               className={`${styles.pill} ${hasTobacco ? styles.active : ''}`}
               onClick={() => setHasTobacco(true)}
             >
+              <TobaccoIcon size={28} />
               Да, есть
             </button>
             <button

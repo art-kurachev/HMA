@@ -6,8 +6,7 @@ export interface FormState extends MixParams {}
 
 export const BOWL_OPTIONS = [
   { value: 'turka' as const, label: 'Турка' },
-  { value: 'phunnel' as const, label: 'Phunnel' },
-  { value: 'killer' as const, label: 'Killer' },
+  { value: 'phunnel' as const, label: 'Фанел' },
 ]
 
 export const HEAT_OPTIONS = [
@@ -22,5 +21,5 @@ export const STRENGTH_OPTIONS = [
 ]
 
 export const PROFILE_OPTIONS = [
-  'tea', 'dessert', 'berry', 'fruit', 'fresh', 'sour',
+  'dessert', 'berry', 'fresh', 'sour', 'fruit', 'tea', 'any',
 ]

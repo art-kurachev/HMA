@@ -2,14 +2,49 @@
   max-width: 420px;
 }
 
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
 .title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 24px;
+  font-size: var(--text-hero, 43px);
+  font-weight: var(--font-thin, 100);
+  line-height: 100%;
+  color: #fff;
+  margin: 0;
+  flex: 1;
+}
+
+.shareBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.shareBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .section {
   margin-bottom: 28px;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .sectionHeader {
@@ -21,13 +56,14 @@
 }
 
 .sectionTitle {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: var(--text-section, 22px);
+  font-weight: var(--font-thin, 100);
+  color: #fff;
   margin: 0;
 }
 
 .hint {
-  font-size: 0.8rem;
+  font-size: var(--text-button, 14px);
   color: var(--tg-theme-hint-color, #999);
 }
 
@@ -38,18 +74,23 @@
 }
 
 .pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 12px 20px;
   border-radius: 24px;
-  border: 1px solid var(--card-border);
-  background: var(--card-bg);
-  color: inherit;
-  font-size: 0.95rem;
+  border: 1px solid rgba(232, 93, 42, 0.5);
+  background: rgba(232, 93, 42, 0.15);
+  color: #fff;
+  font-size: var(--text-body, 16px);
+  font-weight: var(--font-thin, 100);
+  font-family: inherit;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .pill:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(232, 93, 42, 0.25);
 }
 
 .pill.active {
@@ -67,22 +108,24 @@
 .chip {
   padding: 10px 16px;
   border-radius: 50px;
-  border: 1px solid var(--card-border);
-  background: var(--card-bg);
-  color: inherit;
-  font-size: 0.9rem;
+  border: 1px solid rgba(232, 93, 42, 0.5);
+  background: rgba(232, 93, 42, 0.15);
+  color: #fff;
+  font-size: var(--text-body, 16px);
+  font-weight: var(--font-thin, 100);
+  font-family: inherit;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .chip:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(232, 93, 42, 0.25);
 }
 
 .chip.active {
-  background: var(--accent-light);
-  border-color: var(--accent);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a1a2e;
+  border-color: transparent;
 }
 
 .textarea {

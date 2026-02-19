@@ -1,4 +1,5 @@
 import { ScreenLayout } from './ScreenLayout'
+import { LoginIcon, SettingsIcon } from './Icons'
 import styles from './WelcomeScreen.module.css'
 
 const USAGE_KEY = 'hma_usage_count'
@@ -30,7 +31,8 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
     <ScreenLayout progressStep={1} totalSteps={3}>
       <div className={styles.welcome}>
-        <p className={styles.subtitle}>Hookah maker assistant</p>
+        <img src="/welcome-screen.png" alt="" className={styles.figmaBg} aria-hidden onError={(e) => { e.currentTarget.style.display = 'none' }} />
+        <p className={styles.subtitle}>Hookah maker assistent</p>
         <h1 className={styles.title}>
           Кальянный ассистент, а не просто «советчик по миксам»
         </h1>
@@ -44,10 +46,10 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             onClick={onStart}
           >
             Хочу просто и быстро
-            <span>→</span>
+            <LoginIcon size={18} />
           </button>
           <button type="button" className={styles.secondaryBtn} aria-label="Настройки">
-            ⚙
+            <SettingsIcon size={20} />
           </button>
         </div>
       </div>

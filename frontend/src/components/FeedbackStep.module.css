@@ -18,19 +18,25 @@
 .ratingBtn {
   flex: 1;
   padding: 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.05);
-  color: inherit;
-  font-size: 1rem;
+  border-radius: 24px;
+  border: 1px solid rgba(232, 93, 42, 0.5);
+  background: rgba(232, 93, 42, 0.15);
+  color: #fff;
+  font-family: 'Geologica', sans-serif;
+  font-size: var(--text-button, 14px);
+  font-weight: var(--font-extralight, 200);
   cursor: pointer;
   transition: all 0.2s;
 }
 
+.ratingBtn:hover {
+  background: rgba(232, 93, 42, 0.25);
+}
+
 .ratingBtn.active {
-  background: var(--accent, #e85d2a);
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a1a2e;
   border-color: transparent;
-  color: #fff;
 }
 
 .label {
@@ -48,20 +54,25 @@
 }
 
 .chip {
-  padding: 8px 14px;
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.05);
-  color: inherit;
+  padding: 10px 16px;
+  border-radius: 50px;
+  border: 1px solid rgba(232, 93, 42, 0.5);
+  background: rgba(232, 93, 42, 0.15);
+  color: #fff;
+  font-family: inherit;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
+.chip:hover {
+  background: rgba(232, 93, 42, 0.25);
+}
+
 .chip.active {
-  background: var(--accent, #e85d2a);
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a1a2e;
   border-color: transparent;
-  color: #fff;
 }
 
 .input {
@@ -81,13 +92,15 @@
 
 .submit {
   width: 100%;
-  padding: 14px 24px;
-  border-radius: 12px;
+  padding: 16px 24px;
+  border-radius: 24px;
   border: none;
   background: var(--accent, #e85d2a);
   color: #fff;
-  font-size: 1rem;
-  font-weight: 600;
+  font-family: 'Geologica', sans-serif;
+  font-size: var(--text-button, 14px);
+  font-weight: var(--font-extralight, 200);
+  text-align: left;
   cursor: pointer;
 }
 
