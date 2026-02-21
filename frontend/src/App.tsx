@@ -134,6 +134,7 @@ export default function App() {
         <InstructionStep
           instruction={instruction}
           mixTitle={selectedMix.title}
+          mixFlavor={selectedMix.flavor}
           onNext={() => setStep('feedback')}
           onBack={() => setStep('mixes')}
         />

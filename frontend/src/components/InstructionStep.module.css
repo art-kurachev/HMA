@@ -9,7 +9,7 @@
   margin: 0 0 4px;
 }
 
-.mixTitle {
+.flavor {
   font-size: var(--text-subtitle, 22px);
   color: var(--tg-theme-hint-color, #999);
   margin: 0 0 1.5rem;
@@ -27,20 +27,73 @@
 .section h3 {
   font-size: var(--text-section, 22px);
   color: var(--tg-theme-hint-color, #999);
-  margin: 0 0 6px;
+  margin: 0 0 10px;
   font-weight: var(--font-thin, 100);
 }
 
 .section ul {
   margin: 0;
-  padding-left: 18px;
-  line-height: 1.5;
+  padding-left: 0;
+  list-style: none;
+  line-height: 1.6;
 }
 
-.next {
-  width: 100%;
+.tobaccos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tobaccos li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tobaccoName {
+  font-size: 1rem;
+  color: #fff;
+}
+
+.tobaccoPct {
+  font-size: 0.9rem;
+  color: var(--tg-theme-hint-color, #999);
+  font-weight: 300;
+}
+
+.tipSection {
+  margin-bottom: 1.25rem;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(232, 93, 42, 0.1);
+  border: 1px solid rgba(232, 93, 42, 0.25);
+}
+
+.tipSection h3 {
+  font-size: var(--text-section, 22px);
+  color: var(--accent, #e85d2a);
+  margin: 0 0 8px;
+  font-weight: var(--font-thin, 100);
+}
+
+.tipSection p {
+  margin: 0;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* --- Three action buttons --- */
+
+.actions {
+  display: flex;
+  gap: 10px;
   margin-top: 1.5rem;
-  padding: 16px 24px;
+  padding-bottom: 20px;
+}
+
+.finishBtn {
+  flex: 1;
+  padding: 14px 20px;
   border-radius: 24px;
   border: none;
   background: var(--accent, #e85d2a);
@@ -48,9 +101,204 @@
   font-family: 'Geologica', sans-serif;
   font-size: var(--text-button, 14px);
   font-weight: var(--font-extralight, 200);
-  text-align: left;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  gap: 8px;
+  transition: opacity 0.2s;
+}
+
+.finishBtn:active {
+  opacity: 0.8;
+}
+
+.iconBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.iconBtn:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.timerBtn {
+  min-width: 100px;
+  padding: 14px 16px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-family: 'Geologica', sans-serif;
+  font-size: var(--text-button, 14px);
+  font-weight: var(--font-extralight, 200);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.timerBtn.timerRunning {
+  background: var(--accent, #e85d2a);
+  border-color: var(--accent, #e85d2a);
+  color: #fff;
+  box-shadow: 0 0 16px rgba(232, 93, 42, 0.4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.timerBtn.timerDone {
+  background: rgba(76, 175, 80, 0.25);
+  border-color: rgba(76, 175, 80, 0.5);
+  color: #81c784;
+  box-shadow: 0 0 12px rgba(76, 175, 80, 0.3);
+}
+
+.timerBtn:active {
+  opacity: 0.8;
+}
+
+.timerPausedGroup {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.timerResumeBtn {
+  padding: 14px 14px;
+  border-radius: 24px;
+  border: 1px solid rgba(232, 93, 42, 0.4);
+  background: rgba(232, 93, 42, 0.15);
+  color: var(--accent, #e85d2a);
+  font-family: 'Geologica', sans-serif;
+  font-size: var(--text-button, 14px);
+  font-weight: var(--font-extralight, 200);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.timerResumeBtn:active {
+  background: rgba(232, 93, 42, 0.25);
+}
+
+.timerResetBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--tg-theme-hint-color, #999);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.timerResetBtn:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(232, 93, 42, 0.4); }
+  50% { box-shadow: 0 0 24px rgba(232, 93, 42, 0.6); }
+}
+
+/* --- Bottom sheet --- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.sheet {
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--tg-theme-bg-color, #1a1a2e);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  padding: 16px 24px 32px;
+  animation: slideUp 0.25s ease;
+}
+
+.sheetHandle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0 auto 20px;
+}
+
+.sheetTitle {
+  font-size: var(--text-section, 22px);
+  font-weight: var(--font-thin, 100);
+  margin: 0 0 16px;
+}
+
+.sheetList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sheetList li {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  line-height: 1.5;
+  font-size: 0.9rem;
+}
+
+.sheetClose {
+  width: 100%;
+  padding: 14px;
+  border-radius: 24px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-family: 'Geologica', sans-serif;
+  font-size: var(--text-button, 14px);
+  font-weight: var(--font-extralight, 200);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sheetClose:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }

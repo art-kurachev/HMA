@@ -1,10 +1,16 @@
 from pydantic import BaseModel
 
 
+class TobaccoItem(BaseModel):
+    name: str
+    percent: int
+
+
 class InstructionResponse(BaseModel):
-    headline: str
-    bowl: list[str]
-    heat: list[str]
+    tobaccos: list[TobaccoItem]
+    packing: list[str]
+    warmup: list[str]
+    warmup_seconds: int
     if_not_opened: list[str]
-    smoke: list[str]
-    tuning: list[str]
+    tip: str
+    smoking: list[str]

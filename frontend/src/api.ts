@@ -24,13 +24,19 @@ export interface SuggestResponse {
   clarify: string[]
 }
 
+export interface TobaccoItem {
+  name: string
+  percent: number
+}
+
 export interface InstructionResponse {
-  headline: string
-  bowl: string[]
-  heat: string[]
+  tobaccos: TobaccoItem[]
+  packing: string[]
+  warmup: string[]
+  warmup_seconds: number
   if_not_opened: string[]
-  smoke: string[]
-  tuning: string[]
+  tip: string
+  smoking: string[]
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {

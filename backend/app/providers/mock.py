@@ -47,28 +47,43 @@ class MockProvider(BaseProvider):
         return SuggestResponse(mixes=mixes, clarify=[])
 
     async def generate_instruction(self, input_data: InstructionProviderInput) -> InstructionResponse:
-        bowl = input_data.params.get("bowl", "phunnel")
+        from app.schemas.instruction import TobaccoItem
+
+        tobaccos = input_data.mix.tobaccos or ["Black Nana", "Blue Horse"]
+        total = len(tobaccos)
+        tobacco_items = []
+        remaining = 100
+        for i, name in enumerate(tobaccos):
+            pct = remaining // (total - i)
+            tobacco_items.append(TobaccoItem(name=name, percent=pct))
+            remaining -= pct
+
+        coal_count = input_data.params.get("coal_count_start", 3)
         heat = input_data.params.get("heat_control", "kaloud")
+
         return InstructionResponse(
-            headline="Быстрая инструкция на 20–30 сек",
-            bowl=[
-                f"Засыпь микс в {bowl} чашу",
-                "Не утрамбовывай плотно, оставь воздух",
+            tobaccos=tobacco_items,
+            packing=[
+                "Табак мелко порезать",
+                "Тщательно перемешать",
+                "Забивка плотная",
+                "1 мм отступ",
+                "Контакт допустим, но не «в кашу»",
             ],
-            heat=[
-                f"Используй {heat}, 2–3 угля 25мм",
-                "Прогрей 5 мин, потом можно курить",
+            warmup=[
+                f"Старт: {coal_count} угля",
+                "Прогрев: 5–6 минут",
+                "Первые тяги аккуратные",
             ],
+            warmup_seconds=360,
             if_not_opened=[
-                "Разомни табак перед засыпкой",
-                "Смешай в миске до однородности",
+                "3-й уголь на ребро на 60–90 сек",
+                "Затем убрать",
             ],
-            smoke=[
-                "Медленные, плавные затяжки",
-                "Не перегревай — вкус станет горьким",
-            ],
-            tuning=[
-                "Слабый дым — добавь уголь",
-                "Горчит — убери уголь или сдвинь в сторону",
+            tip=f"{tobaccos[0]} не любит перегрев — лучше недожарить, чем пережечь.",
+            smoking=[
+                "Тяга средняя, спокойная",
+                "Паузы 20–30 секунд",
+                "После 10–15 минут можно чуть усилить жар (сдвинуть угли к центру)",
             ],
         )
