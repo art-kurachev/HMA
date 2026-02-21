@@ -61,13 +61,13 @@ async def generate_instruction_input(
     mix: dict,
     params: dict,
 ) -> tuple[BaseProvider, InstructionProviderInput]:
-    from app.schemas.mix import MixCompositionItem, MixItem
+    from app.schemas.mix import MixItem
 
     mix_item = MixItem(
         id=mix.get("id", "mix_1"),
         title=mix.get("title", ""),
-        composition=[MixCompositionItem(name=c["name"], percent=c["percent"]) for c in mix.get("composition", [])],
-        why=mix.get("why", []),
+        tobaccos=mix.get("tobaccos", []),
+        flavor=mix.get("flavor", ""),
     )
     provider = get_provider_for_user(user)
     input_data = InstructionProviderInput(mix=mix_item, params=params)

@@ -14,17 +14,12 @@ class MixParams(BaseModel):
     available_tobaccos_text: str
 
 
-class MixCompositionItem(BaseModel):
-    name: str
-    percent: int
-
-
 class MixItem(BaseModel):
     id: str
     title: str
-    composition: list[MixCompositionItem]
-    why: list[str]
-    mix_db_id: Optional[int] = None  # For feedback, set by backend after save
+    tobaccos: list[str]
+    flavor: str
+    mix_db_id: Optional[int] = None
 
 
 class SuggestRequest(BaseModel):

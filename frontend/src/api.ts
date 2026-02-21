@@ -11,16 +11,11 @@ export interface MixParams {
   available_tobaccos_text: string
 }
 
-export interface MixCompositionItem {
-  name: string
-  percent: number
-}
-
 export interface Mix {
   id: string
   title: string
-  composition: MixCompositionItem[]
-  why: string[]
+  tobaccos: string[]
+  flavor: string
   mix_db_id?: number
 }
 

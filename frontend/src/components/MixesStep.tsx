@@ -32,15 +32,11 @@ export function MixesStep({ mixes, onSelect, onBack }: MixesStepProps) {
           >
             <h3 className={styles.cardTitle}>{mix.title}</h3>
             <div className={styles.composition}>
-              {mix.composition.map((c) => (
-                <span key={c.name}>{c.name} {c.percent}%</span>
+              {mix.tobaccos.map((t) => (
+                <span key={t}>{t}</span>
               ))}
             </div>
-            <ul className={styles.why}>
-              {mix.why.map((w, i) => (
-                <li key={i}>{w}</li>
-              ))}
-            </ul>
+            <p className={styles.flavor}>{mix.flavor}</p>
             <span className={styles.cta}>Инструкция →</span>
           </button>
         ))}

@@ -1,11 +1,10 @@
 import re
 from app.providers.base import BaseProvider, InstructionProviderInput, MixProviderInput
 from app.schemas.instruction import InstructionResponse
-from app.schemas.mix import MixCompositionItem, MixItem, SuggestResponse
+from app.schemas.mix import MixItem, SuggestResponse
 
 
 def _parse_tobaccos(text: str) -> list[str]:
-    """Extract tobacco names from available_tobaccos_text."""
     text = text.strip()
     items = re.split(r"[,;/\n]+", text)
     result = []
@@ -29,30 +28,20 @@ class MockProvider(BaseProvider):
             MixItem(
                 id="mix_1",
                 title="Классика фрукт",
-                composition=[
-                    MixCompositionItem(name=t1, percent=60),
-                    MixCompositionItem(name=t2, percent=40),
-                ],
-                why=["Сбалансированный вкус", "Подходит для новичков"],
+                tobaccos=[t1, t2],
+                flavor="Сладкий фрукт с лёгкой кислинкой",
             ),
             MixItem(
                 id="mix_2",
                 title="Ягодный взрыв",
-                composition=[
-                    MixCompositionItem(name=t2, percent=50),
-                    MixCompositionItem(name=t3, percent=50),
-                ],
-                why=["Яркие ягодные ноты", "Хорошо тянется"],
+                tobaccos=[t2, t3],
+                flavor="Яркие ягоды и свежесть",
             ),
             MixItem(
                 id="mix_3",
                 title="Микс в тройку",
-                composition=[
-                    MixCompositionItem(name=t1, percent=40),
-                    MixCompositionItem(name=t2, percent=30),
-                    MixCompositionItem(name=t3, percent=30),
-                ],
-                why=["Многослойный вкус", "Долгий сеанс"],
+                tobaccos=[t1, t2, t3],
+                flavor="Многослойный и насыщенный вкус",
             ),
         ]
         return SuggestResponse(mixes=mixes, clarify=[])

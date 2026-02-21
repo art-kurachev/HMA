@@ -81,11 +81,11 @@
   margin-bottom: 10px;
 }
 
-.why {
+.flavor {
   margin: 0 0 12px;
-  padding-left: 18px;
   font-size: 0.9rem;
   line-height: 1.4;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .cta {
