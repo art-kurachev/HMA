@@ -19,12 +19,14 @@ function formatTime(seconds: number): string {
 }
 
 const RESCUE_TIPS = [
-  'Горчит — сними калауд, продуй чашу, убери 1 уголь. Подожди 30 сек.',
-  'Мало дыма — добавь уголь или сдвинь угли к центру.',
-  'Привкус угля — прогрей ещё 2 минуты перед курением.',
-  'Слишком крепко — делай короткие затяжки с паузами 30–40 сек.',
-  'Вкус пропал — переверни угли свежей стороной, подожди минуту.',
-  'Течёт сироп — забивка слишком мокрая. Промокни табак салфеткой в следующий раз.',
+  'Горчит — сними калауд на 20–30 сек, убери 1 уголь или сдвинь к краю. Подожди 30 сек.',
+  'Мало дыма — добавь уголь или сдвинь угли к центру. Дай прогреться 1–2 мин.',
+  'Привкус угля — угли не разгорелись. Прогрей их полностью перед установкой.',
+  'Слишком крепко — короткие затяжки + паузы 30–40 сек. Угли к краю.',
+  'Вкус пропал — переверни угли, сдвинь к центру на 1 мин.',
+  'Течёт сироп — табак слишком мокрый. В следующий раз промокни салфеткой.',
+  'Тяжёлая тяга — проверь забивку и чистоту шахты.',
+  'Быстро перегревается — сними 1 уголь и держи угли по краю.',
 ]
 
 export function InstructionStep({ instruction, mixTitle, mixFlavor, onNext, onBack }: InstructionStepProps) {
@@ -125,26 +127,19 @@ export function InstructionStep({ instruction, mixTitle, mixFlavor, onNext, onBa
       </section>
 
       <section className={styles.section}>
-        <h3>Если не раскрылся</h3>
-        <ul>
-          {instruction.if_not_opened.map((x, i) => (
-            <li key={i}>{x}</li>
-          ))}
-        </ul>
-      </section>
-
-      {instruction.tip && (
-        <section className={styles.tipSection}>
-          <h3>Совет</h3>
-          <p>{instruction.tip}</p>
-        </section>
-      )}
-
-      <section className={styles.section}>
         <h3>Курение</h3>
         <ul>
           {instruction.smoking.map((s, i) => (
             <li key={i}>{s}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className={styles.section}>
+        <h3>Если не раскрылся</h3>
+        <ul>
+          {instruction.if_not_opened.map((x, i) => (
+            <li key={i}>{x}</li>
           ))}
         </ul>
       </section>

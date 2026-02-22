@@ -34,9 +34,8 @@ export interface InstructionResponse {
   packing: string[]
   warmup: string[]
   warmup_seconds: number
-  if_not_opened: string[]
-  tip: string
   smoking: string[]
+  if_not_opened: string[]
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {

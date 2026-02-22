@@ -61,26 +61,6 @@
   font-weight: 300;
 }
 
-.tipSection {
-  margin-bottom: 1.25rem;
-  padding: 20px;
-  border-radius: 20px;
-  background: rgba(232, 93, 42, 0.1);
-  border: 1px solid rgba(232, 93, 42, 0.25);
-}
-
-.tipSection h3 {
-  font-size: var(--text-section, 22px);
-  color: var(--accent, #e85d2a);
-  margin: 0 0 8px;
-  font-weight: var(--font-thin, 100);
-}
-
-.tipSection p {
-  margin: 0;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.85);
-}
 
 /* --- Three action buttons --- */
 

@@ -11,6 +11,5 @@ class InstructionResponse(BaseModel):
     packing: list[str]
     warmup: list[str]
     warmup_seconds: int
-    if_not_opened: list[str]
-    tip: str
     smoking: list[str]
+    if_not_opened: list[str]
