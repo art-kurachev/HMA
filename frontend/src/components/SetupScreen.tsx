@@ -126,7 +126,7 @@ export function SetupScreen({ onBack, onSubmit, loading, initialFormState }: Set
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <h3 className={styles.sectionTitle}>Наличие колпака?</h3>
-            <span className={styles.hint}>Kaloud, Lotus и т.п.</span>
+            <span className={styles.hint}>Колпак в наличии, я это учту!</span>
           </div>
           <div className={styles.pills}>
             <button

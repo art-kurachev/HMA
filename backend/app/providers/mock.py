@@ -22,8 +22,11 @@ class MockProvider(BaseProvider):
         )
         if not tobaccos:
             tobaccos = ["Black Nana", "Blue Horse", "Darkside Core"]
-        default = ["Black Nana", "Blue Horse", "Darkside Core"]
-        t1, t2, t3 = (tobaccos + default)[:3]
+        default = ["Black Nana", "Blue Horse", "Darkside Core", "Element Земляника"]
+        avail = list((tobaccos + default)[:4])
+        while len(avail) < 4:
+            avail.append(default[len(avail) % len(default)])
+        t1, t2, t3, t4 = avail[0], avail[1], avail[2], avail[3]
         mixes = [
             MixItem(
                 id="mix_1",
@@ -34,13 +37,13 @@ class MockProvider(BaseProvider):
             MixItem(
                 id="mix_2",
                 title="Ягодный взрыв",
-                tobaccos=[t2, t3],
+                tobaccos=[t1, t2, t3],
                 flavor="Яркие ягоды и свежесть",
             ),
             MixItem(
                 id="mix_3",
-                title="Микс в тройку",
-                tobaccos=[t1, t2, t3],
+                title="Микс в четверку",
+                tobaccos=[t1, t2, t3, t4],
                 flavor="Многослойный и насыщенный вкус",
             ),
         ]

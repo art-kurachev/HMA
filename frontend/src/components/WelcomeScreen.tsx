@@ -1,5 +1,5 @@
 import { ScreenLayout } from './ScreenLayout'
-import { LoginIcon, SettingsIcon } from './Icons'
+import { LoginIcon } from './Icons'
 import styles from './WelcomeScreen.module.css'
 
 const USAGE_KEY = 'hma_usage_count'
@@ -40,7 +40,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         <span className={styles.alphaBadge}>Альфа-тест</span>
         <p className={styles.subtitle}>Hookah maker assistent</p>
         <h1 className={styles.title}>
-          Кальянный ассистент, а не просто «советчик по миксам»
+          {`Кальянный ассистент, а\u00A0не\u00A0просто «советчик по\u00A0миксам»`}
         </h1>
         <p className={styles.counter}>Осталось запросов: {remaining}</p>
         <div className={styles.actions}>
@@ -51,9 +51,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           >
             Хочу просто и быстро
             <LoginIcon size={18} />
-          </button>
-          <button type="button" className={styles.secondaryBtn} aria-label="Настройки">
-            <SettingsIcon size={20} />
           </button>
         </div>
       </div>
