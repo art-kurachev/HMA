@@ -22,5 +22,12 @@ class Settings(BaseSettings):
     YANDEXGPT_FOLDER_ID: Optional[str] = None
     YANDEXGPT_MODEL: str = "yandexgpt-lite/latest"
 
+    # Admin
+    ADMIN_USERNAME: str = "admin"
+    ADMIN_PASSWORD: str = "admin"
+    ADMIN_JWT_SECRET: str = "change-me-in-production"
+    ADMIN_JWT_ALGORITHM: str = "HS256"
+    ADMIN_JWT_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
+
 
 settings = Settings()

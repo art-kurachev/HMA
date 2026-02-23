@@ -39,3 +39,8 @@ CREATE TABLE IF NOT EXISTS feedback (
     reason TEXT NULL,
     created_at TIMESTAMP DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS app_settings (
+    key VARCHAR(64) PRIMARY KEY,
+    value TEXT NOT NULL
+);

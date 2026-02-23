@@ -29,6 +29,7 @@
 .alphaBadge {
   display: inline-block;
   width: fit-content;
+  padding: 6px 12px;
   font-size: 12px;
   font-weight: 500;
   color: rgba(232, 93, 42, 1);

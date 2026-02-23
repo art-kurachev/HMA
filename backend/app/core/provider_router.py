@@ -3,6 +3,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
+from app.core.app_settings import get_app_settings
 from app.db.models import User
 from app.providers.base import BaseProvider, InstructionProviderInput, MixProviderInput
 from app.providers.gigachat import GigaChatProvider
@@ -27,14 +28,16 @@ async def ensure_user_and_provider_group(db: AsyncSession, telegram_id: int) -> 
         user = User(telegram_id=telegram_id)
         db.add(user)
         await db.flush()
-    if settings.LLM_PROVIDER == "ab" and user.provider_group is None:
+    app_cfg = await get_app_settings(db)
+    llm_provider = app_cfg.get("llm_provider", settings.LLM_PROVIDER)
+    if llm_provider == "ab" and user.provider_group is None:
         user.provider_group = "gigachat" if random.random() * 100 < settings.AB_SPLIT else "yandexgpt"
         await db.flush()
     return user
 
 
-def get_provider_for_user(user: Optional[User]) -> BaseProvider:
-    provider_name = settings.LLM_PROVIDER
+def get_provider_for_user(user: Optional[User], llm_provider: Optional[str] = None) -> BaseProvider:
+    provider_name = llm_provider or settings.LLM_PROVIDER
     if provider_name == "ab" and user and user.provider_group:
         provider_name = user.provider_group
     return _get_provider_by_name(provider_name)
@@ -45,7 +48,9 @@ async def generate_mixes(
     user: User,
     params: dict,
 ) -> tuple[BaseProvider, MixProviderInput]:
-    provider = get_provider_for_user(user)
+    app_cfg = await get_app_settings(db)
+    llm_provider = app_cfg.get("llm_provider", settings.LLM_PROVIDER)
+    provider = get_provider_for_user(user, llm_provider)
     import re
 
     text = params.get("available_tobaccos_text", "")
@@ -69,6 +74,8 @@ async def generate_instruction_input(
         tobaccos=mix.get("tobaccos", []),
         flavor=mix.get("flavor", ""),
     )
-    provider = get_provider_for_user(user)
+    app_cfg = await get_app_settings(db)
+    llm_provider = app_cfg.get("llm_provider", settings.LLM_PROVIDER)
+    provider = get_provider_for_user(user, llm_provider)
     input_data = InstructionProviderInput(mix=mix_item, params=params)
     return provider, input_data
