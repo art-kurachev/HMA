@@ -149,6 +149,7 @@ export default function App() {
           instruction={instruction}
           mixTitle={selectedMix.title}
           mixFlavor={selectedMix.flavor}
+          telegramId={uid}
           onNext={() => setStep('feedback')}
           onBack={() => setStep('mixes')}
         />

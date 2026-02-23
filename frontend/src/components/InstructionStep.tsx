@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { InstructionResponse } from '../api'
+import { scheduleWarmupNotify } from '../api'
 import { ScreenLayout } from './ScreenLayout'
 import { CheckIcon, CloseIcon, WrenchIcon, PlayIcon, PauseIcon, RestartIcon } from './Icons'
 import styles from './InstructionStep.module.css'
@@ -8,6 +9,7 @@ interface InstructionStepProps {
   instruction: InstructionResponse
   mixTitle: string
   mixFlavor: string
+  telegramId: number
   onNext: () => void
   onBack: () => void
 }
@@ -29,7 +31,14 @@ const RESCUE_TIPS = [
   'Быстро перегревается — сними 1 уголь и держи угли по краю.',
 ]
 
-export function InstructionStep({ instruction, mixTitle, mixFlavor, onNext, onBack }: InstructionStepProps) {
+export function InstructionStep({
+  instruction,
+  mixTitle,
+  mixFlavor,
+  telegramId,
+  onNext,
+  onBack,
+}: InstructionStepProps) {
   const [showSheet, setShowSheet] = useState(false)
   const [timeLeft, setTimeLeft] = useState(instruction.warmup_seconds)
   const [isRunning, setIsRunning] = useState(false)
@@ -69,6 +78,9 @@ export function InstructionStep({ instruction, mixTitle, mixFlavor, onNext, onBa
     setTimerDone(false)
     setTimerStarted(true)
     setIsRunning(true)
+    scheduleWarmupNotify(telegramId, instruction.warmup_seconds).catch(() => {
+      /* ignore — уведомление опционально */
+    })
   }
 
   const handlePause = () => {

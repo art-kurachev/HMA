@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     YANDEXGPT_FOLDER_ID: Optional[str] = None
     YANDEXGPT_MODEL: str = "yandexgpt-lite/latest"
 
+    # Telegram Bot (уведомления)
+    BOT_TOKEN: Optional[str] = None
+
     # Admin
     ADMIN_USERNAME: str = "admin"
     ADMIN_PASSWORD: str = "admin"

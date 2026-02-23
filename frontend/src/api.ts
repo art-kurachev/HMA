@@ -79,6 +79,19 @@ export async function getInstruction(telegramId: number, mixId: string): Promise
   })
 }
 
+export async function scheduleWarmupNotify(
+  telegramId: number,
+  warmupSeconds: number
+): Promise<void> {
+  await request('/v1/notify/warmup', {
+    method: 'POST',
+    body: JSON.stringify({
+      telegram_id: telegramId,
+      warmup_seconds: warmupSeconds,
+    }),
+  })
+}
+
 export async function submitFeedback(
   telegramId: number,
   mixDbId: number,
