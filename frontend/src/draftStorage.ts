@@ -6,6 +6,16 @@ const DRAFT_KEY = 'hma_draft'
 
 export type DraftStep = 'direction' | 'setup' | 'mixes' | 'instruction' | 'feedback'
 
+export type TimerStateStatus = 'idle' | 'running' | 'paused' | 'done' | 'dismissed'
+
+export interface TimerState {
+  mixId: string
+  state: TimerStateStatus
+  startTime: number
+  duration: number
+  remainingWhenPaused?: number
+}
+
 export interface AppDraft {
   step: DraftStep
   direction: Direction | null
@@ -13,6 +23,7 @@ export interface AppDraft {
   mixes: Mix[]
   selectedMix: Mix | null
   instruction: InstructionResponse | null
+  timerState: TimerState | null
 }
 
 export function saveDraft(draft: AppDraft): void {

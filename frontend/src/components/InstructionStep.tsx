@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { InstructionResponse } from '../api'
 import { scheduleWarmupNotify } from '../api'
+import type { TimerState } from '../draftStorage'
 import { ScreenLayout } from './ScreenLayout'
 import { CheckIcon, CloseIcon, WrenchIcon, PlayIcon, PauseIcon, RestartIcon } from './Icons'
 import styles from './InstructionStep.module.css'
@@ -9,7 +10,10 @@ interface InstructionStepProps {
   instruction: InstructionResponse
   mixTitle: string
   mixFlavor: string
+  mixId: string
   telegramId: number
+  initialTimerState: TimerState | null
+  onTimerStateChange: (state: TimerState | null) => void
   onNext: () => void
   onBack: () => void
 }
@@ -35,7 +39,10 @@ export function InstructionStep({
   instruction,
   mixTitle,
   mixFlavor,
+  mixId,
   telegramId,
+  initialTimerState,
+  onTimerStateChange,
   onNext,
   onBack,
 }: InstructionStepProps) {
@@ -45,9 +52,42 @@ export function InstructionStep({
   const [timerDone, setTimerDone] = useState(false)
   const [timerStarted, setTimerStarted] = useState(false)
   const [timerDismissed, setTimerDismissed] = useState(false)
+  const [paused, setPaused] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const startTimeRef = useRef<number | null>(null)
   const durationRef = useRef<number>(instruction.warmup_seconds)
+  const restoredRef = useRef(false)
+
+  useEffect(() => {
+    if (restoredRef.current || !initialTimerState || initialTimerState.mixId !== mixId) return
+    restoredRef.current = true
+    const ts = initialTimerState
+    durationRef.current = ts.duration
+    if (ts.state === 'running') {
+      const elapsed = (Date.now() - ts.startTime) / 1000
+      const remaining = Math.max(0, Math.ceil(ts.duration - elapsed))
+      setTimeLeft(remaining)
+      if (remaining <= 0) {
+        setTimerDone(true)
+        setTimerStarted(true)
+        return
+      }
+      startTimeRef.current = ts.startTime
+      setIsRunning(true)
+      setTimerStarted(true)
+    } else if (ts.state === 'paused' && ts.remainingWhenPaused != null) {
+      setTimeLeft(ts.remainingWhenPaused)
+      setPaused(true)
+      setTimerStarted(true)
+    } else if (ts.state === 'done') {
+      setTimeLeft(0)
+      setTimerDone(true)
+      setTimerStarted(true)
+    } else if (ts.state === 'dismissed') {
+      setTimerDismissed(true)
+      setTimerStarted(true)
+    }
+  }, [initialTimerState, mixId])
 
   const clearTimer = useCallback(() => {
     if (intervalRef.current) {
@@ -63,11 +103,14 @@ export function InstructionStep({
     const remaining = Math.max(0, Math.ceil(durationRef.current - elapsed))
     setTimeLeft(remaining)
     if (remaining <= 0) {
+      const st = startTimeRef.current
+      const dur = durationRef.current
       clearTimer()
       setIsRunning(false)
       setTimerDone(true)
+      onTimerStateChange({ mixId, state: 'done', startTime: st!, duration: dur })
     }
-  }, [clearTimer])
+  }, [clearTimer, mixId, onTimerStateChange])
 
   useEffect(() => {
     if (isRunning) {
@@ -89,15 +132,16 @@ export function InstructionStep({
     return () => document.removeEventListener('visibilitychange', onVisible)
   }, [isRunning, recalcTimeLeft])
 
-  const [paused, setPaused] = useState(false)
-
   const handleStart = () => {
     setPaused(false)
     setTimerDone(false)
     setTimerStarted(true)
-    durationRef.current = instruction.warmup_seconds
-    startTimeRef.current = Date.now()
+    const duration = instruction.warmup_seconds
+    const startTime = Date.now()
+    durationRef.current = duration
+    startTimeRef.current = startTime
     setIsRunning(true)
+    onTimerStateChange({ mixId, state: 'running', startTime, duration })
     scheduleWarmupNotify(telegramId, instruction.warmup_seconds).catch(() => {
       /* ignore — уведомление опционально */
     })
@@ -110,13 +154,22 @@ export function InstructionStep({
     clearTimer()
     setIsRunning(false)
     setPaused(true)
+    onTimerStateChange({
+      mixId,
+      state: 'paused',
+      startTime: startTimeRef.current ?? Date.now(),
+      duration: durationRef.current,
+      remainingWhenPaused: remaining,
+    })
   }
 
   const handleResume = () => {
     durationRef.current = timeLeft
-    startTimeRef.current = Date.now()
+    const startTime = Date.now()
+    startTimeRef.current = startTime
     setPaused(false)
     setIsRunning(true)
+    onTimerStateChange({ mixId, state: 'running', startTime, duration: timeLeft })
   }
 
   const handleReset = () => {
@@ -126,6 +179,7 @@ export function InstructionStep({
     setTimerDone(false)
     setTimeLeft(instruction.warmup_seconds)
     durationRef.current = instruction.warmup_seconds
+    onTimerStateChange(null)
   }
 
   return (
@@ -211,7 +265,15 @@ export function InstructionStep({
           <button
             type="button"
             className={`${styles.timerBtn} ${styles.timerDone}`}
-            onClick={() => setTimerDismissed(true)}
+            onClick={() => {
+              setTimerDismissed(true)
+              onTimerStateChange({
+                mixId,
+                state: 'dismissed',
+                startTime: startTimeRef.current ?? Date.now(),
+                duration: durationRef.current,
+              })
+            }}
           >
             <CloseIcon size={18} />
             <span>Готово</span>

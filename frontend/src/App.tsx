@@ -44,6 +44,7 @@ export default function App() {
   const [mixes, setMixes] = useState<Mix[]>([])
   const [selectedMix, setSelectedMix] = useState<Mix | null>(null)
   const [instruction, setInstruction] = useState<InstructionResponse | null>(null)
+  const [timerState, setTimerState] = useState<import('./draftStorage').TimerState | null>(null)
 
   useEffect(() => {
     initTelegram()
@@ -60,6 +61,7 @@ export default function App() {
     setMixes(draft.mixes ?? [])
     setSelectedMix(draft.selectedMix)
     setInstruction(draft.instruction)
+    setTimerState(draft.timerState ?? null)
   }, [])
 
   const uid = telegramId ?? 123456789
@@ -71,6 +73,7 @@ export default function App() {
     setMixes([])
     setSelectedMix(null)
     setInstruction(null)
+    setTimerState(null)
     clearDraft()
   }, [])
 
@@ -83,8 +86,9 @@ export default function App() {
       mixes,
       selectedMix,
       instruction,
+      timerState: step === 'instruction' ? timerState : null,
     })
-  }, [step, direction, formState, mixes, selectedMix, instruction])
+  }, [step, direction, formState, mixes, selectedMix, instruction, timerState])
 
   const handleFormSubmit = async (params: FormState) => {
     setError(null)
@@ -178,9 +182,18 @@ export default function App() {
           instruction={instruction}
           mixTitle={selectedMix.title}
           mixFlavor={selectedMix.flavor}
+          mixId={selectedMix.id}
           telegramId={uid}
-          onNext={() => setStep('feedback')}
-          onBack={() => setStep('mixes')}
+          initialTimerState={timerState}
+          onTimerStateChange={setTimerState}
+          onNext={() => {
+            setTimerState(null)
+            setStep('feedback')
+          }}
+          onBack={() => {
+            setTimerState(null)
+            setStep('mixes')
+          }}
         />
       )}
       {step === 'feedback' && (
