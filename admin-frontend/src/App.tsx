@@ -359,14 +359,14 @@ function UsersPage() {
           <tbody>
             {items.map((row) => (
               <tr key={row.id}>
-                <td>{row.id}</td>
-                <td>{row.telegram_id}</td>
-                <td>{row.provider_group || '—'}</td>
-                <td>{row.attempts}</td>
-                <td>{row.sessions_count}</td>
-                <td>{row.feedback_count}</td>
-                <td>{row.created_at ? new Date(row.created_at).toLocaleString('ru') : '—'}</td>
-                <td>{row.last_activity ? new Date(row.last_activity).toLocaleString('ru') : '—'}</td>
+                <td data-label="ID">{row.id}</td>
+                <td data-label="Telegram ID">{row.telegram_id}</td>
+                <td data-label="Провайдер">{row.provider_group || '—'}</td>
+                <td data-label="Попыток">{row.attempts}</td>
+                <td data-label="Сессий">{row.sessions_count}</td>
+                <td data-label="Feedback">{row.feedback_count}</td>
+                <td data-label="Регистрация">{row.created_at ? new Date(row.created_at).toLocaleString('ru') : '—'}</td>
+                <td data-label="Последняя активность">{row.last_activity ? new Date(row.last_activity).toLocaleString('ru') : '—'}</td>
               </tr>
             ))}
           </tbody>
@@ -476,17 +476,17 @@ function FeedbackPage() {
           <tbody>
             {items.map((row) => (
               <tr key={row.id}>
-                <td>{row.id}</td>
-                <td>{row.mix_id}</td>
-                <td>{row.telegram_id}</td>
-                <td>
+                <td data-label="ID">{row.id}</td>
+                <td data-label="Mix">{row.mix_id}</td>
+                <td data-label="Telegram">{row.telegram_id}</td>
+                <td data-label="Оценка">
                   <span className={row.rating ? styles.tagGood : styles.tagBad}>
                     {row.rating ? 'Зашло' : 'Не зашло'}
                   </span>
                 </td>
-                <td>{row.reason || '—'}</td>
-                <td>{row.created_at ? new Date(row.created_at).toLocaleString('ru') : '—'}</td>
-                <td>
+                <td data-label="Причина">{row.reason || '—'}</td>
+                <td data-label="Дата">{row.created_at ? new Date(row.created_at).toLocaleString('ru') : '—'}</td>
+                <td data-label="">
                   <button className={styles.mixBtn} onClick={() => setMixModalId(row.mix_id)}>
                     Микс
                   </button>
@@ -532,13 +532,13 @@ function MixesPage() {
           <tbody>
             {items.map((row) => (
               <tr key={row.id}>
-                <td>{row.id}</td>
-                <td>{row.telegram_id}</td>
-                <td>{row.title || '—'}</td>
-                <td>{row.flavor || '—'}</td>
-                <td>{row.provider}</td>
-                <td>{row.created_at ? new Date(row.created_at).toLocaleString('ru') : '—'}</td>
-                <td>
+                <td data-label="ID">{row.id}</td>
+                <td data-label="Telegram">{row.telegram_id}</td>
+                <td data-label="Название">{row.title || '—'}</td>
+                <td data-label="Букет">{row.flavor || '—'}</td>
+                <td data-label="Провайдер">{row.provider}</td>
+                <td data-label="Дата">{row.created_at ? new Date(row.created_at).toLocaleString('ru') : '—'}</td>
+                <td data-label="">
                   <button className={styles.mixBtn} onClick={() => setMixModalId(row.id)}>
                     Подробнее
                   </button>

@@ -447,3 +447,139 @@
 .table td {
   color: #e4e4e7;
 }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .nav {
+    flex-wrap: wrap;
+    order: 2;
+    width: 100%;
+  }
+
+  .main {
+    padding: 16px;
+  }
+
+  .loginWrap {
+    padding: 16px;
+  }
+
+  .loginForm {
+    padding: 24px;
+  }
+
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .cardValue {
+    font-size: 1.5rem;
+  }
+
+  .chart {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+
+  .chartBarWrap {
+    flex: 0 0 40px;
+    min-width: 40px;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody tr {
+    display: block;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: #18181b;
+    border-radius: 12px;
+    border: 1px solid #27272a;
+  }
+
+  .table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: none;
+  }
+
+  .table td:last-child {
+    padding-top: 12px;
+    border-top: 1px solid #27272a;
+  }
+
+  .table td[data-label='']::before {
+    display: none;
+  }
+
+  .table td[data-label=''] {
+    justify-content: flex-end;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    color: #71717a;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+
+  .modal {
+    width: 95%;
+    max-height: 85vh;
+  }
+
+  .modalBody {
+    padding: 16px;
+  }
+}
+
+/* Touch-friendly (mobile / tablet) */
+@media (pointer: coarse) {
+  .nav button {
+    min-height: 44px;
+    padding: 10px 14px;
+  }
+
+  .logoutBtn,
+  .exportBtn,
+  .mixBtn {
+    min-height: 44px;
+    padding: 10px 16px;
+  }
+
+  .loginForm input,
+  .form input[type='number'],
+  .form select {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .loginForm button,
+  .form button {
+    min-height: 48px;
+  }
+}
