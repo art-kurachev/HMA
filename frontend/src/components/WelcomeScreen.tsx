@@ -32,6 +32,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
     <ScreenLayout progressStep={1} totalSteps={3}>
       <div className={styles.welcome}>
         <img src="/welcome-screen.png" alt="" className={styles.figmaBg} aria-hidden onError={(e) => { e.currentTarget.style.display = 'none' }} />
+        <span className={styles.alphaBadge}>Альфа-тест</span>
         <p className={styles.subtitle}>Hookah maker assistent</p>
         <h1 className={styles.title}>
           Кальянный ассистент, а не просто «советчик по миксам»
