@@ -3,6 +3,7 @@ import { LoginIcon, SettingsIcon } from './Icons'
 import styles from './WelcomeScreen.module.css'
 
 const USAGE_KEY = 'hma_usage_count'
+const DEFAULT_DAILY_LIMIT = 5
 
 export function getUsageCount(): number {
   try {
@@ -21,12 +22,16 @@ export function incrementUsageCount(): void {
   }
 }
 
+export function getRemainingCount(): number {
+  return Math.max(0, DEFAULT_DAILY_LIMIT - getUsageCount())
+}
+
 interface WelcomeScreenProps {
   onStart: () => void
 }
 
 export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
-  const usageCount = getUsageCount()
+  const remaining = getRemainingCount()
 
   return (
     <ScreenLayout progressStep={1} totalSteps={3}>
@@ -37,9 +42,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         <h1 className={styles.title}>
           Кальянный ассистент, а не просто «советчик по миксам»
         </h1>
-        {usageCount > 0 && (
-          <p className={styles.counter}>Использований: {usageCount}</p>
-        )}
+        <p className={styles.counter}>Осталось запросов: {remaining}</p>
         <div className={styles.actions}>
           <button
             type="button"
