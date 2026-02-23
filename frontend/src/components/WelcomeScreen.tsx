@@ -1,37 +1,23 @@
+import { useState, useEffect } from 'react'
 import { ScreenLayout } from './ScreenLayout'
 import { LoginIcon } from './Icons'
+import { getQuota } from '../api'
 import styles from './WelcomeScreen.module.css'
-
-const USAGE_KEY = 'hma_usage_count'
-const DEFAULT_DAILY_LIMIT = 5
-
-export function getUsageCount(): number {
-  try {
-    return parseInt(localStorage.getItem(USAGE_KEY) ?? '0', 10)
-  } catch {
-    return 0
-  }
-}
-
-export function incrementUsageCount(): void {
-  try {
-    const n = getUsageCount() + 1
-    localStorage.setItem(USAGE_KEY, String(n))
-  } catch {
-    /* ignore */
-  }
-}
-
-export function getRemainingCount(): number {
-  return Math.max(0, DEFAULT_DAILY_LIMIT - getUsageCount())
-}
 
 interface WelcomeScreenProps {
   onStart: () => void
+  telegramId: number
 }
 
-export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
-  const remaining = getRemainingCount()
+export function WelcomeScreen({ onStart, telegramId }: WelcomeScreenProps) {
+  const [remaining, setRemaining] = useState<number | null>(null)
+
+  useEffect(() => {
+    getQuota(telegramId).then((q) => setRemaining(q.remaining)).catch(() => setRemaining(0))
+  }, [telegramId])
+
+  const counterText =
+    remaining === null ? 'Загрузка...' : remaining === -1 ? 'Без лимитов' : `Осталось запросов: ${remaining}`
 
   return (
     <ScreenLayout progressStep={1} totalSteps={3}>
@@ -42,7 +28,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         <h1 className={styles.title}>
           {`Кальянный ассистент, а\u00A0не\u00A0просто «советчик по\u00A0миксам»`}
         </h1>
-        <p className={styles.counter}>Осталось запросов: {remaining}</p>
+        <p className={styles.counter}>{counterText}</p>
         <div className={styles.actions}>
           <button
             type="button"

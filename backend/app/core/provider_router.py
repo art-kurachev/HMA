@@ -52,11 +52,18 @@ async def generate_mixes(
     db: AsyncSession,
     user: User,
     params: dict,
+    *,
+    provider_name: Optional[str] = None,
+    llm_model: Optional[str] = None,
 ) -> tuple[BaseProvider, MixProviderInput]:
-    app_cfg = await get_app_settings(db)
-    llm_provider = app_cfg.get("llm_provider", settings.LLM_PROVIDER)
-    llm_model = app_cfg.get("llm_model", "")
-    provider = get_provider_for_user(user, llm_provider, llm_model)
+    """provider_name and llm_model override admin settings (used by quota system)."""
+    if provider_name is not None:
+        provider = _get_provider_by_name(provider_name, llm_model=llm_model or "")
+    else:
+        app_cfg = await get_app_settings(db)
+        p = app_cfg.get("llm_provider", settings.LLM_PROVIDER)
+        m = llm_model or app_cfg.get("llm_model", "")
+        provider = get_provider_for_user(user, p, m)
     import re
 
     text = params.get("available_tobaccos_text", "")
@@ -71,7 +78,11 @@ async def generate_instruction_input(
     user: User,
     mix: dict,
     params: dict,
+    *,
+    provider_name: Optional[str] = None,
+    llm_model: Optional[str] = None,
 ) -> tuple[BaseProvider, InstructionProviderInput]:
+    """Use provider_name and llm_model from mix when present (from GeneratedMix)."""
     from app.schemas.mix import MixItem
 
     mix_item = MixItem(
@@ -80,9 +91,12 @@ async def generate_instruction_input(
         tobaccos=mix.get("tobaccos", []),
         flavor=mix.get("flavor", ""),
     )
-    app_cfg = await get_app_settings(db)
-    llm_provider = app_cfg.get("llm_provider", settings.LLM_PROVIDER)
-    llm_model = app_cfg.get("llm_model", "")
-    provider = get_provider_for_user(user, llm_provider, llm_model)
+    if provider_name is not None:
+        provider = _get_provider_by_name(provider_name, llm_model=llm_model or "")
+    else:
+        app_cfg = await get_app_settings(db)
+        p = app_cfg.get("llm_provider", settings.LLM_PROVIDER)
+        m = llm_model or app_cfg.get("llm_model", "")
+        provider = get_provider_for_user(user, p, m)
     input_data = InstructionProviderInput(mix=mix_item, params=params)
     return provider, input_data

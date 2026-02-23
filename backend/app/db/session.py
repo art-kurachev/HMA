@@ -31,6 +31,21 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             await session.close()
 
 
+async def _run_migrations() -> None:
+    from sqlalchemy import text
+    for sql in [
+        "ALTER TABLE users ADD COLUMN welcome_requests_used INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN last_weekly_refill DATE",
+        "ALTER TABLE generated_mixes ADD COLUMN llm_model_used VARCHAR(64)",
+    ]:
+        try:
+            async with engine.begin() as conn:
+                await conn.execute(text(sql))
+        except Exception:
+            pass  # column may already exist
+
+
 async def init_db() -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    await _run_migrations()

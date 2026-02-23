@@ -4,7 +4,7 @@ import { suggestMixes, getInstruction, submitFeedback } from './api'
 import type { Mix, InstructionResponse } from './api'
 import type { FormState } from './types'
 import type { Direction } from './components/DirectionScreen'
-import { WelcomeScreen, incrementUsageCount } from './components/WelcomeScreen'
+import { WelcomeScreen } from './components/WelcomeScreen'
 import { saveDraft, loadDraft, clearDraft } from './draftStorage'
 import { DirectionScreen } from './components/DirectionScreen'
 import { SetupScreen } from './components/SetupScreen'
@@ -102,7 +102,8 @@ export default function App() {
       setMixes(res.mixes)
       setStep('mixes')
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Ошибка')
+      const msg = e instanceof Error ? e.message : 'Ошибка'
+      setError(msg === 'quota_exceeded' ? 'Лимит запросов исчерпан. Следующий — через неделю.' : msg)
     } finally {
       setLoading(false)
     }
@@ -129,7 +130,6 @@ export default function App() {
     setLoading(true)
     try {
       await submitFeedback(uid, selectedMix.mix_db_id, rating, reason)
-      incrementUsageCount()
       goToWelcome()
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Ошибка')
@@ -151,7 +151,10 @@ export default function App() {
       )}
 
       {step === 'welcome' && (
-        <WelcomeScreen onStart={() => setStep('direction')} />
+        <WelcomeScreen
+          telegramId={uid}
+          onStart={() => setStep('direction')}
+        />
       )}
       {step === 'direction' && (
         <DirectionScreen

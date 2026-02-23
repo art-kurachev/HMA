@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.provider_router import (
@@ -6,13 +6,23 @@ from app.core.provider_router import (
     generate_instruction_input,
     generate_mixes,
 )
-from app.core.rate_limit import check_and_increment_usage
+from app.core.quota import check_and_consume_quota, get_remaining_quota
 from app.db.session import get_db
-from app.schemas.feedback import FeedbackRequest
 from app.schemas.instruction import InstructionResponse
 from app.schemas.mix import InstructionRequest, MixItem, SuggestRequest, SuggestResponse
 
 router = APIRouter(prefix="/mixes", tags=["mixes"])
+
+
+@router.get("/quota")
+async def get_quota(
+    telegram_id: int = Query(..., description="Telegram user ID"),
+    db: AsyncSession = Depends(get_db),
+):
+    """Return remaining requests: -1 = unlimited (creator), else 0–3 (welcome) or 0–1 (weekly)."""
+    user = await ensure_user_and_provider_group(db, telegram_id)
+    remaining, is_creator = await get_remaining_quota(db, user)
+    return {"remaining": remaining, "is_creator": is_creator}
 
 
 @router.post("/suggest", response_model=SuggestResponse)
@@ -21,12 +31,16 @@ async def suggest_mixes(
     db: AsyncSession = Depends(get_db),
 ):
     user = await ensure_user_and_provider_group(db, body.telegram_id)
-    allowed, _ = await check_and_increment_usage(db, user.id)
+    allowed, provider_name, model_name = await check_and_consume_quota(db, user)
     if not allowed:
-        raise HTTPException(status_code=429, detail="daily_limit_exceeded")
+        raise HTTPException(status_code=429, detail="quota_exceeded")
 
     params = body.params.model_dump()
-    provider, input_data = await generate_mixes(db, user, params)
+    provider, input_data = await generate_mixes(
+        db, user, params,
+        provider_name=provider_name,
+        llm_model=model_name or None,
+    )
     response = await provider.generate_mixes(input_data)
 
     from app.db.models import GeneratedMix, Session
@@ -40,6 +54,7 @@ async def suggest_mixes(
             session_id=session.id,
             mix_json=mix.model_dump(),
             provider=provider.__class__.__name__.replace("Provider", "").lower(),
+            llm_model_used=model_name or None,
         )
         db.add(gm)
         await db.flush()
@@ -56,9 +71,6 @@ async def get_instruction(
     db: AsyncSession = Depends(get_db),
 ):
     user = await ensure_user_and_provider_group(db, body.telegram_id)
-    allowed, _ = await check_and_increment_usage(db, user.id)
-    if not allowed:
-        raise HTTPException(status_code=429, detail="daily_limit_exceeded")
 
     from sqlalchemy import select
 
@@ -82,5 +94,9 @@ async def get_instruction(
     params = session.params or {}
     mix_data = gm.mix_json
 
-    provider, input_data = await generate_instruction_input(db, user, mix_data, params)
+    provider, input_data = await generate_instruction_input(
+        db, user, mix_data, params,
+        provider_name=gm.provider,
+        llm_model=gm.llm_model_used,
+    )
     return await provider.generate_instruction(input_data)

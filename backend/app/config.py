@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     # Telegram Bot (уведомления)
     BOT_TOKEN: Optional[str] = None
 
+    # Creator (без лимитов) — comma-separated Telegram IDs
+    CREATOR_TELEGRAM_IDS: str = ""
+
     # Admin
     ADMIN_USERNAME: str = "admin"
     ADMIN_PASSWORD: str = "admin"

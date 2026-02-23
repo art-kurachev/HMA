@@ -16,6 +16,8 @@ class User(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False, index=True)
     provider_group: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    welcome_requests_used: Mapped[int] = mapped_column(Integer, default=0)  # 0–3
+    last_weekly_refill: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
 
@@ -45,6 +47,7 @@ class GeneratedMix(Base):
     session_id: Mapped[int] = mapped_column(Integer, ForeignKey("sessions.id", ondelete="CASCADE"), nullable=False)
     mix_json: Mapped[dict] = mapped_column(JSONB().with_variant(JSON(), "sqlite"), nullable=False)
     provider: Mapped[str] = mapped_column(String(50), nullable=False)
+    llm_model_used: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
 

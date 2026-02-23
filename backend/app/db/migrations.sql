@@ -5,8 +5,14 @@ CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     telegram_id BIGINT UNIQUE NOT NULL,
     provider_group TEXT NULL,
+    welcome_requests_used INTEGER DEFAULT 0,
+    last_weekly_refill DATE NULL,
     created_at TIMESTAMP DEFAULT now()
 );
+
+-- Migration: add quota columns to existing users table
+-- ALTER TABLE users ADD COLUMN IF NOT EXISTS welcome_requests_used INTEGER DEFAULT 0;
+-- ALTER TABLE users ADD COLUMN IF NOT EXISTS last_weekly_refill DATE NULL;
 CREATE INDEX IF NOT EXISTS ix_users_telegram_id ON users(telegram_id);
 
 CREATE TABLE IF NOT EXISTS daily_usage (
@@ -28,8 +34,12 @@ CREATE TABLE IF NOT EXISTS generated_mixes (
     session_id INTEGER NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
     mix_json JSONB NOT NULL,
     provider VARCHAR(50) NOT NULL,
+    llm_model_used VARCHAR(64) NULL,
     created_at TIMESTAMP DEFAULT now()
 );
+
+-- Migration for existing DB:
+-- ALTER TABLE generated_mixes ADD COLUMN IF NOT EXISTS llm_model_used VARCHAR(64) NULL;
 
 CREATE TABLE IF NOT EXISTS feedback (
     id SERIAL PRIMARY KEY,

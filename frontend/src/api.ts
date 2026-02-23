@@ -65,6 +65,15 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return (data ?? {}) as T
 }
 
+export interface QuotaResponse {
+  remaining: number  // -1 = unlimited
+  is_creator: boolean
+}
+
+export async function getQuota(telegramId: number): Promise<QuotaResponse> {
+  return request<QuotaResponse>(`/v1/mixes/quota?telegram_id=${telegramId}`)
+}
+
 export async function suggestMixes(telegramId: number, params: MixParams): Promise<SuggestResponse> {
   return request<SuggestResponse>('/v1/mixes/suggest', {
     method: 'POST',
