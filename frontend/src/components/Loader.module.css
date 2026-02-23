@@ -33,7 +33,7 @@
 .message {
   margin: 0;
   font-size: 15px;
-  color: var(--tg-theme-text-color, #eee);
+  color: #eee;
   opacity: 0.95;
 }
 

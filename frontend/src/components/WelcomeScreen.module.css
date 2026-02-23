@@ -62,7 +62,7 @@
 
 .counter {
   font-size: 0.9rem;
-  color: var(--tg-theme-hint-color, #999);
+  color: rgba(255, 255, 255, 0.65);
   margin: 0 0 32px;
 }
 

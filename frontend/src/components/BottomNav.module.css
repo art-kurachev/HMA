@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: linear-gradient(transparent, var(--tg-theme-bg-color, #1a1a2e) 60%);
+  background: linear-gradient(transparent, #1a1a2e 60%);
   z-index: 20;
 }
 

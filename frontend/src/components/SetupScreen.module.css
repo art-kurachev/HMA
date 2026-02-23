@@ -64,7 +64,7 @@
 
 .hint {
   font-size: var(--text-button, 14px);
-  color: var(--tg-theme-hint-color, #999);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .pills {
@@ -135,12 +135,12 @@
   border-radius: 16px;
   border: 1px solid var(--card-border);
   background: var(--card-bg);
-  color: inherit;
+  color: #fff;
   font-size: 1rem;
   font-family: inherit;
   resize: vertical;
 }
 
 .textarea::placeholder {
-  color: var(--tg-theme-hint-color, #999);
+  color: rgba(255, 255, 255, 0.5);
 }
