@@ -46,30 +46,48 @@ export function InstructionStep({
   const [timerStarted, setTimerStarted] = useState(false)
   const [timerDismissed, setTimerDismissed] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const startTimeRef = useRef<number | null>(null)
+  const durationRef = useRef<number>(instruction.warmup_seconds)
 
   const clearTimer = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
       intervalRef.current = null
     }
+    startTimeRef.current = null
   }, [])
 
-  useEffect(() => {
-    if (isRunning && timeLeft > 0) {
-      intervalRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearTimer()
-            setIsRunning(false)
-            setTimerDone(true)
-            return 0
-          }
-          return prev - 1
-        })
-      }, 1000)
+  const recalcTimeLeft = useCallback(() => {
+    if (startTimeRef.current === null) return
+    const elapsed = (Date.now() - startTimeRef.current) / 1000
+    const remaining = Math.max(0, Math.ceil(durationRef.current - elapsed))
+    setTimeLeft(remaining)
+    if (remaining <= 0) {
+      clearTimer()
+      setIsRunning(false)
+      setTimerDone(true)
     }
-    return clearTimer
-  }, [isRunning, timeLeft, clearTimer])
+  }, [clearTimer])
+
+  useEffect(() => {
+    if (isRunning) {
+      recalcTimeLeft()
+      intervalRef.current = setInterval(recalcTimeLeft, 500)
+      return () => {
+        if (intervalRef.current) clearInterval(intervalRef.current)
+      }
+    }
+  }, [isRunning, recalcTimeLeft])
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === 'visible' && isRunning && startTimeRef.current !== null) {
+        recalcTimeLeft()
+      }
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => document.removeEventListener('visibilitychange', onVisible)
+  }, [isRunning, recalcTimeLeft])
 
   const [paused, setPaused] = useState(false)
 
@@ -77,6 +95,8 @@ export function InstructionStep({
     setPaused(false)
     setTimerDone(false)
     setTimerStarted(true)
+    durationRef.current = instruction.warmup_seconds
+    startTimeRef.current = Date.now()
     setIsRunning(true)
     scheduleWarmupNotify(telegramId, instruction.warmup_seconds).catch(() => {
       /* ignore — уведомление опционально */
@@ -84,12 +104,17 @@ export function InstructionStep({
   }
 
   const handlePause = () => {
+    const elapsed = startTimeRef.current ? (Date.now() - startTimeRef.current) / 1000 : 0
+    const remaining = Math.max(0, Math.ceil(durationRef.current - elapsed))
+    setTimeLeft(remaining)
     clearTimer()
     setIsRunning(false)
     setPaused(true)
   }
 
   const handleResume = () => {
+    durationRef.current = timeLeft
+    startTimeRef.current = Date.now()
     setPaused(false)
     setIsRunning(true)
   }
@@ -100,6 +125,7 @@ export function InstructionStep({
     setPaused(false)
     setTimerDone(false)
     setTimeLeft(instruction.warmup_seconds)
+    durationRef.current = instruction.warmup_seconds
   }
 
   return (
