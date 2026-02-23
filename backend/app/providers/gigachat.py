@@ -20,9 +20,10 @@ TOKEN_TTL = 25 * 60  # обновляем за 5 мин до истечения 
 
 
 class GigaChatProvider(BaseProvider):
-    def __init__(self) -> None:
+    def __init__(self, model: Optional[str] = None) -> None:
         self._access_token: Optional[str] = None
         self._token_expires_at: float = 0
+        self._model = model or settings.GIGACHAT_MODEL
 
     async def _ensure_token(self, client: httpx.AsyncClient) -> str:
         if self._access_token and time.time() < self._token_expires_at:
@@ -53,7 +54,7 @@ class GigaChatProvider(BaseProvider):
             CHAT_URL,
             headers={"Authorization": f"Bearer {token}"},
             json={
-                "model": settings.GIGACHAT_MODEL,
+                "model": self._model,
                 "messages": [
                     {
                         "role": "system",

@@ -26,6 +26,7 @@ class SettingsUpdate(BaseModel):
     daily_request_limit: Optional[int] = None
     disable_daily_limit: Optional[bool] = None
     llm_provider: Optional[str] = None
+    llm_model: Optional[str] = None
 
 
 @router.post("/login", response_model=LoginResponse)
@@ -242,6 +243,7 @@ async def admin_get_settings(
         "daily_request_limit": int(cfg.get("daily_request_limit", "5")),
         "disable_daily_limit": cfg.get("disable_daily_limit", "true").lower() == "true",
         "llm_provider": cfg.get("llm_provider", "mock"),
+        "llm_model": cfg.get("llm_model", ""),
     }
 
 
@@ -261,9 +263,12 @@ async def admin_update_settings(
         if body.llm_provider not in ("mock", "gigachat", "yandexgpt", "ab"):
             raise HTTPException(status_code=400, detail="llm_provider must be mock, gigachat, yandexgpt, or ab")
         await set_setting(db, "llm_provider", body.llm_provider)
+    if body.llm_model is not None:
+        await set_setting(db, "llm_model", body.llm_model.strip())
     cfg = await get_app_settings(db)
     return {
         "daily_request_limit": int(cfg.get("daily_request_limit", "5")),
         "disable_daily_limit": cfg.get("disable_daily_limit", "true").lower() == "true",
         "llm_provider": cfg.get("llm_provider", "mock"),
+        "llm_model": cfg.get("llm_model", ""),
     }

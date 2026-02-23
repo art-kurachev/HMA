@@ -11,11 +11,12 @@ from app.providers.mock import MockProvider
 from app.providers.yandexgpt import YandexGPTProvider
 
 
-def _get_provider_by_name(name: str) -> BaseProvider:
+def _get_provider_by_name(name: str, llm_model: str = "") -> BaseProvider:
+    model = llm_model.strip() or None
     if name == "gigachat":
-        return GigaChatProvider()
+        return GigaChatProvider(model=model)
     if name == "yandexgpt":
-        return YandexGPTProvider()
+        return YandexGPTProvider(model=model)
     return MockProvider()
 
 
@@ -36,11 +37,15 @@ async def ensure_user_and_provider_group(db: AsyncSession, telegram_id: int) -> 
     return user
 
 
-def get_provider_for_user(user: Optional[User], llm_provider: Optional[str] = None) -> BaseProvider:
+def get_provider_for_user(
+    user: Optional[User],
+    llm_provider: Optional[str] = None,
+    llm_model: str = "",
+) -> BaseProvider:
     provider_name = llm_provider or settings.LLM_PROVIDER
     if provider_name == "ab" and user and user.provider_group:
         provider_name = user.provider_group
-    return _get_provider_by_name(provider_name)
+    return _get_provider_by_name(provider_name, llm_model=llm_model)
 
 
 async def generate_mixes(
@@ -50,7 +55,8 @@ async def generate_mixes(
 ) -> tuple[BaseProvider, MixProviderInput]:
     app_cfg = await get_app_settings(db)
     llm_provider = app_cfg.get("llm_provider", settings.LLM_PROVIDER)
-    provider = get_provider_for_user(user, llm_provider)
+    llm_model = app_cfg.get("llm_model", "")
+    provider = get_provider_for_user(user, llm_provider, llm_model)
     import re
 
     text = params.get("available_tobaccos_text", "")
@@ -76,6 +82,7 @@ async def generate_instruction_input(
     )
     app_cfg = await get_app_settings(db)
     llm_provider = app_cfg.get("llm_provider", settings.LLM_PROVIDER)
-    provider = get_provider_for_user(user, llm_provider)
+    llm_model = app_cfg.get("llm_model", "")
+    provider = get_provider_for_user(user, llm_provider, llm_model)
     input_data = InstructionProviderInput(mix=mix_item, params=params)
     return provider, input_data

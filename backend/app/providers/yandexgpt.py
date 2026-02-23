@@ -1,6 +1,7 @@
 import json
-import re
 import logging
+import re
+from typing import Optional
 
 import httpx
 
@@ -19,11 +20,12 @@ _mock = MockProvider()
 
 
 class YandexGPTProvider(BaseProvider):
+    def __init__(self, model: Optional[str] = None) -> None:
+        self._model = model or settings.YANDEXGPT_MODEL
 
     def _model_uri(self) -> str:
         folder = settings.YANDEXGPT_FOLDER_ID
-        model = settings.YANDEXGPT_MODEL
-        return f"gpt://{folder}/{model}"
+        return f"gpt://{folder}/{self._model}"
 
     async def _chat(self, prompt: str) -> str:
         if not settings.YANDEXGPT_API_KEY or not settings.YANDEXGPT_FOLDER_ID:

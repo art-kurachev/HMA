@@ -225,6 +225,21 @@ function DashboardPage() {
   )
 }
 
+const GIGACHAT_MODELS = [
+  { value: '', label: 'По умолчанию (.env)' },
+  { value: 'GigaChat', label: 'GigaChat' },
+  { value: 'GigaChat-Pro', label: 'GigaChat Pro' },
+  { value: 'GigaChat-Lite', label: 'GigaChat Lite' },
+  { value: 'GigaChat-2-Pro', label: 'GigaChat 2 Pro' },
+  { value: 'GigaChat-2-Max', label: 'GigaChat 2 Max' },
+]
+
+const YANDEXGPT_MODELS = [
+  { value: '', label: 'По умолчанию (.env)' },
+  { value: 'yandexgpt-lite/latest', label: 'YandexGPT Lite' },
+  { value: 'yandexgpt/latest', label: 'YandexGPT' },
+]
+
 function SettingsPage() {
   const [settings, setSettings] = useState<api.Settings | null>(null)
   const [err, setErr] = useState<string | null>(null)
@@ -232,6 +247,7 @@ function SettingsPage() {
   const [limit, setLimit] = useState(5)
   const [disableLimit, setDisableLimit] = useState(true)
   const [provider, setProvider] = useState('mock')
+  const [model, setModel] = useState('')
 
   const load = useCallback(() => {
     api
@@ -241,6 +257,7 @@ function SettingsPage() {
         setLimit(s.daily_request_limit)
         setDisableLimit(s.disable_daily_limit)
         setProvider(s.llm_provider)
+        setModel(s.llm_model || '')
       })
       .catch((e) => setErr(e instanceof Error ? e.message : 'Ошибка'))
   }, [])
@@ -257,6 +274,7 @@ function SettingsPage() {
         daily_request_limit: limit,
         disable_daily_limit: disableLimit,
         llm_provider: provider,
+        llm_model: model,
       })
       load()
     } catch (e) {
@@ -265,6 +283,9 @@ function SettingsPage() {
       setSaving(false)
     }
   }
+
+  const showModelSelector = provider === 'gigachat' || provider === 'yandexgpt'
+  const modelOptions = provider === 'gigachat' ? GIGACHAT_MODELS : YANDEXGPT_MODELS
 
   if (err && !settings) return <div className={styles.error}>{err}</div>
   if (!settings) return <div className={styles.loading}>Загрузка...</div>
@@ -294,13 +315,33 @@ function SettingsPage() {
         </label>
         <label>
           LLM провайдер
-          <select value={provider} onChange={(e) => setProvider(e.target.value)}>
+          <select
+            value={provider}
+            onChange={(e) => {
+              const next = e.target.value
+              setProvider(next)
+              const opts = next === 'gigachat' ? GIGACHAT_MODELS : next === 'yandexgpt' ? YANDEXGPT_MODELS : []
+              if (next === 'mock' || next === 'ab' || !opts.some((o) => o.value === model)) setModel('')
+            }}
+          >
             <option value="mock">mock</option>
             <option value="gigachat">gigachat</option>
             <option value="yandexgpt">yandexgpt</option>
             <option value="ab">ab (A/B тест)</option>
           </select>
         </label>
+        {showModelSelector && (
+          <label>
+            Модель нейросети
+            <select value={model} onChange={(e) => setModel(e.target.value)}>
+              {modelOptions.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         {err && <div className={styles.error}>{err}</div>}
         <button onClick={handleSave} disabled={saving}>
           {saving ? 'Сохранение...' : 'Сохранить'}

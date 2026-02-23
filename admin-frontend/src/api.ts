@@ -68,6 +68,7 @@ export interface Settings {
   daily_request_limit: number
   disable_daily_limit: boolean
   llm_provider: string
+  llm_model: string
 }
 
 export function getSettings(): Promise<Settings> {
