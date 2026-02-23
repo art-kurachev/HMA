@@ -85,7 +85,7 @@ export async function submitFeedback(
   rating: boolean,
   reason: string
 ): Promise<void> {
-  await request('/v1/feedback', {
+  await request('/v1/feedback/', {
     method: 'POST',
     body: JSON.stringify({
       telegram_id: telegramId,
