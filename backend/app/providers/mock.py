@@ -59,7 +59,8 @@ class MockProvider(BaseProvider):
             remaining -= pct
 
         coal_count = input_data.params.get("coal_count_start", 3)
-        heat = input_data.params.get("heat_control", "kaloud")
+        has_cap = input_data.params.get("has_cap", True)
+        warmup_note = "С колпаком — ждать равномерного прогрева." if has_cap else "Без колпака — прогрев быстрее."
 
         return InstructionResponse(
             tobaccos=tobacco_items,
@@ -72,10 +73,11 @@ class MockProvider(BaseProvider):
             ],
             warmup=[
                 f"Старт: {coal_count} угля",
-                "Прогрев: 5–6 минут",
+                "Прогрев: ~8 минут",
+                warmup_note,
                 "Первые тяги аккуратные",
             ],
-            warmup_seconds=360,
+            warmup_seconds=480,
             smoking=[
                 "Тяга средняя, спокойная",
                 "Паузы 20–30 секунд",

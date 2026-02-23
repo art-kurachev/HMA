@@ -129,6 +129,16 @@ export function BowlPhunnelIcon({ size = 32 }: { size?: number }) {
   )
 }
 
+export function BowlKillerIcon({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="16" cy="16" r="14" fill="#6b5344" stroke="#8b7355" strokeWidth="1" />
+      <ellipse cx="16" cy="13" rx="6" ry="3" fill="#5c4033" />
+      <path d="M10 13 Q16 5 22 13" stroke="#8b7355" strokeWidth="1.5" fill="none" />
+    </svg>
+  )
+}
+
 export function WrenchIcon({ className, size = 24 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>

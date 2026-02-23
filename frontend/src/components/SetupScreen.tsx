@@ -3,7 +3,7 @@ import type { FormState } from '../types'
 import { BOWL_OPTIONS, PROFILE_OPTIONS } from '../types'
 import { ScreenLayout } from './ScreenLayout'
 import { BottomNav } from './BottomNav'
-import { ShareIcon, BowlTurkaIcon, BowlPhunnelIcon, TobaccoIcon } from './Icons'
+import { ShareIcon, BowlTurkaIcon, BowlPhunnelIcon, BowlKillerIcon, TobaccoIcon } from './Icons'
 import styles from './SetupScreen.module.css'
 
 const PROFILE_LABELS: Record<string, string> = {
@@ -79,10 +79,35 @@ export function SetupScreen({ onBack, onSubmit, loading }: SetupScreenProps) {
                 className={`${styles.pill} ${params.bowl === o.value ? styles.active : ''}`}
                 onClick={() => setParams((p) => ({ ...p, bowl: o.value }))}
               >
-                {o.value === 'turka' ? <BowlTurkaIcon size={28} /> : <BowlPhunnelIcon size={28} />}
+                {o.value === 'turka' && <BowlTurkaIcon size={28} />}
+                {o.value === 'phunnel' && <BowlPhunnelIcon size={28} />}
+                {o.value === 'killer' && <BowlKillerIcon size={28} />}
                 {o.label}
               </button>
             ))}
+          </div>
+        </section>
+
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h3 className={styles.sectionTitle}>Наличие колпака?</h3>
+            <span className={styles.hint}>Kaloud, Lotus и т.п.</span>
+          </div>
+          <div className={styles.pills}>
+            <button
+              type="button"
+              className={`${styles.pill} ${params.has_cap ? styles.active : ''}`}
+              onClick={() => setParams((p) => ({ ...p, has_cap: true }))}
+            >
+              Да, есть
+            </button>
+            <button
+              type="button"
+              className={`${styles.pill} ${!params.has_cap ? styles.active : ''}`}
+              onClick={() => setParams((p) => ({ ...p, has_cap: false }))}
+            >
+              Нет
+            </button>
           </div>
         </section>
 

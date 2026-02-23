@@ -10,7 +10,18 @@ import { SetupScreen } from './components/SetupScreen'
 import { MixesStep } from './components/MixesStep'
 import { InstructionStep } from './components/InstructionStep'
 import { FeedbackStep } from './components/FeedbackStep'
+import { Loader } from './components/Loader'
 import styles from './App.module.css'
+
+const LOADING_MESSAGES: Record<Step, string> = {
+  welcome: 'Загрузка...',
+  direction: 'Загрузка...',
+  setup: 'Подбираем миксы...',
+  mixes: 'Генерирую инструкцию...',
+  instruction: 'Загрузка...',
+  feedback: 'Отправляю...',
+  done: 'Загрузка...',
+}
 
 type Step =
   | 'welcome'
@@ -97,6 +108,9 @@ export default function App() {
 
   return (
     <div className={styles.app}>
+      {loading && (
+        <Loader message={LOADING_MESSAGES[step]} />
+      )}
       {error && (
         <div className={styles.error}>
           {error}

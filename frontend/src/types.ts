@@ -7,6 +7,7 @@ export interface FormState extends MixParams {}
 export const BOWL_OPTIONS = [
   { value: 'turka' as const, label: 'Турка' },
   { value: 'phunnel' as const, label: 'Фанел' },
+  { value: 'killer' as const, label: 'Киллер' },
 ]
 
 export const HEAT_OPTIONS = [
