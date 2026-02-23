@@ -16,45 +16,80 @@ const PROFILE_LABELS: Record<string, string> = {
   any: 'Любой',
 }
 
+const API_DEFAULTS = {
+  heat_control: 'kaloud' as const,
+  coal_size: 25 as const,
+  coal_count_start: 3 as const,
+  strength: 'medium' as const,
+}
+
+const EMPTY_UI = {
+  bowl: null as 'turka' | 'phunnel' | 'killer' | null,
+  has_cap: null as boolean | null,
+  profiles: [] as string[],
+  hasTobacco: null as boolean | null,
+  available_tobaccos_text: '',
+}
+
 interface SetupScreenProps {
   onBack: () => void
   onSubmit: (params: FormState) => void
   loading: boolean
+  initialFormState?: FormState | null
 }
 
-export function SetupScreen({ onBack, onSubmit, loading }: SetupScreenProps) {
-  const [params, setParams] = useState<FormState>({
-    bowl: 'phunnel',
-    heat_control: 'kaloud',
-    has_cap: true,
-    coal_size: 25,
-    coal_count_start: 3,
-    strength: 'medium',
-    profiles: [],
-    available_tobaccos_text: '',
-  })
-
-  const [hasTobacco, setHasTobacco] = useState(false)
+export function SetupScreen({ onBack, onSubmit, loading, initialFormState }: SetupScreenProps) {
+  const initial = initialFormState
+    ? {
+        bowl: initialFormState.bowl as 'turka' | 'phunnel' | 'killer' | null,
+        has_cap: initialFormState.has_cap as boolean | null,
+        profiles: initialFormState.profiles,
+        hasTobacco: initialFormState.available_tobaccos_text.trim()
+          ? true
+          : (false as boolean | null),
+        available_tobaccos_text: initialFormState.available_tobaccos_text,
+      }
+    : EMPTY_UI
+  const [bowl, setBowl] = useState<'turka' | 'phunnel' | 'killer' | null>(initial.bowl)
+  const [has_cap, setHasCap] = useState<boolean | null>(initial.has_cap)
+  const [profiles, setProfiles] = useState<string[]>(initial.profiles)
+  const [hasTobacco, setHasTobacco] = useState<boolean | null>(initial.hasTobacco)
+  const [available_tobaccos_text, setAvailableTobaccosText] = useState(
+    initial.available_tobaccos_text
+  )
 
   const toggleProfile = (p: string) => {
-    setParams((prev) => {
-      const next = { ...prev }
+    setProfiles((prev) => {
       if (p === 'any') {
-        next.profiles = prev.profiles.includes('any') ? [] : ['any']
-      } else {
-        const withoutAny = prev.profiles.filter((x) => x !== 'any')
-        next.profiles = withoutAny.includes(p)
-          ? withoutAny.filter((x) => x !== p)
-          : [...withoutAny, p]
+        return prev.includes('any') ? [] : ['any']
       }
-      return next
+      const withoutAny = prev.filter((x) => x !== 'any')
+      return withoutAny.includes(p)
+        ? withoutAny.filter((x) => x !== p)
+        : [...withoutAny, p]
     })
   }
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault()
-    onSubmit(params)
+    if (bowl === null || has_cap === null || hasTobacco === null) return
+    onSubmit({
+      bowl,
+      has_cap,
+      heat_control: API_DEFAULTS.heat_control,
+      coal_size: API_DEFAULTS.coal_size,
+      coal_count_start: API_DEFAULTS.coal_count_start,
+      strength: API_DEFAULTS.strength,
+      profiles,
+      available_tobaccos_text: hasTobacco ? available_tobaccos_text : '',
+    })
   }
+
+  const canSubmit =
+    bowl !== null &&
+    has_cap !== null &&
+    hasTobacco !== null &&
+    !(hasTobacco && !available_tobaccos_text.trim())
 
   return (
     <ScreenLayout onBack={onBack} progressStep={2} totalSteps={3}>
@@ -76,8 +111,8 @@ export function SetupScreen({ onBack, onSubmit, loading }: SetupScreenProps) {
               <button
                 key={o.value}
                 type="button"
-                className={`${styles.pill} ${params.bowl === o.value ? styles.active : ''}`}
-                onClick={() => setParams((p) => ({ ...p, bowl: o.value }))}
+                className={`${styles.pill} ${bowl === o.value ? styles.active : ''}`}
+                onClick={() => setBowl(o.value)}
               >
                 {o.value === 'turka' && <BowlTurkaIcon size={28} />}
                 {o.value === 'phunnel' && <BowlPhunnelIcon size={28} />}
@@ -96,15 +131,15 @@ export function SetupScreen({ onBack, onSubmit, loading }: SetupScreenProps) {
           <div className={styles.pills}>
             <button
               type="button"
-              className={`${styles.pill} ${params.has_cap ? styles.active : ''}`}
-              onClick={() => setParams((p) => ({ ...p, has_cap: true }))}
+              className={`${styles.pill} ${has_cap === true ? styles.active : ''}`}
+              onClick={() => setHasCap(true)}
             >
               Да, есть
             </button>
             <button
               type="button"
-              className={`${styles.pill} ${!params.has_cap ? styles.active : ''}`}
-              onClick={() => setParams((p) => ({ ...p, has_cap: false }))}
+              className={`${styles.pill} ${has_cap === false ? styles.active : ''}`}
+              onClick={() => setHasCap(false)}
             >
               Нет
             </button>
@@ -121,7 +156,7 @@ export function SetupScreen({ onBack, onSubmit, loading }: SetupScreenProps) {
               <button
                 key={p}
                 type="button"
-                className={`${styles.chip} ${params.profiles.includes(p) ? styles.active : ''}`}
+                className={`${styles.chip} ${profiles.includes(p) ? styles.active : ''}`}
                 onClick={() => toggleProfile(p)}
               >
                 {PROFILE_LABELS[p] ?? p}
@@ -138,7 +173,7 @@ export function SetupScreen({ onBack, onSubmit, loading }: SetupScreenProps) {
           <div className={styles.pills}>
             <button
               type="button"
-              className={`${styles.pill} ${hasTobacco ? styles.active : ''}`}
+              className={`${styles.pill} ${hasTobacco === true ? styles.active : ''}`}
               onClick={() => setHasTobacco(true)}
             >
               <TobaccoIcon size={28} />
@@ -146,21 +181,21 @@ export function SetupScreen({ onBack, onSubmit, loading }: SetupScreenProps) {
             </button>
             <button
               type="button"
-              className={`${styles.pill} ${!hasTobacco ? styles.active : ''}`}
+              className={`${styles.pill} ${hasTobacco === false ? styles.active : ''}`}
               onClick={() => {
                 setHasTobacco(false)
-                setParams((p) => ({ ...p, available_tobaccos_text: '' }))
+                setAvailableTobaccosText('')
               }}
             >
               Нет, пусто
             </button>
           </div>
-          {hasTobacco && (
+          {hasTobacco === true && (
             <textarea
               className={styles.textarea}
-              value={params.available_tobaccos_text}
-              onChange={(e) => setParams((p) => ({ ...p, available_tobaccos_text: e.target.value }))}
-              placeholder="Black Nana, Blue Horse, Darkside Core..."
+              value={available_tobaccos_text}
+              onChange={(e) => setAvailableTobaccosText(e.target.value)}
+              placeholder="название табаков"
               rows={2}
             />
           )}
@@ -170,7 +205,7 @@ export function SetupScreen({ onBack, onSubmit, loading }: SetupScreenProps) {
         onBack={onBack}
         primaryLabel="Подобрать миксы"
         onPrimary={() => handleSubmit()}
-        primaryDisabled={loading || (hasTobacco && !params.available_tobaccos_text.trim())}
+        primaryDisabled={loading || !canSubmit}
         primaryAccent
       />
     </ScreenLayout>

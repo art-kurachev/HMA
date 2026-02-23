@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { getTelegramId, initTelegram } from './telegram'
 import { suggestMixes, getInstruction, submitFeedback } from './api'
 import type { Mix, InstructionResponse } from './api'
 import type { FormState } from './types'
 import type { Direction } from './components/DirectionScreen'
 import { WelcomeScreen, incrementUsageCount } from './components/WelcomeScreen'
+import { saveDraft, loadDraft, clearDraft } from './draftStorage'
 import { DirectionScreen } from './components/DirectionScreen'
 import { SetupScreen } from './components/SetupScreen'
 import { MixesStep } from './components/MixesStep'
@@ -38,7 +39,8 @@ export default function App() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const [, setDirection] = useState<Direction>(null)
+  const [direction, setDirection] = useState<Direction>(null)
+  const [formState, setFormState] = useState<FormState | null>(null)
   const [mixes, setMixes] = useState<Mix[]>([])
   const [selectedMix, setSelectedMix] = useState<Mix | null>(null)
   const [instruction, setInstruction] = useState<InstructionResponse | null>(null)
@@ -49,19 +51,45 @@ export default function App() {
     setTelegramId(id ?? 123456789)
   }, [])
 
+  useEffect(() => {
+    const draft = loadDraft()
+    if (!draft) return
+    setStep(draft.step)
+    setDirection(draft.direction)
+    setFormState(draft.formState)
+    setMixes(draft.mixes ?? [])
+    setSelectedMix(draft.selectedMix)
+    setInstruction(draft.instruction)
+  }, [])
+
   const uid = telegramId ?? 123456789
 
-  const goToWelcome = () => {
+  const goToWelcome = useCallback(() => {
     setStep('welcome')
     setDirection(null)
+    setFormState(null)
     setMixes([])
     setSelectedMix(null)
     setInstruction(null)
-  }
+    clearDraft()
+  }, [])
+
+  useEffect(() => {
+    if (step === 'welcome') return
+    saveDraft({
+      step: step as import('./draftStorage').DraftStep,
+      direction,
+      formState,
+      mixes,
+      selectedMix,
+      instruction,
+    })
+  }, [step, direction, formState, mixes, selectedMix, instruction])
 
   const handleFormSubmit = async (params: FormState) => {
     setError(null)
     setLoading(true)
+    setFormState(params)
     try {
       const apiParams = params.profiles.includes('any')
         ? { ...params, profiles: [] }
@@ -135,6 +163,7 @@ export default function App() {
           onBack={() => setStep('direction')}
           onSubmit={handleFormSubmit}
           loading={loading}
+          initialFormState={formState}
         />
       )}
       {step === 'mixes' && (
