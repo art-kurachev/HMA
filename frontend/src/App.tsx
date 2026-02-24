@@ -5,6 +5,7 @@ import type { Mix, InstructionResponse } from './api'
 import type { FormState } from './types'
 import type { Direction } from './components/DirectionScreen'
 import { WelcomeScreen } from './components/WelcomeScreen'
+import { SplashScreen } from './components/SplashScreen'
 import { ShelfSheet } from './components/ShelfSheet'
 import { saveDraft, loadDraft, clearDraft } from './draftStorage'
 import { DirectionScreen } from './components/DirectionScreen'
@@ -18,7 +19,7 @@ import styles from './App.module.css'
 const LOADING_MESSAGES: Record<Step, string> = {
   welcome: 'Загрузка...',
   direction: 'Загрузка...',
-  setup: 'Подбираем миксы...',
+  setup: 'Подбираю миксы...',
   mixes: 'Генерирую инструкцию...',
   instruction: 'Загрузка...',
   feedback: 'Отправляю...',
@@ -35,6 +36,7 @@ type Step =
   | 'done'
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true)
   const [telegramId, setTelegramId] = useState<number | null>(null)
   const [step, setStep] = useState<Step>('welcome')
   const [error, setError] = useState<string | null>(null)
@@ -54,10 +56,13 @@ export default function App() {
     setTelegramId(id ?? 123456789)
   }, [])
 
+  // Сплаш закрывается через 2 секунды (таймер в SplashScreen)
+
   useEffect(() => {
     const draft = loadDraft()
     if (!draft) return
-    setStep(draft.step)
+    // Не восстанавливаем step — приложение всегда стартует с первого экрана (welcome).
+    // Остальные данные черновика подставляются при переходе на соответствующие экраны.
     setDirection(draft.direction)
     setFormState(draft.formState)
     setMixes(draft.mixes ?? [])
@@ -83,7 +88,12 @@ export default function App() {
     const root = document.getElementById('root')
     if (step === 'welcome') root?.classList.add('welcome-full-bleed')
     else root?.classList.remove('welcome-full-bleed')
-    return () => root?.classList.remove('welcome-full-bleed')
+    if (step === 'direction') root?.classList.add('direction-full-bleed')
+    else root?.classList.remove('direction-full-bleed')
+    return () => {
+      root?.classList.remove('welcome-full-bleed')
+      root?.classList.remove('direction-full-bleed')
+    }
   }, [step])
 
   useEffect(() => {
@@ -149,6 +159,7 @@ export default function App() {
 
   return (
     <div className={styles.app}>
+      {showSplash && <SplashScreen onDismiss={() => setShowSplash(false)} />}
       {loading && (
         <Loader message={LOADING_MESSAGES[step]} />
       )}
