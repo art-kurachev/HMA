@@ -2,6 +2,7 @@
 Simple in-memory cache for MVP.
 TODO: replace with Redis for production.
 """
+from __future__ import annotations
 
 from typing import Any
 

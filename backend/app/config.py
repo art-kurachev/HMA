@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Optional
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,17 +15,17 @@ class Settings(BaseSettings):
     DISABLE_DAILY_LIMIT: bool = True
 
     # GigaChat
-    GIGACHAT_AUTH_KEY: str | None = None
+    GIGACHAT_AUTH_KEY: Optional[str] = None
     GIGACHAT_SCOPE: str = "GIGACHAT_API_PERS"
     GIGACHAT_MODEL: str = "GigaChat"
 
     # YandexGPT
-    YANDEXGPT_API_KEY: str | None = None
-    YANDEXGPT_FOLDER_ID: str | None = None
+    YANDEXGPT_API_KEY: Optional[str] = None
+    YANDEXGPT_FOLDER_ID: Optional[str] = None
     YANDEXGPT_MODEL: str = "yandexgpt-lite/latest"
 
     # Telegram Bot (уведомления)
-    BOT_TOKEN: str | None = None
+    BOT_TOKEN: Optional[str] = None
 
     # Creator (без лимитов) — comma-separated Telegram IDs
     CREATOR_TELEGRAM_IDS: str = ""

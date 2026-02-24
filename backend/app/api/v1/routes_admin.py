@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import func, select
@@ -21,10 +25,10 @@ class LoginResponse(BaseModel):
 
 
 class SettingsUpdate(BaseModel):
-    daily_request_limit: int | None = None
-    disable_daily_limit: bool | None = None
-    llm_provider: str | None = None
-    llm_model: str | None = None
+    daily_request_limit: Optional[int] = None
+    disable_daily_limit: Optional[bool] = None
+    llm_provider: Optional[str] = None
+    llm_model: Optional[str] = None
 
 
 @router.post("/login", response_model=LoginResponse)

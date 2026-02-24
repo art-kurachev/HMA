@@ -154,6 +154,10 @@ export default function App() {
         <WelcomeScreen
           telegramId={uid}
           onStart={() => setStep('direction')}
+          onSetup={() => setStep('setup')}
+          onOpenShelf={() => {
+            // TODO: открыть sheet с полкой табаков (дизайн придёт позже)
+          }}
         />
       )}
       {step === 'direction' && (

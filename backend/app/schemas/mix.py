@@ -1,4 +1,6 @@
-from typing import Literal
+from __future__ import annotations
+
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -19,7 +21,7 @@ class MixItem(BaseModel):
     title: str
     tobaccos: list[str]
     flavor: str
-    mix_db_id: int | None = None
+    mix_db_id: Optional[int] = None
 
 
 class SuggestRequest(BaseModel):

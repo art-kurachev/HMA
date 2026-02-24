@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 import jwt
 from fastapi import Depends, HTTPException, status
@@ -39,7 +42,7 @@ def verify_admin_token(token: str) -> bool:
 
 
 async def require_admin(
-    creds: HTTPAuthorizationCredentials | None = Depends(security),
+    creds: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ) -> None:
     if not creds or creds.scheme != "Bearer":
         raise HTTPException(
