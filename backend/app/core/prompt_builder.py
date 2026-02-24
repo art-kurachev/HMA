@@ -38,8 +38,8 @@ def build_mixes_prompt(params: dict, available_tobaccos: list[str]) -> str:
 {SPELLING_RULES}
 
 Параметры сетапа:
-- Чаша: {params.get('bowl', 'phunnel')}
-- Угли: калауд / фольга — {params.get('heat_control', 'kaloud')}
+- Чаша: {params.get("bowl", "phunnel")}
+- Угли: калауд / фольга — {params.get("heat_control", "kaloud")}
 - Крепость: {strength}
 - Вкусовые предпочтения: {profiles_text}
 {tobacco_block}
@@ -92,9 +92,9 @@ def build_instruction_prompt(mix: dict, params: dict) -> str:
     return f"""Ты — профессиональный кальянщик. Составь подробную инструкцию для микса.
 {SPELLING_RULES}
 
-Микс: {mix.get('title', '')}
-Табаки: {mix.get('tobaccos', [])}
-Чаша: {params.get('bowl', 'phunnel')}
+Микс: {mix.get("title", "")}
+Табаки: {mix.get("tobaccos", [])}
+Чаша: {params.get("bowl", "phunnel")}
 Угли: {heat_device}, {coal_count} шт, {coal_size} мм
 {cap_note}
 

@@ -2,6 +2,7 @@
 Simple in-memory cache for MVP.
 TODO: replace with Redis for production.
 """
+
 from typing import Any
 
 _cache: dict = {}

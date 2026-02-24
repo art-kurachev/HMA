@@ -35,6 +35,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 async def _run_migrations() -> None:
     from sqlalchemy import text
+
     for sql in [
         "ALTER TABLE users ADD COLUMN welcome_requests_used INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN last_weekly_refill DATE",

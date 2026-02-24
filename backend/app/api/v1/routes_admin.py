@@ -101,16 +101,13 @@ async def admin_users_list(
         .group_by(User.id)
     ).subquery()
     sessions_subq = (
-        select(Session.user_id, func.count(Session.id).label("sessions_count"))
-        .group_by(Session.user_id)
+        select(Session.user_id, func.count(Session.id).label("sessions_count")).group_by(Session.user_id)
     ).subquery()
     feedback_subq = (
-        select(Feedback.user_id, func.count(Feedback.id).label("feedback_count"))
-        .group_by(Feedback.user_id)
+        select(Feedback.user_id, func.count(Feedback.id).label("feedback_count")).group_by(Feedback.user_id)
     ).subquery()
     last_session_subq = (
-        select(Session.user_id, func.max(Session.created_at).label("last_activity"))
-        .group_by(Session.user_id)
+        select(Session.user_id, func.max(Session.created_at).label("last_activity")).group_by(Session.user_id)
     ).subquery()
 
     q = (
@@ -192,10 +189,7 @@ async def admin_providers_stats(
     db: AsyncSession = Depends(get_db),
     _: None = Depends(require_admin),
 ):
-    q = (
-        select(GeneratedMix.provider, func.count(GeneratedMix.id).label("count"))
-        .group_by(GeneratedMix.provider)
-    )
+    q = select(GeneratedMix.provider, func.count(GeneratedMix.id).label("count")).group_by(GeneratedMix.provider)
     result = await db.execute(q)
     rows = result.all()
     return [{"provider": r.provider, "count": r.count} for r in rows]

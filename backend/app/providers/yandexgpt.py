@@ -47,7 +47,7 @@ class YandexGPTProvider(BaseProvider):
                     "messages": [
                         {
                             "role": "system",
-                                "text": (
+                            "text": (
                                 "Ты — эксперт по кальянам. "
                                 "Строго соблюдай правописание и термины (уголь, калауд, колпак, забивка и т.д.). "
                                 "Отвечай ТОЛЬКО валидным JSON без markdown-обёрток."
@@ -105,7 +105,7 @@ class YandexGPTProvider(BaseProvider):
             for m in data.get("mixes", []):
                 mixes.append(
                     MixItem(
-                        id=m.get("id", f"mix_{len(mixes)+1}"),
+                        id=m.get("id", f"mix_{len(mixes) + 1}"),
                         title=m.get("title", "Микс"),
                         tobaccos=m.get("tobaccos", []),
                         flavor=m.get("flavor", ""),
@@ -131,10 +131,7 @@ class YandexGPTProvider(BaseProvider):
             raw = await self._chat(prompt)
             data = self._extract_json(raw)
 
-            tobaccos = [
-                TobaccoItem(name=t["name"], percent=t["percent"])
-                for t in data.get("tobaccos", [])
-            ]
+            tobaccos = [TobaccoItem(name=t["name"], percent=t["percent"]) for t in data.get("tobaccos", [])]
 
             return InstructionResponse(
                 tobaccos=tobaccos,

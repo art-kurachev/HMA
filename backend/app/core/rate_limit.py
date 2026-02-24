@@ -19,9 +19,7 @@ async def check_and_increment_usage(db: AsyncSession, user_id: int) -> tuple[boo
     if disable:
         return True, 0
     today = date.today()
-    row = await db.execute(
-        select(DailyUsage).where(DailyUsage.user_id == user_id, DailyUsage.usage_date == today)
-    )
+    row = await db.execute(select(DailyUsage).where(DailyUsage.user_id == user_id, DailyUsage.usage_date == today))
     usage = row.scalar_one_or_none()
     if usage is None:
         usage = DailyUsage(user_id=user_id, usage_date=today, count=0)

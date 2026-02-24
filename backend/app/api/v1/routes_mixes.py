@@ -37,7 +37,9 @@ async def suggest_mixes(
 
     params = body.params.model_dump()
     provider, input_data = await generate_mixes(
-        db, user, params,
+        db,
+        user,
+        params,
         provider_name=provider_name,
         llm_model=model_name or None,
     )
@@ -95,7 +97,10 @@ async def get_instruction(
     mix_data = gm.mix_json
 
     provider, input_data = await generate_instruction_input(
-        db, user, mix_data, params,
+        db,
+        user,
+        mix_data,
+        params,
         provider_name=gm.provider,
         llm_model=gm.llm_model_used,
     )
