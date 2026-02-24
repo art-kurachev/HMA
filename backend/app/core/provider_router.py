@@ -1,5 +1,5 @@
 import random
-from typing import Optional
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
@@ -38,8 +38,8 @@ async def ensure_user_and_provider_group(db: AsyncSession, telegram_id: int) -> 
 
 
 def get_provider_for_user(
-    user: Optional[User],
-    llm_provider: Optional[str] = None,
+    user: User | None,
+    llm_provider: str | None = None,
     llm_model: str = "",
 ) -> BaseProvider:
     provider_name = llm_provider or settings.LLM_PROVIDER
@@ -53,8 +53,8 @@ async def generate_mixes(
     user: User,
     params: dict,
     *,
-    provider_name: Optional[str] = None,
-    llm_model: Optional[str] = None,
+    provider_name: str | None = None,
+    llm_model: str | None = None,
 ) -> tuple[BaseProvider, MixProviderInput]:
     """provider_name and llm_model override admin settings (used by quota system)."""
     if provider_name is not None:
@@ -79,8 +79,8 @@ async def generate_instruction_input(
     mix: dict,
     params: dict,
     *,
-    provider_name: Optional[str] = None,
-    llm_model: Optional[str] = None,
+    provider_name: str | None = None,
+    llm_model: str | None = None,
 ) -> tuple[BaseProvider, InstructionProviderInput]:
     """Use provider_name and llm_model from mix when present (from GeneratedMix)."""
     from app.schemas.mix import MixItem

@@ -2,7 +2,6 @@ import json
 import logging
 import time
 import uuid
-from typing import Optional
 
 import httpx
 
@@ -20,8 +19,8 @@ TOKEN_TTL = 25 * 60  # обновляем за 5 мин до истечения 
 
 
 class GigaChatProvider(BaseProvider):
-    def __init__(self, model: Optional[str] = None) -> None:
-        self._access_token: Optional[str] = None
+    def __init__(self, model: str | None = None) -> None:
+        self._access_token: str | None = None
         self._token_expires_at: float = 0
         self._model = model or settings.GIGACHAT_MODEL
 

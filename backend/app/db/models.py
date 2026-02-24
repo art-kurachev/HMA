@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Optional
+
 from sqlalchemy import BigInteger, Boolean, Date, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.types import JSON
@@ -15,9 +15,9 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False, index=True)
-    provider_group: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    provider_group: Mapped[str | None] = mapped_column(Text, nullable=True)
     welcome_requests_used: Mapped[int] = mapped_column(Integer, default=0)  # 0–3
-    last_weekly_refill: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    last_weekly_refill: Mapped[date | None] = mapped_column(Date, nullable=True)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
 
@@ -47,7 +47,7 @@ class GeneratedMix(Base):
     session_id: Mapped[int] = mapped_column(Integer, ForeignKey("sessions.id", ondelete="CASCADE"), nullable=False)
     mix_json: Mapped[dict] = mapped_column(JSONB().with_variant(JSON(), "sqlite"), nullable=False)
     provider: Mapped[str] = mapped_column(String(50), nullable=False)
-    llm_model_used: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    llm_model_used: Mapped[str | None] = mapped_column(String(64), nullable=True)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
 
@@ -58,7 +58,7 @@ class Feedback(Base):
     mix_id: Mapped[int] = mapped_column(Integer, ForeignKey("generated_mixes.id", ondelete="CASCADE"), nullable=False)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     rating: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
 

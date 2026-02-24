@@ -2,12 +2,12 @@
 Simple in-memory cache for MVP.
 TODO: replace with Redis for production.
 """
-from typing import Any, Optional
+from typing import Any
 
 _cache: dict = {}
 
 
-def get(key: str) -> Optional[Any]:
+def get(key: str) -> Any | None:
     return _cache.get(key)
 
 

@@ -1,7 +1,6 @@
 import json
 import logging
 import re
-from typing import Optional
 
 import httpx
 
@@ -20,7 +19,7 @@ _mock = MockProvider()
 
 
 class YandexGPTProvider(BaseProvider):
-    def __init__(self, model: Optional[str] = None) -> None:
+    def __init__(self, model: str | None = None) -> None:
         self._model = model or settings.YANDEXGPT_MODEL
 
     def _model_uri(self) -> str:
