@@ -1,18 +1,33 @@
 import { useEffect, useState } from 'react'
 
 import { getQuota } from '../api'
-import { LoginIcon } from './Icons'
 import { ScreenLayout } from './ScreenLayout'
 import styles from './WelcomeScreen.module.css'
+
+/* Локальные SVG из frontend/public/icons/ (имена как в макете) */
+const ICON_LOGO = '/icons/Union.svg'
+const ICON_DATABASE = '/icons/Database.svg'
+const ICON_SHARE_CIRCLE = '/icons/ShareCircle.svg'
+const ICON_ROUND_GRAPH = '/icons/RoundGraph.svg'
+
+/* Фоновые изображения: кальян локально, текстура — Figma MCP при истечении заменить */
+const IMG_OVERLAY =
+  'https://www.figma.com/api/mcp/asset/ef24c265-ea40-4e9d-9781-a7586e974768'
+const IMG_HOOKAH = '/hookah.png'
 
 interface WelcomeScreenProps {
   telegramId: number
   onStart: () => void
   onSetup: () => void
-  onOpenShelf: () => void
+  onOpenShelf?: () => void
 }
 
-export function WelcomeScreen({ telegramId, onStart, onSetup, onOpenShelf }: WelcomeScreenProps) {
+export function WelcomeScreen({
+  telegramId,
+  onStart,
+  onSetup,
+  onOpenShelf,
+}: WelcomeScreenProps) {
   const [remaining, setRemaining] = useState<number | null>(null)
 
   useEffect(() => {
@@ -21,57 +36,124 @@ export function WelcomeScreen({ telegramId, onStart, onSetup, onOpenShelf }: Wel
       .catch(() => setRemaining(0))
   }, [telegramId])
 
-  const counterText =
-    remaining === null ? 'Загрузка...' : remaining === -1 ? 'Без лимитов' : `Осталось запросов: ${remaining}`
+  const quotaDisplay =
+    remaining === null ? '—' : remaining === -1 ? '∞' : String(remaining)
 
   return (
-    <ScreenLayout progressStep={1} totalSteps={3}>
-      <div className={styles.welcome}>
-        <img
-          src="/welcome-screen.png"
-          alt=""
-          className={styles.figmaBg}
-          aria-hidden
-          onError={(e) => {
-            e.currentTarget.style.display = 'none'
-          }}
-        />
-
-        <div className={styles.topRow}>
-          <span className={styles.alphaBadge}>Альфа-тест</span>
-          <button
-            type="button"
-            className={styles.shelfBtn}
-            onClick={onOpenShelf}
-          >
-            Моя полка
-          </button>
+    <>
+      {/* Фон макета на весь экран — не «блок», а общее пространство */}
+      <div className={styles.fullScreenBg} aria-hidden>
+        <div className={styles.gradient} />
+        <div className={styles.overlay}>
+          <img
+            src={IMG_OVERLAY}
+            alt=""
+            onError={(e) => {
+              e.currentTarget.style.display = 'none'
+            }}
+          />
+        </div>
+      </div>
+      <ScreenLayout progressStep={0} totalSteps={0} fullBleed>
+        <div className={styles.welcome}>
+          <div className={styles.heroWrap}>
+          <div className={styles.heroInner}>
+            <img
+              src={IMG_HOOKAH}
+              alt=""
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+            />
+          </div>
         </div>
 
-        <p className={styles.subtitle}>Hookah maker assistent</p>
-        <h1 className={styles.title}>
-          {`Кальянный ассистент, а\u00A0не\u00A0просто «советчик по\u00A0миксам»`}
-        </h1>
-        <p className={styles.counter}>{counterText}</p>
+        <header className={styles.topBar}>
+          <div className={styles.progressRow}>
+            <div className={styles.progressBar} />
+            <div className={`${styles.progressBar} ${styles.progressBarInactive}`} />
+            <div className={`${styles.progressBar} ${styles.progressBarInactive}`} />
+          </div>
+          <div className={styles.headerRow}>
+            <img
+              src={ICON_LOGO}
+              alt="Iprit"
+              className={styles.logo}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+            />
+            <button
+              type="button"
+              className={styles.shelfBtn}
+              onClick={onOpenShelf}
+              aria-label="Моя полка"
+            >
+              Моя полка
+              <img
+                src={ICON_DATABASE}
+                alt=""
+                className={styles.shelfBtnIcon}
+                aria-hidden
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            </button>
+          </div>
+        </header>
 
-        <div className={styles.actions}>
-          <button
-            type="button"
-            className={styles.primaryBtn}
-            onClick={onStart}
-          >
-            Просто и быстро
-            <LoginIcon size={18} />
-          </button>
-          <button
-            type="button"
-            className={styles.secondaryBtn}
-            onClick={onSetup}
-          >
-            Сетап
-          </button>
+        <div className={styles.bottom}>
+          <div className={styles.quotaRow}>
+            <div className={styles.quotaBadge}>{quotaDisplay}</div>
+            <span className={styles.quotaLabel}>
+              Доступно
+              <br />
+              рекомендаций
+            </span>
+          </div>
+          <h1 className={styles.title}>
+            {`Ассистент — настройка,\nпрогрев,\nрезультат.`}
+          </h1>
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.primaryBtn}
+              onClick={onStart}
+            >
+              Просто и быстро
+              <img
+                src={ICON_SHARE_CIRCLE}
+                alt=""
+                className={styles.primaryBtnIcon}
+                aria-hidden
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            </button>
+            <button
+              type="button"
+              className={styles.secondaryBtn}
+              onClick={onSetup}
+              title="Сетап"
+              aria-label="Сетап"
+            >
+              Сетап
+              <img
+                src={ICON_ROUND_GRAPH}
+                alt=""
+                className={styles.secondaryBtnIcon}
+                aria-hidden
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            </button>
+          </div>
         </div>
       </div>
     </ScreenLayout>
+    </>
   )
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormState } from '../types'
 import { BOWL_OPTIONS, PROFILE_OPTIONS } from '../types'
+import { loadShelf, shelfToText } from '../shelfStorage'
 import { ScreenLayout } from './ScreenLayout'
 import { BottomNav } from './BottomNav'
 import { ShareIcon, BowlTurkaIcon, BowlPhunnelIcon, BowlKillerIcon, TobaccoIcon } from './Icons'
@@ -32,13 +33,14 @@ const EMPTY_UI = {
 }
 
 interface SetupScreenProps {
+  telegramId: number
   onBack: () => void
   onSubmit: (params: FormState) => void
   loading: boolean
   initialFormState?: FormState | null
 }
 
-export function SetupScreen({ onBack, onSubmit, loading, initialFormState }: SetupScreenProps) {
+export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialFormState }: SetupScreenProps) {
   const initial = initialFormState
     ? {
         bowl: initialFormState.bowl as 'turka' | 'phunnel' | 'killer' | null,
@@ -174,7 +176,13 @@ export function SetupScreen({ onBack, onSubmit, loading, initialFormState }: Set
             <button
               type="button"
               className={`${styles.pill} ${hasTobacco === true ? styles.active : ''}`}
-              onClick={() => setHasTobacco(true)}
+              onClick={() => {
+                setHasTobacco(true)
+                if (!available_tobaccos_text.trim()) {
+                  const fromShelf = shelfToText(loadShelf(telegramId))
+                  if (fromShelf) setAvailableTobaccosText(fromShelf)
+                }
+              }}
             >
               <TobaccoIcon size={28} />
               Да, есть

@@ -42,3 +42,10 @@ body {
   padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
   color: #fff;
 }
+
+#root.welcome-full-bleed {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}

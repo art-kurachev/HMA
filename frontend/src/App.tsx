@@ -5,6 +5,7 @@ import type { Mix, InstructionResponse } from './api'
 import type { FormState } from './types'
 import type { Direction } from './components/DirectionScreen'
 import { WelcomeScreen } from './components/WelcomeScreen'
+import { ShelfSheet } from './components/ShelfSheet'
 import { saveDraft, loadDraft, clearDraft } from './draftStorage'
 import { DirectionScreen } from './components/DirectionScreen'
 import { SetupScreen } from './components/SetupScreen'
@@ -45,6 +46,7 @@ export default function App() {
   const [selectedMix, setSelectedMix] = useState<Mix | null>(null)
   const [instruction, setInstruction] = useState<InstructionResponse | null>(null)
   const [timerState, setTimerState] = useState<import('./draftStorage').TimerState | null>(null)
+  const [shelfOpen, setShelfOpen] = useState(false)
 
   useEffect(() => {
     initTelegram()
@@ -76,6 +78,13 @@ export default function App() {
     setTimerState(null)
     clearDraft()
   }, [])
+
+  useEffect(() => {
+    const root = document.getElementById('root')
+    if (step === 'welcome') root?.classList.add('welcome-full-bleed')
+    else root?.classList.remove('welcome-full-bleed')
+    return () => root?.classList.remove('welcome-full-bleed')
+  }, [step])
 
   useEffect(() => {
     if (step === 'welcome') return
@@ -155,10 +164,11 @@ export default function App() {
           telegramId={uid}
           onStart={() => setStep('direction')}
           onSetup={() => setStep('setup')}
-          onOpenShelf={() => {
-            // TODO: открыть sheet с полкой табаков (дизайн придёт позже)
-          }}
+          onOpenShelf={() => setShelfOpen(true)}
         />
+      )}
+      {shelfOpen && (
+        <ShelfSheet telegramId={uid} onClose={() => setShelfOpen(false)} />
       )}
       {step === 'direction' && (
         <DirectionScreen
@@ -171,6 +181,7 @@ export default function App() {
       )}
       {step === 'setup' && (
         <SetupScreen
+          telegramId={uid}
           onBack={() => setStep('direction')}
           onSubmit={handleFormSubmit}
           loading={loading}

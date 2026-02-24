@@ -5,9 +5,10 @@ interface ScreenLayoutProps {
   onBack?: () => void
   progressStep?: number
   totalSteps?: number
+  fullBleed?: boolean
 }
 
-export function ScreenLayout({ children, onBack, progressStep = 0, totalSteps = 4 }: ScreenLayoutProps) {
+export function ScreenLayout({ children, onBack, progressStep = 0, totalSteps = 4, fullBleed = false }: ScreenLayoutProps) {
   return (
     <div className={styles.screen}>
       {totalSteps > 0 && (
@@ -25,7 +26,7 @@ export function ScreenLayout({ children, onBack, progressStep = 0, totalSteps = 
           ←
         </button>
       )}
-      <div className={styles.content}>{children}</div>
+      <div className={fullBleed ? `${styles.content} ${styles.contentFullBleed}` : styles.content}>{children}</div>
     </div>
   )
 }
