@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.llm_queue import run_through_llm_queue
 from app.core.provider_router import (
     ensure_user_and_provider_group,
     generate_instruction_input,
@@ -43,7 +44,7 @@ async def suggest_mixes(
         provider_name=provider_name,
         llm_model=model_name or None,
     )
-    response = await provider.generate_mixes(input_data)
+    response = await run_through_llm_queue(provider.generate_mixes(input_data))
 
     from app.db.models import GeneratedMix, Session
 
@@ -104,4 +105,4 @@ async def get_instruction(
         provider_name=gm.provider,
         llm_model=gm.llm_model_used,
     )
-    return await provider.generate_instruction(input_data)
+    return await run_through_llm_queue(provider.generate_instruction(input_data))
