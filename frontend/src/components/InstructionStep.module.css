@@ -89,7 +89,8 @@
   gap: 4px;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   overflow-clip-margin: 0;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
@@ -201,7 +202,7 @@
   font-size: 14px;
   font-weight: 200;
   line-height: 1.4;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.8);
   padding: 2px 4px;
 }
 
@@ -246,11 +247,11 @@
 }
 
 .finishBtn:hover {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(34, 34, 34, 0.6);
 }
 
 .finishBtn:active {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(34, 34, 34, 0.6);
 }
 
 .iconBtn {
@@ -273,12 +274,12 @@
 }
 
 .timerBtn {
-  width: fit-content;
+  width: 142px;
   padding: 16px 24px;
   border-radius: 50px;
   border: none;
-  background: rgba(255, 102, 63, 0.1);
-  color: #ff663f;
+  background: rgba(246, 248, 255, 0.2);
+  color: rgba(246, 248, 255, 1);
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 200;

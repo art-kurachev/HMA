@@ -3,7 +3,21 @@ import type { InstructionResponse } from '../api'
 import { scheduleWarmupNotify } from '../api'
 import type { TimerState } from '../draftStorage'
 import { ScreenLayout } from './ScreenLayout'
-import { CheckIcon, CloseIcon, WrenchIcon, PlayIcon, PauseIcon, RestartIcon, LayerIcon } from './Icons'
+import {
+  EndIcon,
+  CloseIcon,
+  WrenchIcon,
+  PlayIcon,
+  PauseIcon,
+  RestartIcon,
+  LayerIcon,
+  TimerIcon,
+  InstructionCard1Icon,
+  InstructionCard2Icon,
+  InstructionCard3Icon,
+  InstructionCard4Icon,
+  InstructionCard5Icon,
+} from './Icons'
 import styles from './InstructionStep.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
 
@@ -210,7 +224,7 @@ export function InstructionStep({
               <div className={styles.sectionTitleRow}>
                 <h3 className={styles.sectionTitle}>Табаки</h3>
                 <div className={styles.navBtn} aria-hidden>
-                  <LayerIcon size={20} />
+                  <InstructionCard1Icon size={16} />
                 </div>
               </div>
               {instruction.tobaccos.map((t) => (
@@ -225,7 +239,7 @@ export function InstructionStep({
               <div className={styles.sectionTitleRow}>
                 <h3 className={styles.sectionTitle}>Забивка</h3>
                 <div className={styles.navBtn} aria-hidden>
-                  <LayerIcon size={20} />
+                  <InstructionCard2Icon size={16} />
                 </div>
               </div>
               <ul className={styles.sectionList}>
@@ -239,7 +253,7 @@ export function InstructionStep({
               <div className={styles.sectionTitleRow}>
                 <h3 className={styles.sectionTitle}>Прогрев</h3>
                 <div className={styles.navBtn} aria-hidden>
-                  <LayerIcon size={20} />
+                  <InstructionCard3Icon size={16} />
                 </div>
               </div>
               <ul className={styles.sectionList}>
@@ -253,7 +267,7 @@ export function InstructionStep({
               <div className={styles.sectionTitleRow}>
                 <h3 className={styles.sectionTitle}>Курение</h3>
                 <div className={styles.navBtn} aria-hidden>
-                  <LayerIcon size={20} />
+                  <InstructionCard4Icon size={16} />
                 </div>
               </div>
               <ul className={styles.sectionList}>
@@ -267,7 +281,7 @@ export function InstructionStep({
               <div className={styles.sectionTitleRow}>
                 <h3 className={styles.sectionTitle}>Если не раскрылся</h3>
                 <div className={styles.navBtn} aria-hidden>
-                  <LayerIcon size={20} />
+                  <InstructionCard5Icon size={16} />
                 </div>
               </div>
               <ul className={styles.sectionList}>
@@ -282,7 +296,7 @@ export function InstructionStep({
         <div className={`${welcomeStyles.bottom} ${styles.bottomInstruction}`}>
           <div className={styles.bottomBlock}>
             <button type="button" className={styles.finishBtn} onClick={onNext}>
-              <CheckIcon size={24} />
+              <EndIcon size={24} />
               Закончить
             </button>
             {timerDismissed ? (
@@ -323,8 +337,8 @@ export function InstructionStep({
               </button>
             ) : (
               <button type="button" className={styles.timerBtn} onClick={handleStart}>
-                <PlayIcon size={24} />
-                <span>{formatTime(timeLeft)}</span>
+                <TimerIcon size={24} />
+                <span>Прогрев</span>
               </button>
             )}
           </div>
