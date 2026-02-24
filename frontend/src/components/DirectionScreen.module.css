@@ -83,6 +83,8 @@
 }
 
 .title {
+  position: relative;
+  z-index: 2;
   font-family: var(--font-family);
   font-size: 32px;
   font-weight: 100;
@@ -96,7 +98,8 @@
 .bowlPlaceholder {
   position: absolute;
   top: 197px;
-  left: 214px;
+  left: auto;
+  right: 24px;
   transform: rotate(-15deg);
   width: 193px;
   height: 224px;
