@@ -1,0 +1,20 @@
+/* Блок прогресс-баров с первого экрана (Welcome) — общий для всех экранов */
+.progressRow {
+  width: 100%;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 8px 24px;
+}
+
+.progressBar {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 4px;
+  border-radius: 13px;
+  background: #fff;
+}
+
+.progressBarInactive {
+  opacity: 0.2;
+}

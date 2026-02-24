@@ -6,11 +6,18 @@ from app.core.provider_router import (
     ensure_user_and_provider_group,
     generate_instruction_input,
     generate_mixes,
+    generate_quick_mixes,
 )
 from app.core.quota import check_and_consume_quota, get_remaining_quota
 from app.db.session import get_db
 from app.schemas.instruction import InstructionResponse
-from app.schemas.mix import InstructionRequest, MixItem, SuggestRequest, SuggestResponse
+from app.schemas.mix import (
+    InstructionRequest,
+    MixItem,
+    QuickSuggestRequest,
+    SuggestRequest,
+    SuggestResponse,
+)
 
 router = APIRouter(prefix="/mixes", tags=["mixes"])
 
@@ -49,6 +56,49 @@ async def suggest_mixes(
     from app.db.models import GeneratedMix, Session
 
     session = Session(user_id=user.id, params=params)
+    db.add(session)
+    await db.flush()
+    mixes_out = []
+    for mix in response.mixes:
+        gm = GeneratedMix(
+            session_id=session.id,
+            mix_json=mix.model_dump(),
+            provider=provider.__class__.__name__.replace("Provider", "").lower(),
+            llm_model_used=model_name or None,
+        )
+        db.add(gm)
+        await db.flush()
+        mix_dict = mix.model_dump()
+        mix_dict["mix_db_id"] = gm.id
+        mixes_out.append(MixItem(**mix_dict))
+    return SuggestResponse(mixes=mixes_out, clarify=response.clarify)
+
+
+@router.post("/quick-suggest", response_model=SuggestResponse)
+async def quick_suggest_mixes(
+    body: QuickSuggestRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Быстрый совет: 3 рандомных микса по цели вечера (без полного сетапа)."""
+    user = await ensure_user_and_provider_group(db, body.telegram_id)
+    allowed, provider_name, model_name = await check_and_consume_quota(db, user)
+    if not allowed:
+        raise HTTPException(status_code=429, detail="quota_exceeded")
+
+    from app.core.provider_router import QUICK_SUGGEST_MINIMAL_PARAMS
+    from app.db.models import GeneratedMix, Session
+
+    provider, input_data = await generate_quick_mixes(
+        db,
+        user,
+        body.direction,
+        body.no_tobacco,
+        provider_name=provider_name,
+        llm_model=model_name or None,
+    )
+    response = await run_through_llm_queue(provider.generate_mixes(input_data))
+
+    session = Session(user_id=user.id, params=QUICK_SUGGEST_MINIMAL_PARAMS)
     db.add(session)
     await db.flush()
     mixes_out = []

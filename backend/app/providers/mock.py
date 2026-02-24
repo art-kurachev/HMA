@@ -16,8 +16,77 @@ def _parse_tobaccos(text: str) -> list[str]:
     return result[:20] if result else ["Black Nana", "Blue Horse", "Darkside Core"]
 
 
+# Mock-миксы по цели вечера (быстрый совет с экрана выбора цели).
+_MOCK_QUICK_MIXES = {
+    "movie": [
+        MixItem(
+            id="mix_1",
+            title="Тихий вечер",
+            tobaccos=["Darkside Hola", "MUSTHAVE Pinkman"],
+            flavor="Лёгкий фрукт, не отвлекает",
+        ),
+        MixItem(
+            id="mix_2",
+            title="Классика ягода",
+            tobaccos=["Element Земляника", "Spectrum Ананас"],
+            flavor="Привычная сладость, ненавязчиво",
+        ),
+        MixItem(
+            id="mix_3",
+            title="Мята и манго",
+            tobaccos=["Darkside Core", "Daily Hookah Манго", "Severniy Мята"],
+            flavor="Свежий спокойный вкус",
+        ),
+    ],
+    "relax": [
+        MixItem(
+            id="mix_1",
+            title="Крепкий цитрус",
+            tobaccos=["Darkside Core", "MUSTHAVE Pinkman", "Black Burn Лимон"],
+            flavor="Средняя крепость, необычная кислинка",
+        ),
+        MixItem(
+            id="mix_2",
+            title="Дымный ягодный",
+            tobaccos=["Satyr Голубика", "Element Земляника", "Bonche Клюква", "Hype Мята"],
+            flavor="Крепковато, необычное сочетание",
+        ),
+        MixItem(
+            id="mix_3",
+            title="Тёмная вишня",
+            tobaccos=["Darkside Вишня", "Trofi'moff Вишня"],
+            flavor="Крепкий, насыщенный, расслабляющий",
+        ),
+    ],
+    "surprise": [
+        MixItem(
+            id="mix_1",
+            title="Рандом фрукт",
+            tobaccos=["Element Земляника", "Jent Манго"],
+            flavor="Неожиданная пара",
+        ),
+        MixItem(
+            id="mix_2",
+            title="Микс-сюрприз",
+            tobaccos=["Darkside Hola", "Nash Кола", "Deus Клубника", "Severniy Мята"],
+            flavor="Любые сочетания на выбор",
+        ),
+        MixItem(
+            id="mix_3",
+            title="Удиви меня",
+            tobaccos=["MUSTHAVE Pinkman", "Daily Hookah Манго"],
+            flavor="Абсолютно любой микс",
+        ),
+    ],
+}
+
+
 class MockProvider(BaseProvider):
     async def generate_mixes(self, input_data: MixProviderInput) -> SuggestResponse:
+        direction = getattr(input_data, "direction", None)
+        if direction in _MOCK_QUICK_MIXES:
+            return SuggestResponse(mixes=_MOCK_QUICK_MIXES[direction], clarify=[])
+
         tobaccos = input_data.available_tobaccos or _parse_tobaccos(
             input_data.params.get("available_tobaccos_text", "")
         )

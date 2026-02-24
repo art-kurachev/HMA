@@ -87,26 +87,6 @@
   z-index: 2;
 }
 
-.progressRow {
-  width: 100%;
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  padding: 8px 24px;
-}
-
-.progressBar {
-  flex: 1 0 0;
-  min-width: 0;
-  height: 4px;
-  border-radius: 13px;
-  background: #fff;
-}
-
-.progressBarInactive {
-  opacity: 0.2;
-}
-
 .headerRow {
   display: flex;
   align-items: center;
@@ -245,6 +225,17 @@
   opacity: 0.95;
 }
 
+.primaryBtnPadding {
+  padding-left: 16px;
+  padding-right: 24px;
+}
+
+/* Только для кнопки «Просто и быстро» на Welcome-экране */
+.primaryBtnWelcome {
+  padding-left: 24px;
+  padding-right: 16px;
+}
+
 .primaryBtnIcon {
   flex-shrink: 0;
   width: 24px;
@@ -256,7 +247,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 16px 24px 16px 16px;
+  padding: 16px 16px 16px 24px;
   border-radius: 50px;
   border: none;
   background: rgba(246, 248, 255, 0.2);

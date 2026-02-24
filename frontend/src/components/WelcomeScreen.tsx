@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { getQuota } from '../api'
 import { ScreenLayout } from './ScreenLayout'
+import { ProgressRow } from './ProgressRow'
 import styles from './WelcomeScreen.module.css'
 
 /* Локальные SVG из frontend/public/icons/ (имена как в макете) */
@@ -69,11 +70,7 @@ export function WelcomeScreen({
         </div>
 
         <header className={styles.topBar}>
-          <div className={styles.progressRow}>
-            <div className={styles.progressBar} />
-            <div className={`${styles.progressBar} ${styles.progressBarInactive}`} />
-            <div className={`${styles.progressBar} ${styles.progressBarInactive}`} />
-          </div>
+          <ProgressRow total={3} activeStep={0} />
           <div className={styles.headerRow}>
             <img
               src={ICON_LOGO}
@@ -118,7 +115,7 @@ export function WelcomeScreen({
           <div className={styles.actions}>
             <button
               type="button"
-              className={styles.primaryBtn}
+              className={`${styles.primaryBtn} ${styles.primaryBtnPadding} ${styles.primaryBtnWelcome}`}
               onClick={onStart}
             >
               Просто и быстро

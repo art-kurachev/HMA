@@ -121,6 +121,8 @@
   flex: 1;
   min-height: 0;
   max-height: 440px;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .colLeft {

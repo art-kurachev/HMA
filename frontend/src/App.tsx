@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getTelegramId, initTelegram } from './telegram'
-import { suggestMixes, getInstruction, submitFeedback } from './api'
+import { suggestMixes, quickSuggestMixes, getInstruction, submitFeedback } from './api'
 import type { Mix, InstructionResponse } from './api'
 import type { FormState } from './types'
 import type { Direction } from './components/DirectionScreen'
@@ -18,7 +18,7 @@ import styles from './App.module.css'
 
 const LOADING_MESSAGES: Record<Step, string> = {
   welcome: 'Загрузка...',
-  direction: 'Загрузка...',
+  direction: 'Подбираю миксы...',
   setup: 'Подбираю миксы...',
   mixes: 'Генерирую инструкцию...',
   instruction: 'Загрузка...',
@@ -49,6 +49,8 @@ export default function App() {
   const [instruction, setInstruction] = useState<InstructionResponse | null>(null)
   const [timerState, setTimerState] = useState<import('./draftStorage').TimerState | null>(null)
   const [shelfOpen, setShelfOpen] = useState(false)
+  /** С какого экрана пришли на выбор миксов: от него зависит «Назад» */
+  const [mixesFromStep, setMixesFromStep] = useState<'direction' | 'setup'>('direction')
 
   useEffect(() => {
     initTelegram()
@@ -81,6 +83,7 @@ export default function App() {
     setSelectedMix(null)
     setInstruction(null)
     setTimerState(null)
+    setMixesFromStep('direction')
     clearDraft()
   }, [])
 
@@ -90,9 +93,15 @@ export default function App() {
     else root?.classList.remove('welcome-full-bleed')
     if (step === 'direction') root?.classList.add('direction-full-bleed')
     else root?.classList.remove('direction-full-bleed')
+    if (step === 'mixes') root?.classList.add('mixes-full-bleed')
+    else root?.classList.remove('mixes-full-bleed')
+    if (step === 'instruction') root?.classList.add('instruction-full-bleed')
+    else root?.classList.remove('instruction-full-bleed')
     return () => {
       root?.classList.remove('welcome-full-bleed')
       root?.classList.remove('direction-full-bleed')
+      root?.classList.remove('mixes-full-bleed')
+      root?.classList.remove('instruction-full-bleed')
     }
   }, [step])
 
@@ -119,10 +128,36 @@ export default function App() {
         : params
       const res = await suggestMixes(uid, apiParams)
       setMixes(res.mixes)
+      setMixesFromStep('setup')
       setStep('mixes')
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Ошибка'
       setError(msg === 'quota_exceeded' ? 'Лимит запросов исчерпан. Следующий — через неделю.' : msg)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleQuickSuggest = async (d: NonNullable<Direction>) => {
+    setError(null)
+    setLoading(true)
+    try {
+      const res = await quickSuggestMixes(uid, d)
+      setMixes(res.mixes)
+      setDirection(d)
+      setMixesFromStep('direction')
+      setStep('mixes')
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Ошибка'
+      const isQuota = msg === 'quota_exceeded'
+      const isAbort = e instanceof Error && e.name === 'AbortError'
+      setError(
+        isQuota
+          ? 'Лимит запросов исчерпан. Следующий — через неделю.'
+          : isAbort
+            ? 'Превышено время ожидания. Проверьте интернет или попробуйте позже.'
+            : msg
+      )
     } finally {
       setLoading(false)
     }
@@ -184,10 +219,7 @@ export default function App() {
       {step === 'direction' && (
         <DirectionScreen
           onBack={() => setStep('welcome')}
-          onNext={(d) => {
-            setDirection(d)
-            setStep('setup')
-          }}
+          onNext={(d) => d && handleQuickSuggest(d)}
         />
       )}
       {step === 'setup' && (
@@ -203,7 +235,7 @@ export default function App() {
         <MixesStep
           mixes={mixes}
           onSelect={handleMixSelect}
-          onBack={() => setStep('setup')}
+          onBack={() => setStep(mixesFromStep)}
         />
       )}
       {step === 'instruction' && instruction && selectedMix && (

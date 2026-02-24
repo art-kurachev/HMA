@@ -226,3 +226,36 @@ export function MinusCircleIcon({ className, size = 16 }: IconProps) {
     </svg>
   )
 }
+
+export function FlameIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path
+        d="M12 22c4.97 0 9-3.59 9-8 0-4.5-2.5-6.5-4-8-1.5 1.5-2 3.5-2 5 0 2 1.5 4 4 4-1.5-1.5-2-3-2-5 0-3.5 2.5-5.5 5-7-2.5 2-5 5.5-5 10 0 5 3.58 9 8 9z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+export function MeditationIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="12" cy="6" r="3" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M8 22c0-2.5 1.5-5 4-5s4 2.5 4 5M5 14l2-4 2 2 2-2 2 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+/** Иконка «слои» для NavBtn на экране инструкции (Figma: vuesax/linear/layer) */
+export function LayerIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}

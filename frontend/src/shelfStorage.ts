@@ -1,3 +1,5 @@
+/** Полка табаков хранится только локально (localStorage) на каждом устройстве.
+ * Сервер её не хранит; список передаётся только в запросе подбора миксов и не сохраняется на бэке. */
 const SHELF_KEY_PREFIX = 'hma_shelf_'
 
 export function getShelfKey(telegramId: number): string {

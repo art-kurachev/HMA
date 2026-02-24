@@ -44,9 +44,15 @@ body {
   color: #fff;
 }
 
-#root.welcome-full-bleed {
+#root.welcome-full-bleed,
+#root.direction-full-bleed,
+#root.mixes-full-bleed,
+#root.instruction-full-bleed {
   width: 100%;
   max-width: none;
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
   padding: 0;
   padding-bottom: env(safe-area-inset-bottom, 0);
 }

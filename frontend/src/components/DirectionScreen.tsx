@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ScreenLayout } from './ScreenLayout'
+import { ProgressRow } from './ProgressRow'
 import { ArrowLeftIcon } from './Icons'
 import styles from './DirectionScreen.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
@@ -30,11 +31,7 @@ export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
       <div className={styles.wrap}>
         {/* Хедер по макету: только прогресс-бары + лого + тег (без заголовка) */}
         <header className={welcomeStyles.topBar}>
-          <div className={welcomeStyles.progressRow}>
-            <div className={welcomeStyles.progressBarInactive} />
-            <div className={welcomeStyles.progressBar} />
-            <div className={welcomeStyles.progressBarInactive} />
-          </div>
+          <ProgressRow total={3} activeStep={1} />
           <div className={welcomeStyles.headerRow}>
             <img src={ICON_LOGO} alt="Iprit" className={welcomeStyles.logo} onError={(e) => { e.currentTarget.style.display = 'none' }} />
             <div className={styles.tag} aria-hidden>
@@ -51,7 +48,7 @@ export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
           </div>
 
           <div className={styles.bowlPlaceholder} aria-hidden>
-            {/* SVG/картинку чаши подставишь после готовой вёрстки */}
+            <img src="/bowl.png" alt="" width={193} height={224} className={styles.bowlImage} />
           </div>
 
           <div className={styles.cardsGrid}>
@@ -66,7 +63,7 @@ export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
               </div>
               <div className={styles.cardText}>
                 <span className={styles.cardLabel}>Под фильм</span>
-                <span className={styles.cardDesc}>Что-то привычное и не навязчивое</span>
+                <span className={styles.cardDesc}>Что-то привычное<br />и не навязчивое</span>
               </div>
             </button>
             <button
@@ -76,7 +73,7 @@ export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
             >
               <div className={styles.cardText}>
                 <span className={styles.cardLabel}>Расслабиться</span>
-                <span className={styles.cardDesc}>Средние и крепкие вариации табака</span>
+                <span className={styles.cardDesc}>Средние и крепкие<br />вариации табака</span>
               </div>
               <div className={styles.cardIconWrap}>
                 <img src={ICON_MEDITATION} alt="" width={24} height={24} aria-hidden />
@@ -96,7 +93,7 @@ export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
               </div>
               <div className={styles.cardText}>
                 <span className={styles.cardLabel}>Удиви меня</span>
-                <span className={styles.cardDesc}>Рандомный кальянный микс</span>
+                <span className={styles.cardDesc}>Рандомный<br />кальянный микс</span>
               </div>
             </button>
           </div>

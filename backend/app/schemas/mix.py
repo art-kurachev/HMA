@@ -29,6 +29,12 @@ class SuggestRequest(BaseModel):
     params: MixParams
 
 
+class QuickSuggestRequest(BaseModel):
+    telegram_id: int
+    direction: Literal["movie", "relax", "surprise"]
+    no_tobacco: bool = False
+
+
 class SuggestResponse(BaseModel):
     mixes: list[MixItem]
     clarify: list[str] = Field(default_factory=list)
