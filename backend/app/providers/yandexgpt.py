@@ -81,7 +81,6 @@ class YandexGPTProvider(BaseProvider):
         if text.startswith("```"):
             lines = text.split("\n", 1)
             first = lines[0]
-            rest = lines[1] if len(lines) > 1 else ""
             prefix_len = len(first)  # ``` или ```json
             text = text[prefix_len:]
             if text.endswith("```"):
