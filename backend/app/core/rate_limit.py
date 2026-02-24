@@ -1,9 +1,10 @@
 from datetime import date
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.app_settings import get_app_settings
-from app.db.models import DailyUsage, User
+from app.db.models import DailyUsage
 
 
 async def check_and_increment_usage(db: AsyncSession, user_id: int) -> tuple[bool, int]:

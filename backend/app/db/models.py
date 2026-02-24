@@ -2,8 +2,8 @@ from datetime import date, datetime
 
 from sqlalchemy import BigInteger, Boolean, Date, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.types import JSON
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):

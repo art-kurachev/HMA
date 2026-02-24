@@ -1,6 +1,7 @@
 """Quota: 3 welcome requests (GigaChat-max) + 1/week (admin model). Creator unlimited."""
 
 from datetime import date
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
@@ -72,8 +73,6 @@ async def get_remaining_quota(db: AsyncSession, user: User) -> tuple[int, bool]:
     Returns (remaining, is_creator).
     remaining: -1 = unlimited (creator), else 0–3 (welcome) or 0–1 (weekly)
     """
-    from app.core.app_settings import get_app_settings
-
     if is_creator(user.telegram_id):
         return -1, True
 
