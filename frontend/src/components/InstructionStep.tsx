@@ -5,8 +5,8 @@ import type { TimerState } from '../draftStorage'
 import { ScreenLayout } from './ScreenLayout'
 import {
   EndIcon,
-  CloseIcon,
-  WrenchIcon,
+  TickCircleIcon,
+  DangerIcon,
   PlayIcon,
   PauseIcon,
   RestartIcon,
@@ -17,6 +17,7 @@ import {
   InstructionCard3Icon,
   InstructionCard4Icon,
   InstructionCard5Icon,
+  CloseIcon,
 } from './Icons'
 import styles from './InstructionStep.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
@@ -47,7 +48,7 @@ const RESCUE_TIPS = [
   'Мало дыма — добавь уголь или сдвинь угли к центру. Дай прогреться 1–2 мин.',
   'Привкус угля — угли не разгорелись. Прогрей их полностью перед установкой.',
   'Слишком крепко — короткие затяжки + паузы 30–40 сек. Угли к краю.',
-  'Вкус пропал — переверни угли, сдвинь к центру на 1 мин.',
+  'Вкус пропал — Переверни угли, сдвинь к центру на 1 мин.',
   'Течёт сироп — табак слишком мокрый. В следующий раз промокни салфеткой.',
   'Тяжёлая тяга — проверь забивку и чистоту шахты.',
   'Быстро перегревается — сними 1 уголь и держи угли по краю.',
@@ -300,17 +301,23 @@ export function InstructionStep({
               Закончить
             </button>
             {timerDismissed ? (
-              <button type="button" className={styles.iconBtn} onClick={() => setShowSheet(true)} aria-label="Проблемы">
-                <WrenchIcon size={20} />
+              <button
+                type="button"
+                className={styles.problemsBtn}
+                onClick={() => setShowSheet(true)}
+                aria-label="Проблемы"
+              >
+                <DangerIcon size={24} />
+                <span>Проблемы</span>
               </button>
             ) : paused ? (
               <div className={styles.timerPausedGroup}>
                 <button type="button" className={styles.timerResumeBtn} onClick={handleResume}>
-                  <PlayIcon size={16} />
+                  <PlayIcon size={24} />
                   <span>{formatTime(timeLeft)}</span>
                 </button>
                 <button type="button" className={styles.timerResetBtn} onClick={handleReset} aria-label="Сбросить">
-                  <RestartIcon size={16} />
+                  <RestartIcon size={24} />
                 </button>
               </div>
             ) : timerDone ? (
@@ -327,7 +334,7 @@ export function InstructionStep({
                   })
                 }}
               >
-                <CloseIcon size={18} />
+                <TickCircleIcon size={24} />
                 <span>Готово</span>
               </button>
             ) : isRunning ? (
@@ -348,16 +355,30 @@ export function InstructionStep({
       {showSheet && (
         <div className={styles.overlay} onClick={() => setShowSheet(false)}>
           <div className={styles.sheet} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.sheetHandle} />
-            <h3 className={styles.sheetTitle}>Как спасти кальян</h3>
+            <div className={styles.sheetHeader}>
+              <h3 className={styles.sheetTitle}>Как спасти кальян</h3>
+              <button
+                type="button"
+                className={styles.sheetCloseBtn}
+                onClick={() => setShowSheet(false)}
+                aria-label="Закрыть"
+              >
+                <CloseIcon size={24} />
+              </button>
+            </div>
             <ul className={styles.sheetList}>
-              {RESCUE_TIPS.map((tip, i) => (
-                <li key={i}>{tip}</li>
-              ))}
+              {RESCUE_TIPS.map((tip, i) => {
+                const [rawTitle, ...rest] = tip.split('—')
+                const title = rawTitle?.trim() ?? tip
+                const description = rest.join('—').trim()
+                return (
+                  <li key={i}>
+                    <div className={styles.sheetTipTitle}>{title}</div>
+                    {description && <div className={styles.sheetTipText}>{description}</div>}
+                  </li>
+                )
+              })}
             </ul>
-            <button type="button" className={styles.sheetClose} onClick={() => setShowSheet(false)}>
-              Закрыть
-            </button>
           </div>
         </div>
       )}
