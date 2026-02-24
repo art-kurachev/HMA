@@ -237,9 +237,9 @@
   padding: 16px 24px 16px 16px;
   border-radius: 50px;
   border: none;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(34, 34, 34, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: #fff;
   font-family: var(--font-family);
   font-size: 14px;
