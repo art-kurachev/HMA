@@ -167,17 +167,30 @@
   text-align: left;
 }
 
+/* Чаша: картинка у левого края, текст у правого края (только верхний ряд) */
+.blocksRow:not(.blocksRowBottom) .blockCard:first-child .pill {
+  justify-content: space-between;
+}
+
 /* Пилюли в тёмных блоках */
 .pills {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 4px;
   margin-top: 0;
+}
+
+.pillsRow {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .pillsRow .pill {
   flex: 1;
-  width: 100%;
+  width: auto;
+  min-width: 0;
 }
 
 .pillsRow .pill:first-child {

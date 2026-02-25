@@ -4,7 +4,7 @@ import { BOWL_OPTIONS, PROFILE_OPTIONS } from '../types'
 import { loadShelf, shelfToText } from '../shelfStorage'
 import { ScreenLayout } from './ScreenLayout'
 import { ProgressRow } from './ProgressRow'
-import { BowlTurkaIcon, BowlPhunnelIcon, BowlKillerIcon, ArrowLeftIcon, BlackHoleIcon } from './Icons'
+import { ArrowLeftIcon, BlackHoleIcon } from './Icons'
 import { ShelfSheet } from './ShelfSheet'
 import instructionStyles from './InstructionStep.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
@@ -158,9 +158,9 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
                       className={`${styles.pill} ${bowl === o.value ? styles.active : ''}`}
                       onClick={() => setBowl(o.value)}
                     >
-                      {o.value === 'turka' && <BowlTurkaIcon size={24} />}
-                      {o.value === 'phunnel' && <BowlPhunnelIcon size={24} />}
-                      {o.value === 'killer' && <BowlKillerIcon size={24} />}
+                      {o.value === 'turka' && <img src="/icons/bowl-turka.png" alt="" width={24} height={24} />}
+                      {o.value === 'phunnel' && <img src="/icons/bowl-phunnel.png" alt="" width={24} height={24} />}
+                      {o.value === 'killer' && <img src="/icons/bowl-killer.png" alt="" width={24} height={24} />}
                       {o.label}
                     </button>
                   ))}
