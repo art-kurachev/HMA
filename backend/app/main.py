@@ -1,15 +1,33 @@
+import asyncio
 import logging
 import traceback
 from contextlib import asynccontextmanager
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1 import api_router
+from app.core.friday_refill import run_friday_refill
 from app.core.app_settings import init_app_settings
 from app.db.session import async_session_maker, init_db
 
 logger = logging.getLogger("uvicorn.error")
+
+
+def _start_friday_scheduler() -> None:
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(
+        run_friday_refill,
+        "cron",
+        day_of_week="fri",
+        hour=19,
+        minute=0,
+        id="friday_refill",
+        timezone="Europe/Moscow",
+    )
+    scheduler.start()
+    logger.info("Friday refill scheduler started (Fri 19:00 MSK)")
 
 
 @asynccontextmanager
@@ -22,6 +40,7 @@ async def lifespan(app: FastAPI):
         except Exception:
             await session.rollback()
             raise
+    _start_friday_scheduler()
     yield
 
 

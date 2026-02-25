@@ -225,14 +225,14 @@ export default function App() {
       )}
       {step === 'direction' && (
         <DirectionScreen
-          onBack={() => setStep('welcome')}
+          onBack={goToWelcome}
           onNext={(d) => d && handleQuickSuggest(d)}
         />
       )}
       {step === 'setup' && (
         <SetupScreen
           telegramId={uid}
-          onBack={() => setStep('welcome')}
+          onBack={goToWelcome}
           onSubmit={handleFormSubmit}
           loading={loading}
           initialFormState={formState}

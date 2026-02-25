@@ -50,6 +50,14 @@ async def check_and_consume_quota(
             return True, llm_provider, llm_model or ""
         return True, "gigachat", llm_model or settings.GIGACHAT_MODEL
 
+    # Friday bonus: consume first — провайдер и модель из админки (как weekly)
+    bonus = getattr(user, "friday_bonus", 0) or 0
+    if bonus > 0:
+        user.friday_bonus = bonus - 1
+        await db.flush()
+        app_cfg = await get_app_settings(db)
+        return True, _admin_provider(app_cfg, user), _admin_model(app_cfg)
+
     # Welcome phase: first 3 requests — используем провайдер из настроек (в т.ч. mock)
     if user.welcome_requests_used < WELCOME_QUOTA:
         user.welcome_requests_used += 1
@@ -89,16 +97,17 @@ async def get_remaining_quota(db: AsyncSession, user: User) -> tuple[int, bool]:
     if is_creator(user.telegram_id):
         return -1, True
 
+    bonus = getattr(user, "friday_bonus", 0) or 0
     if user.welcome_requests_used < WELCOME_QUOTA:
-        return WELCOME_QUOTA - user.welcome_requests_used, False
+        return bonus + (WELCOME_QUOTA - user.welcome_requests_used), False
 
     today = date.today()
     if user.last_weekly_refill is None:
-        return 1, False
+        return bonus + 1, False
     days_since = (today - user.last_weekly_refill).days
     if days_since >= WEEKLY_REFILL_DAYS:
-        return 1, False
-    return 0, False
+        return bonus + 1, False
+    return bonus + 0, False
 
 
 def _admin_provider(app_cfg: dict, user: User) -> str:
