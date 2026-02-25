@@ -107,12 +107,6 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
     hasTobacco !== null &&
     !(hasTobacco && !available_tobaccos_text.trim())
 
-  const filledBlocks =
-    (bowl !== null ? 1 : 0) +
-    (coal_size !== null ? 1 : 0) +
-    (profiles.length > 0 ? 1 : 0) +
-    (hasTobacco !== null && (hasTobacco === false || available_tobaccos_text.trim().length > 0) ? 1 : 0)
-
   return (
     <ScreenLayout onBack={onBack} hideBackButton totalSteps={0} fullBleed>
       <div className={`${instructionStyles.wrap} ${styles.wrapSetup}`}>
