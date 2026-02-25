@@ -5,6 +5,30 @@
   z-index: 0;
 }
 
+/* Заголовок и картинка прижаты к нижнему блоку */
+.wrapFeedback .mainContentFront {
+  padding-top: 0px;
+  gap: 24px;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.wrapFeedback .mainContentFront > div:first-child {
+  margin-bottom: 0px;
+  width: 100%;
+}
+
+.wrapFeedback .mainContentFront > div:first-child h2 {
+  width: 100%;
+}
+
+.wrapFeedback .bowlPlaceholderBehind {
+  top: 328px;
+  left: 308px;
+  width: 237px;
+  height: 255px;
+}
+
 .mainContentFront {
   position: relative;
   z-index: 1;
@@ -34,16 +58,16 @@
   right: 0;
 }
 
-/* Вёрстка: верхний ряд + нижний блок */
+/* Вёрстка: верхний ряд + нижний блок — обжимает контент, прижат к низу */
 .blocksLayout {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  flex: 1;
-  min-height: 0;
+  gap: 0px;
+  flex: 0 0 auto;
+  margin-top: 0px;
   height: fit-content;
-  overflow-y: auto;
   padding: 0;
+  width: 100%;
 }
 
 /* Верхний ряд: два блока подряд */
@@ -51,6 +75,7 @@
   display: flex;
   gap: 4px;
   flex-shrink: 0;
+  margin-bottom: 4px;
 }
 
 .blocksRow .blockCard:nth-child(2) {
@@ -88,6 +113,7 @@
   padding: 12px;
   gap: 8px;
   border-radius: 24px 24px 40px 40px;
+  height: fit-content;
 }
 
 .blockTitle {
@@ -97,7 +123,7 @@
   line-height: 24px;
   color: #fff;
   margin: 0 0 0;
-  padding: 8px 0 8px 8px;
+  padding: 8px 8px 8px 8px;
   text-align: left;
 }
 
@@ -108,7 +134,7 @@
   line-height: 16px;
   color: rgba(255, 255, 255, 0.6);
   margin: 0 0 8px;
-  padding: 0 0 0 8px;
+  padding: 0 8px 0 8px;
   text-align: left;
 }
 
@@ -167,7 +193,8 @@
 .tagsGrid {
   display: grid;
   grid-template-columns: repeat(2, max-content);
-  gap: 4px;
+  column-gap: 4px;
+  row-gap: 4px;
   margin-top: 24px;
   width: fit-content;
 }
