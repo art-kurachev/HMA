@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { getQuota } from '../api'
 import { ScreenLayout } from './ScreenLayout'
-import { ProgressRow } from './ProgressRow'
+import progressRowStyles from './ProgressRow.module.css'
 import styles from './WelcomeScreen.module.css'
 
 /* Локальные SVG из frontend/public/icons/ (имена как в макете) */
@@ -70,7 +70,7 @@ export function WelcomeScreen({
         </div>
 
         <header className={styles.topBar}>
-          <ProgressRow total={3} activeStep={0} />
+          <div className={progressRowStyles.progressRow} aria-hidden />
           <div className={styles.headerRow}>
             <img
               src={ICON_LOGO}

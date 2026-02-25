@@ -5,7 +5,6 @@ import type { Mix, InstructionResponse } from './api'
 import type { FormState } from './types'
 import type { Direction } from './components/DirectionScreen'
 import { WelcomeScreen } from './components/WelcomeScreen'
-import { SplashScreen } from './components/SplashScreen'
 import { ShelfSheet } from './components/ShelfSheet'
 import { saveDraft, loadDraft, clearDraft } from './draftStorage'
 import { DirectionScreen } from './components/DirectionScreen'
@@ -36,7 +35,6 @@ type Step =
   | 'done'
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState(true)
   const [telegramId, setTelegramId] = useState<number | null>(null)
   const [step, setStep] = useState<Step>('welcome')
   const [error, setError] = useState<string | null>(null)
@@ -57,8 +55,6 @@ export default function App() {
     const id = getTelegramId()
     setTelegramId(id ?? 123456789)
   }, [])
-
-  // Сплаш закрывается через 2 секунды (таймер в SplashScreen)
 
   useEffect(() => {
     const draft = loadDraft()
@@ -201,7 +197,6 @@ export default function App() {
 
   return (
     <div className={styles.app}>
-      {showSplash && <SplashScreen onDismiss={() => setShowSplash(false)} />}
       {loading && (
         <Loader message={LOADING_MESSAGES[step]} />
       )}

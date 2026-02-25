@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ScreenLayout } from './ScreenLayout'
-import { ProgressRow } from './ProgressRow'
+import progressRowStyles from './ProgressRow.module.css'
 import { ArrowLeftIcon } from './Icons'
 import styles from './DirectionScreen.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
@@ -31,7 +31,7 @@ export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
       <div className={styles.wrap}>
         {/* Хедер по макету: только прогресс-бары + лого + тег (без заголовка) */}
         <header className={welcomeStyles.topBar}>
-          <ProgressRow total={3} activeStep={1} />
+          <div className={progressRowStyles.progressRow} aria-hidden />
           <div className={welcomeStyles.headerRow}>
             <img src={ICON_LOGO} alt="Iprit" className={welcomeStyles.logo} onError={(e) => { e.currentTarget.style.display = 'none' }} />
             <div className={styles.tag} aria-hidden>

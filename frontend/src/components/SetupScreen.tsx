@@ -3,7 +3,7 @@ import type { FormState } from '../types'
 import { BOWL_OPTIONS, PROFILE_OPTIONS } from '../types'
 import { loadShelf, shelfToText } from '../shelfStorage'
 import { ScreenLayout } from './ScreenLayout'
-import { ProgressRow } from './ProgressRow'
+import progressRowStyles from './ProgressRow.module.css'
 import { ArrowLeftIcon, BlackHoleIcon } from './Icons'
 import { ShelfSheet } from './ShelfSheet'
 import instructionStyles from './InstructionStep.module.css'
@@ -117,7 +117,7 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
     <ScreenLayout onBack={onBack} hideBackButton totalSteps={0} fullBleed>
       <div className={`${instructionStyles.wrap} ${styles.wrapSetup}`}>
         <header className={welcomeStyles.topBar}>
-          <ProgressRow filledCount={filledBlocks} />
+          <div className={progressRowStyles.progressRow} aria-hidden />
           <div className={welcomeStyles.headerRow}>
             <img
               src={ICON_LOGO}
