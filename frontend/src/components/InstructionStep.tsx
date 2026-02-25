@@ -213,10 +213,6 @@ export function InstructionStep({
           </div>
         </header>
 
-        <div className={styles.bowlPlaceholder} aria-hidden>
-          <img src="/bowl.png" alt="" width={193} height={224} className={styles.bowlImage} />
-        </div>
-
         <div className={styles.mainContent}>
           <div className={styles.headerBlock}>
             <h2 className={styles.title}>{mixTitle}</h2>

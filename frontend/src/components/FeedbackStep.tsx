@@ -27,12 +27,19 @@ interface FeedbackStepProps {
 
 export function FeedbackStep({ onSubmit, onSkip, onBack, loading }: FeedbackStepProps) {
   const [rating, setRating] = useState<boolean | null>(null)
-  const [reason, setReason] = useState('')
+  const [reasons, setReasons] = useState<string[]>([])
   const [comment, setComment] = useState('')
+
+  const toggleReason = (value: string) => {
+    setReasons((prev) =>
+      prev.includes(value) ? prev.filter((r) => r !== value) : [...prev, value]
+    )
+  }
 
   const handleSubmit = () => {
     if (rating === null) return
-    const text = comment.trim() || (rating ? 'понравилось' : reason || 'другое')
+    const reasonText = reasons.join(', ')
+    const text = comment.trim() || (rating ? 'понравилось' : reasonText || 'другое')
     onSubmit(rating, text)
   }
 
@@ -110,8 +117,8 @@ export function FeedbackStep({ onSubmit, onSkip, onBack, loading }: FeedbackStep
                     <button
                       key={r.value}
                       type="button"
-                      className={`${styles.chip} ${reason === r.value ? styles.active : ''}`}
-                      onClick={() => setReason(r.value)}
+                      className={`${styles.chip} ${reasons.includes(r.value) ? styles.active : ''}`}
+                      onClick={() => toggleReason(r.value)}
                     >
                       {r.label}
                     </button>
