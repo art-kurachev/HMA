@@ -36,18 +36,43 @@ app.add_middleware(
 app.include_router(api_router)
 
 
+@app.exception_handler(RuntimeError)
+async def runtime_error_handler(request, exc: RuntimeError):
+    """LLM-провайдеры кидают RuntimeError при проблемах с ключами — отдаём 503 с понятным сообщением."""
+    msg = str(exc)
+    if "GIGACHAT_AUTH_KEY" in msg or "YandexGPT" in msg or "API" in msg:
+        logger.warning("LLM provider error: %s", msg)
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            status_code=503,
+            content={"detail": msg},
+        )
+    raise exc
+
+
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request, exc):
-    """Логируем необработанные исключения — в консоли будет видна причина 500."""
+    """Логируем необработанные исключения. httpx-ошибки LLM — 503 с понятным сообщением."""
     logger.error(
         "Internal Server Error: %s\n%s",
         exc,
         traceback.format_exc(),
     )
     from fastapi.responses import JSONResponse
+    msg = str(exc)
+    if "httpx" in type(exc).__module__:
+        if "404" in msg:
+            detail = "GigaChat API: модель недоступна (404). Попробуйте GigaChat в админке."
+        elif "401" in msg or "403" in msg:
+            detail = "Ошибка авторизации GigaChat. Проверьте GIGACHAT_AUTH_KEY в .env."
+        elif "Timeout" in type(exc).__name__ or "timeout" in msg.lower():
+            detail = "GigaChat недоступен: таймаут подключения. Проверьте интернет или попробуйте позже."
+        else:
+            detail = f"Ошибка LLM API: {msg[:200]}"
+        return JSONResponse(status_code=503, content={"detail": detail})
     return JSONResponse(
         status_code=500,
-        content={"detail": "Internal Server Error", "error": str(exc)},
+        content={"detail": "Internal Server Error", "error": msg},
     )
 
 

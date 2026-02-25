@@ -17,15 +17,28 @@ from app.providers.yandexgpt import YandexGPTProvider
 logger = logging.getLogger(__name__)
 
 
+def _has_gigachat_key() -> bool:
+    key = settings.GIGACHAT_AUTH_KEY
+    return bool(key and str(key).strip())
+
+
+def _has_yandexgpt_keys() -> bool:
+    return bool(
+        settings.YANDEXGPT_API_KEY and str(settings.YANDEXGPT_API_KEY).strip()
+        and settings.YANDEXGPT_FOLDER_ID and str(settings.YANDEXGPT_FOLDER_ID).strip()
+    )
+
+
 def _get_provider_by_name(name: str, llm_model: str = "") -> BaseProvider:
     model = llm_model.strip() or None
+    logger.info("LLM provider=%s model=%s (from admin settings)", name, model or "(default)")
     if name == "gigachat":
-        if not settings.GIGACHAT_AUTH_KEY:
+        if not _has_gigachat_key():
             logger.warning("GIGACHAT_AUTH_KEY не задан в .env — используем mock-провайдер")
             return MockProvider()
         return GigaChatProvider(model=model)
     if name == "yandexgpt":
-        if not settings.YANDEXGPT_API_KEY or not settings.YANDEXGPT_FOLDER_ID:
+        if not _has_yandexgpt_keys():
             logger.warning("YandexGPT API key или folder_id не заданы в .env — используем mock-провайдер")
             return MockProvider()
         return YandexGPTProvider(model=model)

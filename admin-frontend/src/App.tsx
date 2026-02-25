@@ -17,6 +17,15 @@ export default function App() {
     }
   }, [token])
 
+  useEffect(() => {
+    const onUnauthorized = () => {
+      setToken(null)
+      setPage('login')
+    }
+    window.addEventListener('admin:unauthorized', onUnauthorized)
+    return () => window.removeEventListener('admin:unauthorized', onUnauthorized)
+  }, [])
+
   const handleLogout = useCallback(() => {
     setToken(null)
     setPage('login')
@@ -229,7 +238,8 @@ const GIGACHAT_MODELS = [
   { value: '', label: 'По умолчанию (.env)' },
   { value: 'GigaChat', label: 'GigaChat' },
   { value: 'GigaChat-Pro', label: 'GigaChat Pro' },
-  { value: 'GigaChat-Lite', label: 'GigaChat Lite' },
+  { value: 'GigaChat-2-Lite', label: 'GigaChat 2 Lite' },
+  { value: 'GigaChat-Lite', label: 'GigaChat Lite (deprecated)' },
   { value: 'GigaChat-2-Pro', label: 'GigaChat 2 Pro' },
   { value: 'GigaChat-2-Max', label: 'GigaChat 2 Max' },
 ]

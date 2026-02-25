@@ -86,6 +86,7 @@ export async function suggestMixes(telegramId: number, params: MixParams): Promi
   return request<SuggestResponse>('/v1/mixes/suggest', {
     method: 'POST',
     body: JSON.stringify({ telegram_id: telegramId, params }),
+    timeout: 90000,
   })
 }
 
