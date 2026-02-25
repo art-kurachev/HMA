@@ -10,7 +10,6 @@ import {
   PlayIcon,
   PauseIcon,
   RestartIcon,
-  LayerIcon,
   TimerIcon,
   InstructionCard1Icon,
   InstructionCard2Icon,
@@ -213,6 +212,10 @@ export function InstructionStep({
             </div>
           </div>
         </header>
+
+        <div className={styles.bowlPlaceholder} aria-hidden>
+          <img src="/bowl.png" alt="" width={193} height={224} className={styles.bowlImage} />
+        </div>
 
         <div className={styles.mainContent}>
           <div className={styles.headerBlock}>

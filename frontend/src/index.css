@@ -47,7 +47,8 @@ body {
 #root.welcome-full-bleed,
 #root.direction-full-bleed,
 #root.mixes-full-bleed,
-#root.instruction-full-bleed {
+#root.instruction-full-bleed,
+#root.feedback-full-bleed {
   width: 100%;
   max-width: none;
   height: 100vh;

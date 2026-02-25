@@ -97,11 +97,14 @@ export default function App() {
     else root?.classList.remove('mixes-full-bleed')
     if (step === 'instruction') root?.classList.add('instruction-full-bleed')
     else root?.classList.remove('instruction-full-bleed')
+    if (step === 'feedback') root?.classList.add('feedback-full-bleed')
+    else root?.classList.remove('feedback-full-bleed')
     return () => {
       root?.classList.remove('welcome-full-bleed')
       root?.classList.remove('direction-full-bleed')
       root?.classList.remove('mixes-full-bleed')
       root?.classList.remove('instruction-full-bleed')
+      root?.classList.remove('feedback-full-bleed')
     }
   }, [step])
 
@@ -260,6 +263,7 @@ export default function App() {
       {step === 'feedback' && (
         <FeedbackStep
           onSubmit={handleFeedbackSubmit}
+          onSkip={goToWelcome}
           onBack={() => setStep('instruction')}
           loading={loading}
         />
