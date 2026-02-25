@@ -4,7 +4,7 @@ export interface MixParams {
   bowl: 'turka' | 'phunnel' | 'killer'
   heat_control: 'kaloud' | 'foil'
   has_cap: boolean
-  coal_size: 25 | 26
+  coal_size: 23 | 25 | 26
   coal_count_start: 2 | 3 | 4
   strength: 'low' | 'medium' | 'high'
   profiles: string[]

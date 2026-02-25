@@ -231,7 +231,7 @@ export default function App() {
       {step === 'setup' && (
         <SetupScreen
           telegramId={uid}
-          onBack={() => setStep('direction')}
+          onBack={() => setStep('welcome')}
           onSubmit={handleFormSubmit}
           loading={loading}
           initialFormState={formState}

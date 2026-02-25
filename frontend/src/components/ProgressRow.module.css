@@ -18,3 +18,13 @@
 .progressBarInactive {
   opacity: 0.2;
 }
+
+/* Setup: полупрозрачная полоска по умолчанию */
+.progressBarEmpty {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Setup: заполнена при выборе данных в блоке */
+.progressBarFilled {
+  background: #FF6544;
+}

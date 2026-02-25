@@ -73,8 +73,7 @@
 .bowlPlaceholder {
   position: absolute;
   top: 197px;
-  left: auto;
-  right: 24px;
+  left: 386px;
   transform: rotate(-15deg);
   width: 193px;
   height: 224px;

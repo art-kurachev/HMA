@@ -8,11 +8,13 @@ import { ArrowLeftIcon, BlackHoleIcon } from './Icons'
 import { ShelfSheet } from './ShelfSheet'
 import instructionStyles from './InstructionStep.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
+import directionStyles from './DirectionScreen.module.css'
 import feedbackStyles from './FeedbackStep.module.css'
 import styles from './SetupScreen.module.css'
 
 const ICON_LOGO = '/icons/Union.svg'
 const ICON_ROUND_GRAPH = '/icons/RoundGraph.svg'
+const ICON_TICK_CIRCLE = '/icons/tick-circle.svg'
 
 const PROFILE_LABELS: Record<string, string> = {
   tea: 'Чайные',
@@ -68,6 +70,7 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
   const [available_tobaccos_text, setAvailableTobaccosText] = useState(
     initial.available_tobaccos_text
   )
+  const [hasCap, setHasCap] = useState(initialFormState?.has_cap ?? false)
   const [showTobaccoSheet, setShowTobaccoSheet] = useState(false)
 
   const toggleProfile = (p: string) => {
@@ -87,7 +90,7 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
     if (bowl === null || coal_size === null || hasTobacco === null) return
     onSubmit({
       bowl,
-      has_cap: API_DEFAULTS.has_cap,
+      has_cap: hasCap,
       heat_control: API_DEFAULTS.heat_control,
       coal_size,
       coal_count_start: API_DEFAULTS.coal_count_start,
@@ -139,9 +142,27 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
         </header>
 
         <div className={`${instructionStyles.mainContent} ${styles.mainContentSetup}`}>
-          <div className={instructionStyles.headerBlock}>
-            <h2 className={instructionStyles.title}>Всего четыре параметра</h2>
-            <p className={instructionStyles.flavor}>Нажми на колпак, если он у тебя есть!</p>
+          <div className={styles.headerWithBowl}>
+            <div className={directionStyles.titleRow}>
+              <div className={styles.headerText}>
+                <h2 className={directionStyles.title}>Всего четыре параметра</h2>
+                <p className={instructionStyles.flavor}>
+                  {hasCap ? 'Колпак в наличии, я это учту!' : 'Нажми на колпак, если он у тебя есть!'}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className={`${directionStyles.bowlPlaceholder} ${styles.kolpakWrap} ${hasCap ? styles.kolpakActive : ''}`}
+              onClick={() => setHasCap((prev) => !prev)}
+              aria-pressed={hasCap}
+              aria-label={hasCap ? 'Колпак в наличии' : 'Нажми, если есть колпак'}
+            >
+              <img src="/bowl.png" alt="" width={193} height={224} className={directionStyles.bowlImage} />
+              {hasCap && (
+                <img src={ICON_TICK_CIRCLE} alt="" className={styles.kolpakTick} aria-hidden />
+              )}
+            </button>
           </div>
           <form className={styles.blocksLayout} onSubmit={handleSubmit}>
             <div className={styles.blocksRow}>
@@ -190,7 +211,7 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
               <section className={styles.blockCard}>
                 <div className={styles.blockHeader}>
                   <h3 className={styles.blockTitle}>Есть табак?</h3>
-                  <p className={styles.blockSubtitle}>Будет проще</p>
+                  <p className={styles.blockSubtitle}>Подберу из наличия</p>
                 </div>
                 <div className={`${styles.pills} ${styles.pillsRow}`}>
                   <button

@@ -9,7 +9,7 @@ class MixParams(BaseModel):
     bowl: Literal["turka", "phunnel", "killer"]
     heat_control: Literal["kaloud", "foil"]
     has_cap: bool
-    coal_size: Literal[25, 26]
+    coal_size: Literal[23, 25, 26]
     coal_count_start: Literal[2, 3, 4]
     strength: Literal["low", "medium", "high"]
     profiles: list[str]
