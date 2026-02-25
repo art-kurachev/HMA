@@ -1,14 +1,13 @@
 """Telegram WebApp initData validator and user extraction."""
 
-from __future__ import annotations
-
 import hashlib
+from typing import Optional
 import hmac
 import json
 from urllib.parse import parse_qs
 
 
-def validate_init_data(init_data: str, bot_token: str | None) -> bool:
+def validate_init_data(init_data: str, bot_token: Optional[str]) -> bool:
     """Validate Telegram WebApp initData via HMAC-SHA256. Returns False if no token or invalid."""
     if not init_data or not bot_token:
         return False
@@ -26,7 +25,7 @@ def validate_init_data(init_data: str, bot_token: str | None) -> bool:
         return False
 
 
-def extract_user_id_from_init_data(init_data: str) -> int | None:
+def extract_user_id_from_init_data(init_data: str) -> Optional[int]:
     """Extract user.id from initData (call only after validate_init_data)."""
     if not init_data:
         return None
@@ -42,7 +41,7 @@ def extract_user_id_from_init_data(init_data: str) -> int | None:
         return None
 
 
-def resolve_telegram_id(init_data: str | None, fallback: int, bot_token: str | None) -> int:
+def resolve_telegram_id(init_data: Optional[str], fallback: int, bot_token: Optional[str]) -> int:
     """Используем initData только когда fallback=123456789 (Main button, getTelegramId не сработал).
     Иначе — fallback (Menu button, getTelegramId дал реальный ID)."""
     if fallback != 123456789:

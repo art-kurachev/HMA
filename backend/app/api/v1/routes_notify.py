@@ -1,4 +1,5 @@
 import asyncio
+from typing import Optional
 
 from fastapi import APIRouter, Header, HTTPException
 
@@ -51,7 +52,7 @@ def _cancel_warmup_task(telegram_id: int) -> bool:
 @router.post("/warmup")
 async def schedule_warmup_notify(
     body: WarmupNotifyRequest,
-    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
+    x_telegram_init_data: Optional[str] = Header(None, alias="X-Telegram-Init-Data"),
 ):
     """Schedule a Telegram notification when warmup timer ends."""
     if not settings.BOT_TOKEN:
@@ -68,7 +69,7 @@ async def schedule_warmup_notify(
 @router.post("/warmup/cancel")
 async def cancel_warmup_notify(
     body: WarmupCancelRequest,
-    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
+    x_telegram_init_data: Optional[str] = Header(None, alias="X-Telegram-Init-Data"),
 ):
     """Cancel scheduled warmup notification (when user pauses timer)."""
     uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)

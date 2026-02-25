@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -27,7 +29,7 @@ router = APIRouter(prefix="/mixes", tags=["mixes"])
 @router.get("/quota")
 async def get_quota(
     telegram_id: int = Query(..., description="Telegram user ID"),
-    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
+    x_telegram_init_data: Optional[str] = Header(None, alias="X-Telegram-Init-Data"),
     db: AsyncSession = Depends(get_db),
 ):
     """Return remaining requests: -1 = unlimited (creator), else 0–3 (welcome) or 0–1 (weekly)."""
@@ -40,7 +42,7 @@ async def get_quota(
 @router.post("/suggest", response_model=SuggestResponse)
 async def suggest_mixes(
     body: SuggestRequest,
-    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
+    x_telegram_init_data: Optional[str] = Header(None, alias="X-Telegram-Init-Data"),
     db: AsyncSession = Depends(get_db),
 ):
     uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
@@ -83,7 +85,7 @@ async def suggest_mixes(
 @router.post("/quick-suggest", response_model=SuggestResponse)
 async def quick_suggest_mixes(
     body: QuickSuggestRequest,
-    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
+    x_telegram_init_data: Optional[str] = Header(None, alias="X-Telegram-Init-Data"),
     db: AsyncSession = Depends(get_db),
 ):
     """Быстрый совет: 3 рандомных микса по цели вечера (без полного сетапа)."""
@@ -129,7 +131,7 @@ async def quick_suggest_mixes(
 async def get_instruction(
     mix_id: str,
     body: InstructionRequest,
-    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
+    x_telegram_init_data: Optional[str] = Header(None, alias="X-Telegram-Init-Data"),
     db: AsyncSession = Depends(get_db),
 ):
     uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)

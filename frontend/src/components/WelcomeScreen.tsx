@@ -11,9 +11,6 @@ const ICON_DATABASE = '/icons/Database.svg'
 const ICON_SHARE_CIRCLE = '/icons/ShareCircle.svg'
 const ICON_ROUND_GRAPH = '/icons/RoundGraph.svg'
 
-/* Фоновые изображения: кальян локально, текстура — Figma MCP при истечении заменить */
-const IMG_OVERLAY =
-  'https://www.figma.com/api/mcp/asset/ef24c265-ea40-4e9d-9781-a7586e974768'
 const IMG_HOOKAH = '/hookah.png'
 
 interface WelcomeScreenProps {
@@ -42,19 +39,6 @@ export function WelcomeScreen({
 
   return (
     <>
-      {/* Фон макета на весь экран — не «блок», а общее пространство */}
-      <div className={styles.fullScreenBg} aria-hidden>
-        <div className={styles.gradient} />
-        <div className={styles.overlay}>
-          <img
-            src={IMG_OVERLAY}
-            alt=""
-            onError={(e) => {
-              e.currentTarget.style.display = 'none'
-            }}
-          />
-        </div>
-      </div>
       <ScreenLayout progressStep={0} totalSteps={0} fullBleed>
         <div className={styles.welcome}>
           <div className={styles.heroWrap}>

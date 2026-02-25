@@ -15,6 +15,8 @@ import { FeedbackStep } from './components/FeedbackStep'
 import { Loader } from './components/Loader'
 import styles from './App.module.css'
 
+const IMG_OVERLAY = '/texture-overlay.png'
+
 const LOADING_MESSAGES: Record<Step, string> = {
   welcome: 'Загрузка...',
   direction: 'Подбираю миксы...',
@@ -232,6 +234,14 @@ export default function App() {
       )}
       {shelfOpen && (
         <ShelfSheet telegramId={uid} onClose={() => setShelfOpen(false)} />
+      )}
+      {['welcome', 'direction', 'setup', 'mixes', 'instruction', 'feedback'].includes(step) && (
+        <div className={styles.fullScreenBg} aria-hidden>
+          <div className={styles.fullScreenBgGradient} />
+          <div className={styles.fullScreenBgOverlay}>
+            <img src={IMG_OVERLAY} alt="" onError={(e) => { e.currentTarget.style.display = 'none' }} />
+          </div>
+        </div>
       )}
       {step === 'direction' && (
         <DirectionScreen

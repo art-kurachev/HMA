@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy import select
 
@@ -16,7 +18,7 @@ router = APIRouter(prefix="/feedback", tags=["feedback"])
 @router.post("/")
 async def submit_feedback(
     body: FeedbackRequest,
-    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
+    x_telegram_init_data: Optional[str] = Header(None, alias="X-Telegram-Init-Data"),
     db: AsyncSession = Depends(get_db),
 ):
     uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
