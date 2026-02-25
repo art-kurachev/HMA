@@ -52,6 +52,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding-right: 100px;
 }
 
 /* Кликабельный блок с колпаком — без анимации вверх/вниз, поворот по клику */
@@ -94,7 +95,7 @@
 .kolpakTick {
   position: absolute;
   top: 86px;
-  left: 11px;
+  left: 98px;
   width: 44px;
   height: 44px;
   pointer-events: none;
