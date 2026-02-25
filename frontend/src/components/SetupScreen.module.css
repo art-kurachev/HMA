@@ -1,89 +1,177 @@
-.form {
-  max-width: 420px;
-}
+/* Страница сетапа — расположение блоков и заголовка как на фидбеке */
 
-.titleRow {
+.wrapSetup {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  position: relative;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.title {
-  font-size: var(--text-hero, 43px);
-  font-weight: var(--font-thin, 100);
-  line-height: 100%;
-  color: #fff;
-  margin: 0;
+  flex-direction: column;
   flex: 1;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 0 0 24px;
+  padding-bottom: 0;
 }
 
-.shareBtn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  cursor: pointer;
-  display: flex;
+.wrapSetup header,
+.wrapSetup .mainContentSetup,
+.wrapSetup .bottomSetup {
+  position: relative;
+  z-index: 1;
+}
+
+/* Контент и заголовок — как на фидбеке: прижаты к низу, заголовок на всю ширину */
+.wrapSetup .mainContentSetup {
+  padding-top: 0;
+  gap: 24px;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.wrapSetup .mainContentSetup > div:first-child {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.wrapSetup .mainContentSetup > div:first-child h2 {
+  width: 100%;
+}
+
+.mainContentSetup {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+/* Кнопки прижаты к низу — как на фидбеке */
+.wrapSetup .bottomSetup {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.bottomSetup {
+  margin-top: 8px;
+  background: unset;
+  background-color: unset;
+  background-image: none;
+  justify-content: flex-start;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.2s;
+  padding: 0 24px 24px;
 }
 
-.shareBtn:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.section {
-  margin-bottom: 28px;
-  padding: 20px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.sectionHeader {
+/* Блоки — вёрстка как на фидбеке */
+.blocksLayout {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 12px;
+  flex-direction: column;
+  gap: 0;
+  flex: 0 0 auto;
+  margin-top: 0;
+  margin-bottom: 88px;
+  height: fit-content;
+  padding: 0;
+  width: 100%;
 }
 
-.sectionTitle {
-  font-size: var(--text-section, 22px);
-  font-weight: var(--font-thin, 100);
+.blocksRow {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-bottom: 4px;
+}
+
+.blocksRow .blockCard:nth-child(2) {
+  border-radius: 24px 40px 24px 24px;
+}
+
+/* Тёмный блок — стиль как на фидбеке */
+.blockCard .blockTitle {
+  padding-bottom: 0;
+}
+
+.blocksRow .blockCard:first-child .blockTitle,
+.blocksRow .blockCard:first-child .blockSubtitle {
+  text-align: right;
+}
+
+.blockCard {
+  flex: 1;
+  padding: 8px;
+  border-radius: 40px 24px 24px 24px;
+  background: rgba(34, 34, 34, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: fit-content;
+  min-width: 0;
+}
+
+/* Блок во всю ширину (средний ряд) */
+.blockFull {
+  flex: 0 0 auto;
+  width: 100%;
+  padding: 12px;
+  gap: 8px;
+  border-radius: 24px;
+  height: fit-content;
+}
+
+/* Нижний блок во всю ширину — как blockComment на фидбеке */
+.blockFullLast {
+  flex: 0 0 auto;
+  width: 100%;
+  padding: 12px;
+  gap: 8px;
+  border-radius: 24px 24px 40px 40px;
+  height: fit-content;
+}
+
+.blockTitle {
+  font-family: var(--font-family);
+  font-size: 22px;
+  font-weight: 200;
+  line-height: 24px;
   color: #fff;
   margin: 0;
+  padding: 8px;
+  text-align: left;
 }
 
-.hint {
-  font-size: var(--text-button, 14px);
-  color: rgba(255, 255, 255, 0.65);
+.blockSubtitle {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 200;
+  line-height: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 8px;
+  padding: 0 8px;
+  text-align: left;
 }
 
+/* Пилюли в тёмных блоках */
 .pills {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
+  margin-top: 24px;
 }
 
 .pill {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  border-radius: 24px;
-  border: 1px solid rgba(232, 93, 42, 0.5);
-  background: rgba(232, 93, 42, 0.15);
-  color: #fff;
-  font-size: var(--text-body, 16px);
-  font-weight: var(--font-thin, 100);
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 50px;
+  border: none;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  font-weight: 200;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s;
@@ -95,24 +183,26 @@
 
 .pill.active {
   background: rgba(255, 255, 255, 0.95);
-  color: #1a1a2e;
-  border-color: transparent;
+  color: #292d32;
 }
 
+/* Чипы вкусов */
 .chips {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 24px;
 }
 
 .chip {
-  padding: 10px 16px;
+  padding: 8px 12px;
+  height: 30px;
   border-radius: 50px;
-  border: 1px solid rgba(232, 93, 42, 0.5);
-  background: rgba(232, 93, 42, 0.15);
-  color: #fff;
-  font-size: var(--text-body, 16px);
-  font-weight: var(--font-thin, 100);
+  border: none;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  font-weight: 200;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s;
@@ -124,23 +214,45 @@
 
 .chip.active {
   background: rgba(255, 255, 255, 0.95);
-  color: #1a1a2e;
-  border-color: transparent;
+  color: #292d32;
 }
 
+/* Текстареа для табаков */
 .textarea {
   width: 100%;
-  margin-top: 12px;
+  margin-top: 8px;
   padding: 12px 16px;
-  border-radius: 16px;
-  border: 1px solid var(--card-border);
-  background: var(--card-bg);
+  border-radius: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.2);
   color: #fff;
-  font-size: 1rem;
+  font-size: 14px;
   font-family: inherit;
   resize: vertical;
+  min-height: 48px;
+  box-sizing: border-box;
 }
 
 .textarea::placeholder {
   color: rgba(255, 255, 255, 0.5);
+}
+
+.textarea:focus {
+  outline: 1px solid #ff6544;
+}
+
+/* Кнопки нижней панели */
+.bottomSetup .finishBtnSetup {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.bottomSetup .submitBtnSetup {
+  padding-left: 24px;
+  padding-right: 16px;
+}
+
+.bottomSetup .submitBtnSetup:disabled {
+  background: rgba(246, 248, 255, 0.2);
+  color: #F6F8FF;
 }

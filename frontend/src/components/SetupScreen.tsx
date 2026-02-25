@@ -3,9 +3,15 @@ import type { FormState } from '../types'
 import { BOWL_OPTIONS, PROFILE_OPTIONS } from '../types'
 import { loadShelf, shelfToText } from '../shelfStorage'
 import { ScreenLayout } from './ScreenLayout'
-import { BottomNav } from './BottomNav'
-import { ShareIcon, BowlTurkaIcon, BowlPhunnelIcon, BowlKillerIcon, TobaccoIcon } from './Icons'
+import { ProgressRow } from './ProgressRow'
+import { BowlTurkaIcon, BowlPhunnelIcon, BowlKillerIcon, TobaccoIcon, ArrowLeftIcon, BlackHoleIcon } from './Icons'
+import instructionStyles from './InstructionStep.module.css'
+import welcomeStyles from './WelcomeScreen.module.css'
+import feedbackStyles from './FeedbackStep.module.css'
 import styles from './SetupScreen.module.css'
+
+const ICON_LOGO = '/icons/Union.svg'
+const ICON_ROUND_GRAPH = '/icons/RoundGraph.svg'
 
 const PROFILE_LABELS: Record<string, string> = {
   tea: 'Чайные',
@@ -94,128 +100,164 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
     !(hasTobacco && !available_tobaccos_text.trim())
 
   return (
-    <ScreenLayout onBack={onBack} progressStep={2} totalSteps={3}>
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <div className={styles.titleRow}>
-          <h2 className={styles.title}>Всего три параметра</h2>
-          <button type="button" className={styles.shareBtn} aria-label="Поделиться">
-            <ShareIcon size={20} />
-          </button>
+    <ScreenLayout onBack={onBack} hideBackButton totalSteps={0} fullBleed>
+      <div className={`${instructionStyles.wrap} ${styles.wrapSetup}`}>
+        <header className={welcomeStyles.topBar}>
+          <ProgressRow total={3} activeStep={1} />
+          <div className={welcomeStyles.headerRow}>
+            <img
+              src={ICON_LOGO}
+              alt="Iprit"
+              className={welcomeStyles.logo}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+            />
+            <div className={instructionStyles.tag} aria-hidden>
+              <span className={instructionStyles.tagText}>Сетап</span>
+              <img
+                src={ICON_ROUND_GRAPH}
+                alt=""
+                className={instructionStyles.tagIconSvg}
+                aria-hidden
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            </div>
+          </div>
+        </header>
+
+        <div className={`${instructionStyles.mainContent} ${styles.mainContentSetup}`}>
+          <div className={instructionStyles.headerBlock}>
+            <h2 className={instructionStyles.title}>Всего три параметра</h2>
+          </div>
+          <form className={styles.blocksLayout} onSubmit={handleSubmit}>
+            <div className={styles.blocksRow}>
+              <section className={styles.blockCard}>
+                <h3 className={styles.blockTitle}>Чаша?</h3>
+                <p className={styles.blockSubtitle}>Дам совет по забивке</p>
+                <div className={styles.pills}>
+                  {BOWL_OPTIONS.map((o) => (
+                    <button
+                      key={o.value}
+                      type="button"
+                      className={`${styles.pill} ${bowl === o.value ? styles.active : ''}`}
+                      onClick={() => setBowl(o.value)}
+                    >
+                      {o.value === 'turka' && <BowlTurkaIcon size={24} />}
+                      {o.value === 'phunnel' && <BowlPhunnelIcon size={24} />}
+                      {o.value === 'killer' && <BowlKillerIcon size={24} />}
+                      {o.label}
+                    </button>
+                  ))}
+                </div>
+              </section>
+              <section className={styles.blockCard}>
+                <h3 className={styles.blockTitle}>Колпак?</h3>
+                <p className={styles.blockSubtitle}>Учту при рекомендациях</p>
+                <div className={styles.pills}>
+                  <button
+                    type="button"
+                    className={`${styles.pill} ${has_cap === true ? styles.active : ''}`}
+                    onClick={() => setHasCap(true)}
+                  >
+                    Да, есть
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.pill} ${has_cap === false ? styles.active : ''}`}
+                    onClick={() => setHasCap(false)}
+                  >
+                    Нет
+                  </button>
+                </div>
+              </section>
+            </div>
+
+            <div className={styles.blocksRow}>
+              <section className={`${styles.blockCard} ${styles.blockFull}`}>
+                <h3 className={styles.blockTitle}>Вкус?</h3>
+                <p className={styles.blockSubtitle}>Подберу лучший микс</p>
+                <div className={styles.chips}>
+                  {PROFILE_OPTIONS.map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      className={`${styles.chip} ${profiles.includes(p) ? styles.active : ''}`}
+                      onClick={() => toggleProfile(p)}
+                    >
+                      {PROFILE_LABELS[p] ?? p}
+                    </button>
+                  ))}
+                </div>
+              </section>
+            </div>
+
+            <section className={`${styles.blockCard} ${styles.blockFullLast}`}>
+              <h3 className={styles.blockTitle}>Есть табак?</h3>
+              <p className={styles.blockSubtitle}>Будет проще</p>
+              <div className={styles.pills}>
+                <button
+                  type="button"
+                  className={`${styles.pill} ${hasTobacco === true ? styles.active : ''}`}
+                  onClick={() => {
+                    setHasTobacco(true)
+                    if (!available_tobaccos_text.trim()) {
+                      const fromShelf = shelfToText(loadShelf(telegramId))
+                      if (fromShelf) setAvailableTobaccosText(fromShelf)
+                    }
+                  }}
+                >
+                  <TobaccoIcon size={24} />
+                  Да, есть
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.pill} ${hasTobacco === false ? styles.active : ''}`}
+                  onClick={() => {
+                    setHasTobacco(false)
+                    setAvailableTobaccosText('')
+                  }}
+                >
+                  Нет, пусто
+                </button>
+              </div>
+              {hasTobacco === true && (
+                <textarea
+                  className={styles.textarea}
+                  value={available_tobaccos_text}
+                  onChange={(e) => setAvailableTobaccosText(e.target.value)}
+                  placeholder="название табаков"
+                  rows={2}
+                />
+              )}
+            </section>
+          </form>
         </div>
 
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>Чаша?</h3>
-            <span className={styles.hint}>Дам совет по забивке</span>
-          </div>
-          <div className={styles.pills}>
-            {BOWL_OPTIONS.map((o) => (
-              <button
-                key={o.value}
-                type="button"
-                className={`${styles.pill} ${bowl === o.value ? styles.active : ''}`}
-                onClick={() => setBowl(o.value)}
-              >
-                {o.value === 'turka' && <BowlTurkaIcon size={28} />}
-                {o.value === 'phunnel' && <BowlPhunnelIcon size={28} />}
-                {o.value === 'killer' && <BowlKillerIcon size={28} />}
-                {o.label}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>Наличие колпака?</h3>
-            <span className={styles.hint}>Колпак в наличии, я это учту!</span>
-          </div>
-          <div className={styles.pills}>
+        <div className={`${welcomeStyles.bottom} ${instructionStyles.bottomInstruction} ${styles.bottomSetup}`}>
+          <div className={instructionStyles.bottomBlock}>
             <button
               type="button"
-              className={`${styles.pill} ${has_cap === true ? styles.active : ''}`}
-              onClick={() => setHasCap(true)}
+              className={`${instructionStyles.finishBtn} ${styles.finishBtnSetup}`}
+              onClick={onBack}
+              aria-label="Вернуться"
             >
-              Да, есть
+              <ArrowLeftIcon size={24} />
             </button>
             <button
               type="button"
-              className={`${styles.pill} ${has_cap === false ? styles.active : ''}`}
-              onClick={() => setHasCap(false)}
+              className={`${feedbackStyles.submitBtnWhite} ${styles.submitBtnSetup}`}
+              onClick={() => handleSubmit()}
+              disabled={loading || !canSubmit}
             >
-              Нет
+              {loading ? 'Загрузка...' : 'Миксуй'}
+              <BlackHoleIcon size={24} />
             </button>
           </div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>Вкус?</h3>
-            <span className={styles.hint}>Подберу лучший микс</span>
-          </div>
-          <div className={styles.chips}>
-            {PROFILE_OPTIONS.map((p) => (
-              <button
-                key={p}
-                type="button"
-                className={`${styles.chip} ${profiles.includes(p) ? styles.active : ''}`}
-                onClick={() => toggleProfile(p)}
-              >
-                {PROFILE_LABELS[p] ?? p}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>Есть табак?</h3>
-            <span className={styles.hint}>Будет проще</span>
-          </div>
-          <div className={styles.pills}>
-            <button
-              type="button"
-              className={`${styles.pill} ${hasTobacco === true ? styles.active : ''}`}
-              onClick={() => {
-                setHasTobacco(true)
-                if (!available_tobaccos_text.trim()) {
-                  const fromShelf = shelfToText(loadShelf(telegramId))
-                  if (fromShelf) setAvailableTobaccosText(fromShelf)
-                }
-              }}
-            >
-              <TobaccoIcon size={28} />
-              Да, есть
-            </button>
-            <button
-              type="button"
-              className={`${styles.pill} ${hasTobacco === false ? styles.active : ''}`}
-              onClick={() => {
-                setHasTobacco(false)
-                setAvailableTobaccosText('')
-              }}
-            >
-              Нет, пусто
-            </button>
-          </div>
-          {hasTobacco === true && (
-            <textarea
-              className={styles.textarea}
-              value={available_tobaccos_text}
-              onChange={(e) => setAvailableTobaccosText(e.target.value)}
-              placeholder="название табаков"
-              rows={2}
-            />
-          )}
-        </section>
-      </form>
-      <BottomNav
-        onBack={onBack}
-        primaryLabel="Подобрать миксы"
-        onPrimary={() => handleSubmit()}
-        primaryDisabled={loading || !canSubmit}
-        primaryAccent
-      />
+        </div>
+      </div>
     </ScreenLayout>
   )
 }

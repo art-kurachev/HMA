@@ -110,7 +110,7 @@ export function WelcomeScreen({
             </span>
           </div>
           <h1 className={styles.title}>
-            {`Ассистент — настройка,\nпрогрев,\nрезультат.`}
+            {`Ассистент —\nнастройка,\nпрогрев,\nрезультат.`}
           </h1>
           <div className={styles.actions}>
             <button
