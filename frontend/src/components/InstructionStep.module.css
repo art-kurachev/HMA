@@ -315,7 +315,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 16px;
+  padding: 16px 24px 16px 16px;
   border-radius: 50px;
   border: none;
   background: rgba(255, 102, 63, 0.2);
@@ -370,20 +370,20 @@
 }
 
 .timerBtn.timerDone {
-  background: rgba(76, 175, 80, 0.25);
-  border: 1px solid rgba(76, 175, 80, 0.5);
-  color: rgba(129, 199, 132, 1);
-  box-shadow: 0 0 12px rgba(76, 175, 80, 0.3);
+  background: #6FC135;
+  border: none;
+  color: #292D32;
+  box-shadow: none;
 }
 
 .timerBtn.timerDone span {
-  color: rgba(41, 45, 50, 1);
+  color: #292D32;
 }
 
 .timerBtn.timerDone svg {
   width: 24px;
   height: 24px;
-  color: rgba(41, 45, 50, 1);
+  color: #292D32;
 }
 
 .timerBtn:active {

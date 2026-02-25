@@ -437,7 +437,10 @@ function MixModal({ mixId, onClose }: { mixId: number; onClose: () => void }) {
   }, [mixId])
 
   const m = mix?.mix_json
-  const tobaccos = (m?.tobaccos as Array<{ name: string; percent?: number }>) || []
+  const raw = (m?.tobaccos as unknown) ?? []
+  const tobaccos = (Array.isArray(raw) ? raw : []).map((t) =>
+    typeof t === 'string' ? { name: t, percent: undefined } : { name: (t as { name?: string }).name ?? String(t), percent: (t as { percent?: number }).percent }
+  )
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
