@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { InstructionResponse } from '../api'
-import { scheduleWarmupNotify } from '../api'
+import { scheduleWarmupNotify, cancelWarmupNotify } from '../api'
 import type { TimerState } from '../draftStorage'
 import { ScreenLayout } from './ScreenLayout'
 import {
@@ -172,6 +172,7 @@ export function InstructionStep({
     clearTimer()
     setIsRunning(false)
     setPaused(true)
+    cancelWarmupNotify(telegramId).catch(() => { /* ignore */ })
     onTimerStateChange({
       mixId,
       state: 'paused',
@@ -187,10 +188,12 @@ export function InstructionStep({
     startTimeRef.current = startTime
     setPaused(false)
     setIsRunning(true)
+    scheduleWarmupNotify(telegramId, timeLeft).catch(() => { /* ignore */ })
     onTimerStateChange({ mixId, state: 'running', startTime, duration: timeLeft })
   }
 
   const handleReset = () => {
+    if (isRunning) cancelWarmupNotify(telegramId).catch(() => { /* ignore */ })
     clearTimer()
     setIsRunning(false)
     setPaused(false)

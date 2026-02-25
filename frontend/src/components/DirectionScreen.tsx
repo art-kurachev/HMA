@@ -44,11 +44,10 @@ export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
         {/* Контентный блок по макету (bottom-0): заголовок → карточки → кнопка */}
         <div className={styles.mainContent}>
           <div className={styles.titleRow}>
+            <div className={styles.bowlPlaceholder} aria-hidden>
+              <img src="/bowl-goal.png" alt="" width={193} height={224} className={styles.bowlImage} />
+            </div>
             <h2 className={styles.title}>Твоя цель вечера?</h2>
-          </div>
-
-          <div className={styles.bowlPlaceholder} aria-hidden>
-            <img src="/bowl.png" alt="" width={193} height={224} className={styles.bowlImage} />
           </div>
 
           <div className={styles.cardsGrid}>

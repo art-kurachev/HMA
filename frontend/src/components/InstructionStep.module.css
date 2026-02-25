@@ -8,7 +8,7 @@
   flex-direction: column;
   flex: 1;
   padding: 0 0 24px;
-  padding-bottom: calc(88px + env(safe-area-inset-bottom, 0));
+  padding-bottom: 88px;
 }
 
 /* Тег в хедере — как на экране «Выбор цели» */
@@ -475,7 +475,7 @@
   flex-direction: column;
   background: linear-gradient(180deg, #222 0%, #36160f 100%);
   border-radius: 24px 24px 0 0;
-  padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0));
+  padding: 12px 12px 12px;
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
   color: #fff;
   overflow-y: auto;

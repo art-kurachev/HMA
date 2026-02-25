@@ -128,6 +128,13 @@ export async function scheduleWarmupNotify(
   })
 }
 
+export async function cancelWarmupNotify(telegramId: number): Promise<void> {
+  await request('/v1/notify/warmup/cancel', {
+    method: 'POST',
+    body: JSON.stringify({ telegram_id: telegramId }),
+  })
+}
+
 export async function submitFeedback(
   telegramId: number,
   mixDbId: number,

@@ -8,7 +8,7 @@
   flex: 1;
   min-height: 100vh;
   padding: 0 0 24px;
-  padding-bottom: calc(88px + env(safe-area-inset-bottom, 0));
+  padding-bottom: 88px;
 }
 
 /* Тег в хедере — как на экране «Выбор цели» (Direction) */
@@ -50,6 +50,7 @@
 }
 
 .titleRow {
+  position: relative;
   display: flex;
   align-items: center;
   padding: 0 24px;
@@ -59,7 +60,7 @@
 
 .title {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   font-family: var(--font-family);
   font-size: 32px;
   font-weight: 100;
@@ -67,18 +68,25 @@
   color: #fff;
   margin: 0;
   padding: 0;
-  max-width: 248px;
+  width: 100%;
+}
+
+@keyframes bowlFloat {
+  0%, 100% { transform: rotate(-15deg) translateY(0); }
+  50% { transform: rotate(-15deg) translateY(-24px); }
 }
 
 .bowlPlaceholder {
   position: absolute;
-  top: 197px;
-  left: 386px;
+  top: -55px;
+  right: 0;
   transform: rotate(-15deg);
   width: 193px;
   height: 224px;
   flex-shrink: 0;
   pointer-events: none;
+  z-index: 0;
+  animation: bowlFloat 4s ease-in-out infinite;
 }
 
 .bowlImage {
@@ -118,12 +126,14 @@
 
 /* Плашка микса — как на экране «Выбор цели»: чёрные контейнеры */
 .card {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
   text-align: left;
-  padding: 24px;
+  padding: 16px;
   border: none;
   border-radius: 24px;
   background: rgba(34, 34, 34, 0.7);
@@ -204,8 +214,11 @@
   border-radius: 50px;
   border: 1px solid rgba(255, 101, 68, 0.2);
   background: transparent;
-  width: fit-content;
-  height: fit-content;
+  max-width: 140px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-family: var(--font-family);
   font-size: 12px;
   font-weight: 200;
@@ -230,4 +243,5 @@
   justify-content: flex-start;
   align-items: center;
   padding-top: 0;
+  gap: 0;
 }

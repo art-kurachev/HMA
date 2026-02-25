@@ -47,11 +47,10 @@ export function MixesStep({ mixes, onSelect, onBack }: MixesStepProps) {
         {/* Контент: заголовок + сетка карточек (1 слева, 2 справа) */}
         <div className={styles.mainContent}>
           <div className={styles.titleRow}>
+            <div className={styles.bowlPlaceholder} aria-hidden>
+              <img src="/bowl-mixes.png" alt="" width={193} height={224} className={styles.bowlImage} />
+            </div>
             <h2 className={styles.title}>Предлагаю варианты</h2>
-          </div>
-
-          <div className={styles.bowlPlaceholder} aria-hidden>
-            <img src="/bowl-mixes.png" alt="" width={193} height={224} className={styles.bowlImage} />
           </div>
 
           <div className={styles.cardsGrid}>

@@ -63,14 +63,14 @@ export default function App() {
   useEffect(() => {
     const draft = loadDraft()
     if (!draft) return
-    // Не восстанавливаем step — приложение всегда стартует с первого экрана (welcome).
-    // Остальные данные черновика подставляются при переходе на соответствующие экраны.
+    setStep(draft.step)
     setDirection(draft.direction)
     setFormState(draft.formState)
     setMixes(draft.mixes ?? [])
     setSelectedMix(draft.selectedMix)
     setInstruction(draft.instruction)
     setTimerState(draft.timerState ?? null)
+    setMixesFromStep(draft.mixesFromStep ?? (draft.formState ? 'setup' : 'direction'))
   }, [])
 
   const uid = telegramId ?? 123456789
@@ -121,8 +121,9 @@ export default function App() {
       selectedMix,
       instruction,
       timerState: step === 'instruction' ? timerState : null,
+      mixesFromStep,
     })
-  }, [step, direction, formState, mixes, selectedMix, instruction, timerState])
+  }, [step, direction, formState, mixes, selectedMix, instruction, timerState, mixesFromStep])
 
   const handleFormSubmit = async (params: FormState) => {
     setError(null)
