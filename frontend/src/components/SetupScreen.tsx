@@ -4,7 +4,8 @@ import { BOWL_OPTIONS, PROFILE_OPTIONS } from '../types'
 import { loadShelf, shelfToText } from '../shelfStorage'
 import { ScreenLayout } from './ScreenLayout'
 import { ProgressRow } from './ProgressRow'
-import { BowlTurkaIcon, BowlPhunnelIcon, BowlKillerIcon, TobaccoIcon, ArrowLeftIcon, BlackHoleIcon } from './Icons'
+import { BowlTurkaIcon, BowlPhunnelIcon, BowlKillerIcon, ArrowLeftIcon, BlackHoleIcon } from './Icons'
+import { ShelfSheet } from './ShelfSheet'
 import instructionStyles from './InstructionStep.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
 import feedbackStyles from './FeedbackStep.module.css'
@@ -25,14 +26,14 @@ const PROFILE_LABELS: Record<string, string> = {
 
 const API_DEFAULTS = {
   heat_control: 'kaloud' as const,
-  coal_size: 25 as const,
+  has_cap: true as const,
   coal_count_start: 3 as const,
   strength: 'medium' as const,
 }
 
 const EMPTY_UI = {
   bowl: null as 'turka' | 'phunnel' | 'killer' | null,
-  has_cap: null as boolean | null,
+  coal_size: null as 23 | 25 | null,
   profiles: [] as string[],
   hasTobacco: null as boolean | null,
   available_tobaccos_text: '',
@@ -50,7 +51,9 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
   const initial = initialFormState
     ? {
         bowl: initialFormState.bowl as 'turka' | 'phunnel' | 'killer' | null,
-        has_cap: initialFormState.has_cap as boolean | null,
+        coal_size: (initialFormState.coal_size === 23 || initialFormState.coal_size === 25
+          ? initialFormState.coal_size
+          : null) as 23 | 25 | null,
         profiles: initialFormState.profiles,
         hasTobacco: initialFormState.available_tobaccos_text.trim()
           ? true
@@ -59,12 +62,13 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
       }
     : EMPTY_UI
   const [bowl, setBowl] = useState<'turka' | 'phunnel' | 'killer' | null>(initial.bowl)
-  const [has_cap, setHasCap] = useState<boolean | null>(initial.has_cap)
+  const [coal_size, setCoalSize] = useState<23 | 25 | null>(initial.coal_size)
   const [profiles, setProfiles] = useState<string[]>(initial.profiles)
   const [hasTobacco, setHasTobacco] = useState<boolean | null>(initial.hasTobacco)
   const [available_tobaccos_text, setAvailableTobaccosText] = useState(
     initial.available_tobaccos_text
   )
+  const [showTobaccoSheet, setShowTobaccoSheet] = useState(false)
 
   const toggleProfile = (p: string) => {
     setProfiles((prev) => {
@@ -80,12 +84,12 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault()
-    if (bowl === null || has_cap === null || hasTobacco === null) return
+    if (bowl === null || coal_size === null || hasTobacco === null) return
     onSubmit({
       bowl,
-      has_cap,
+      has_cap: API_DEFAULTS.has_cap,
       heat_control: API_DEFAULTS.heat_control,
-      coal_size: API_DEFAULTS.coal_size,
+      coal_size,
       coal_count_start: API_DEFAULTS.coal_count_start,
       strength: API_DEFAULTS.strength,
       profiles,
@@ -95,15 +99,21 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
 
   const canSubmit =
     bowl !== null &&
-    has_cap !== null &&
+    coal_size !== null &&
     hasTobacco !== null &&
     !(hasTobacco && !available_tobaccos_text.trim())
+
+  const filledBlocks =
+    (bowl !== null ? 1 : 0) +
+    (coal_size !== null ? 1 : 0) +
+    (profiles.length > 0 ? 1 : 0) +
+    (hasTobacco !== null && (hasTobacco === false || available_tobaccos_text.trim().length > 0) ? 1 : 0)
 
   return (
     <ScreenLayout onBack={onBack} hideBackButton totalSteps={0} fullBleed>
       <div className={`${instructionStyles.wrap} ${styles.wrapSetup}`}>
         <header className={welcomeStyles.topBar}>
-          <ProgressRow total={3} activeStep={1} />
+          <ProgressRow filledCount={filledBlocks} />
           <div className={welcomeStyles.headerRow}>
             <img
               src={ICON_LOGO}
@@ -130,13 +140,16 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
 
         <div className={`${instructionStyles.mainContent} ${styles.mainContentSetup}`}>
           <div className={instructionStyles.headerBlock}>
-            <h2 className={instructionStyles.title}>Всего три параметра</h2>
+            <h2 className={instructionStyles.title}>Всего четыре параметра</h2>
+            <p className={instructionStyles.flavor}>Нажми на колпак, если он у тебя есть!</p>
           </div>
           <form className={styles.blocksLayout} onSubmit={handleSubmit}>
             <div className={styles.blocksRow}>
               <section className={styles.blockCard}>
-                <h3 className={styles.blockTitle}>Чаша?</h3>
-                <p className={styles.blockSubtitle}>Дам совет по забивке</p>
+                <div className={styles.blockHeader}>
+                  <h3 className={styles.blockTitle}>Чаша?</h3>
+                  <p className={styles.blockSubtitle}>Дам совет по забивке</p>
+                </div>
                 <div className={styles.pills}>
                   {BOWL_OPTIONS.map((o) => (
                     <button
@@ -154,31 +167,10 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
                 </div>
               </section>
               <section className={styles.blockCard}>
-                <h3 className={styles.blockTitle}>Колпак?</h3>
-                <p className={styles.blockSubtitle}>Учту при рекомендациях</p>
-                <div className={styles.pills}>
-                  <button
-                    type="button"
-                    className={`${styles.pill} ${has_cap === true ? styles.active : ''}`}
-                    onClick={() => setHasCap(true)}
-                  >
-                    Да, есть
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.pill} ${has_cap === false ? styles.active : ''}`}
-                    onClick={() => setHasCap(false)}
-                  >
-                    Нет
-                  </button>
+                <div className={styles.blockHeader}>
+                  <h3 className={styles.blockTitle}>Вкус?</h3>
+                  <p className={styles.blockSubtitle}>Подберу лучший микс</p>
                 </div>
-              </section>
-            </div>
-
-            <div className={styles.blocksRow}>
-              <section className={`${styles.blockCard} ${styles.blockFull}`}>
-                <h3 className={styles.blockTitle}>Вкус?</h3>
-                <p className={styles.blockSubtitle}>Подберу лучший микс</p>
                 <div className={styles.chips}>
                   {PROFILE_OPTIONS.map((p) => (
                     <button
@@ -194,45 +186,55 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
               </section>
             </div>
 
-            <section className={`${styles.blockCard} ${styles.blockFullLast}`}>
-              <h3 className={styles.blockTitle}>Есть табак?</h3>
-              <p className={styles.blockSubtitle}>Будет проще</p>
-              <div className={styles.pills}>
-                <button
-                  type="button"
-                  className={`${styles.pill} ${hasTobacco === true ? styles.active : ''}`}
-                  onClick={() => {
-                    setHasTobacco(true)
-                    if (!available_tobaccos_text.trim()) {
-                      const fromShelf = shelfToText(loadShelf(telegramId))
-                      if (fromShelf) setAvailableTobaccosText(fromShelf)
-                    }
-                  }}
-                >
-                  <TobaccoIcon size={24} />
-                  Да, есть
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.pill} ${hasTobacco === false ? styles.active : ''}`}
-                  onClick={() => {
-                    setHasTobacco(false)
-                    setAvailableTobaccosText('')
-                  }}
-                >
-                  Нет, пусто
-                </button>
-              </div>
-              {hasTobacco === true && (
-                <textarea
-                  className={styles.textarea}
-                  value={available_tobaccos_text}
-                  onChange={(e) => setAvailableTobaccosText(e.target.value)}
-                  placeholder="название табаков"
-                  rows={2}
-                />
-              )}
-            </section>
+            <div className={`${styles.blocksRow} ${styles.blocksRowBottom}`}>
+              <section className={styles.blockCard}>
+                <div className={styles.blockHeader}>
+                  <h3 className={styles.blockTitle}>Есть табак?</h3>
+                  <p className={styles.blockSubtitle}>Будет проще</p>
+                </div>
+                <div className={`${styles.pills} ${styles.pillsRow}`}>
+                  <button
+                    type="button"
+                    className={`${styles.pill} ${hasTobacco === true ? styles.active : ''}`}
+                    onClick={() => setShowTobaccoSheet(true)}
+                  >
+                    Да
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.pill} ${hasTobacco === false ? styles.active : ''}`}
+                    onClick={() => {
+                      setHasTobacco(false)
+                      setAvailableTobaccosText('')
+                    }}
+                  >
+                    Нет
+                  </button>
+                </div>
+              </section>
+              <section className={styles.blockCard}>
+                <div className={styles.blockHeader}>
+                  <h3 className={styles.blockTitle}>Уголь?</h3>
+                  <p className={styles.blockSubtitle}>Скажу как долго греть</p>
+                </div>
+                <div className={`${styles.pills} ${styles.pillsRow}`}>
+                  <button
+                    type="button"
+                    className={`${styles.pill} ${coal_size === 23 ? styles.active : ''}`}
+                    onClick={() => setCoalSize(23)}
+                  >
+                    23
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.pill} ${coal_size === 25 ? styles.active : ''}`}
+                    onClick={() => setCoalSize(25)}
+                  >
+                    25
+                  </button>
+                </div>
+              </section>
+            </div>
           </form>
         </div>
 
@@ -258,6 +260,20 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
           </div>
         </div>
       </div>
+
+      {showTobaccoSheet && (
+        <ShelfSheet
+          telegramId={telegramId}
+          onClose={() => {
+            setShowTobaccoSheet(false)
+            const shelf = loadShelf(telegramId)
+            if (shelf.length > 0) {
+              setHasTobacco(true)
+              setAvailableTobaccosText(shelfToText(shelf))
+            }
+          }}
+        />
+      )}
     </ScreenLayout>
   )
 }

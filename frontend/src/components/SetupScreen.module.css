@@ -87,11 +87,11 @@
 }
 
 .blocksRowBottom .blockCard:first-child {
-  border-radius: 24px 24px 40px 40px; /* top-left 24, top-right 24, bottom-right 40, bottom-left 40 */
+  border-radius: 24px 24px 24px 40px; /* Есть табак */
 }
 
 .blocksRowBottom .blockCard:nth-child(2) {
-  border-radius: 24px 24px 24px 24px; /* top-left 24, top-right 24, bottom-right 24, bottom-left 24 */
+  border-radius: 24px 24px 40px 24px; /* Уголь */
 }
 
 /* Тёмный блок — стиль как на фидбеке */
@@ -186,6 +186,20 @@
 
 .pillsRow .pill:last-child {
   border-radius: 16px 16px 32px 32px;
+}
+
+/* Есть табак: только Нет — 16 везде */
+.blocksRowBottom .blockCard:first-child .pillsRow .pill:last-child {
+  border-radius: 16px;
+}
+
+/* Уголь: только 25 — 16 16 32 16 */
+.blocksRowBottom .blockCard:nth-child(2) .pillsRow .pill:first-child {
+  border-radius: 16px;
+}
+
+.blocksRowBottom .blockCard:nth-child(2) .pillsRow .pill:last-child {
+  border-radius: 16px 16px 32px 16px;
 }
 
 .pill {
