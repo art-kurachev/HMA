@@ -1,4 +1,11 @@
+from __future__ import annotations
+
+import logging
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,10 +28,10 @@ class LoginResponse(BaseModel):
 
 
 class SettingsUpdate(BaseModel):
-    daily_request_limit: int | None = None
-    disable_daily_limit: bool | None = None
-    llm_provider: str | None = None
-    llm_model: str | None = None
+    daily_request_limit: Optional[int] = None
+    disable_daily_limit: Optional[bool] = None
+    llm_provider: Optional[str] = None
+    llm_model: Optional[str] = None
 
 
 @router.post("/login", response_model=LoginResponse)
@@ -258,6 +265,7 @@ async def admin_update_settings(
     if body.llm_model is not None:
         await set_setting(db, "llm_model", body.llm_model.strip())
     cfg = await get_app_settings(db)
+    logger.info("Admin settings saved: llm_provider=%s llm_model=%s", cfg.get("llm_provider"), cfg.get("llm_model"))
     return {
         "daily_request_limit": int(cfg.get("daily_request_limit", "5")),
         "disable_daily_limit": cfg.get("disable_daily_limit", "true").lower() == "true",

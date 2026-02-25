@@ -1,4 +1,6 @@
-"""Runtime app settings stored in DB with fallback to env."""
+"""Runtime app settings stored in DB with fallback to env.
+   После первого запуска значения берутся из БД (админка); .env используется только как дефолт при первом seed.
+   Исключение: лимит рекомендаций (quota) дополнительно читает DISABLE_DAILY_LIMIT из .env при каждом запросе."""
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession

@@ -4,7 +4,7 @@ export interface MixParams {
   bowl: 'turka' | 'phunnel' | 'killer'
   heat_control: 'kaloud' | 'foil'
   has_cap: boolean
-  coal_size: 25 | 26
+  coal_size: 23 | 25 | 26
   coal_count_start: 2 | 3 | 4
   strength: 'low' | 'medium' | 'high'
   profiles: string[]
@@ -38,14 +38,22 @@ export interface InstructionResponse {
   if_not_opened: string[]
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+async function request<T>(path: string, options: RequestInit & { timeout?: number } = {}): Promise<T> {
+  const { timeout: timeoutMs, ...fetchOptions } = options
+  const controller = timeoutMs != null ? new AbortController() : undefined
+  const id =
+    controller &&
+    window.setTimeout(() => controller.abort(), timeoutMs)
+
   const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
+    ...fetchOptions,
+    signal: controller?.signal,
     headers: {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...fetchOptions.headers,
     },
   })
+  if (id != null) window.clearTimeout(id)
   const text = await res.text()
   let data: unknown
   try {
@@ -78,6 +86,25 @@ export async function suggestMixes(telegramId: number, params: MixParams): Promi
   return request<SuggestResponse>('/v1/mixes/suggest', {
     method: 'POST',
     body: JSON.stringify({ telegram_id: telegramId, params }),
+    timeout: 90000,
+  })
+}
+
+export type QuickSuggestDirection = 'movie' | 'relax' | 'surprise'
+
+export async function quickSuggestMixes(
+  telegramId: number,
+  direction: QuickSuggestDirection,
+  noTobacco = true
+): Promise<SuggestResponse> {
+  return request<SuggestResponse>('/v1/mixes/quick-suggest', {
+    method: 'POST',
+    body: JSON.stringify({
+      telegram_id: telegramId,
+      direction,
+      no_tobacco: noTobacco,
+    }),
+    timeout: 45000,
   })
 }
 

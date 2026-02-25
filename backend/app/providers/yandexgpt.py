@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import logging
 import re
@@ -97,7 +99,9 @@ class YandexGPTProvider(BaseProvider):
 
     async def generate_mixes(self, input_data: MixProviderInput) -> SuggestResponse:
         try:
-            prompt = build_mixes_prompt(input_data.params, input_data.available_tobaccos)
+            prompt = input_data.custom_prompt or build_mixes_prompt(
+                input_data.params, input_data.available_tobaccos
+            )
             raw = await self._chat(prompt)
             data = self._extract_json(raw)
 

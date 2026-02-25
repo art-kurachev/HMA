@@ -1,4 +1,5 @@
-"""Quota: 3 welcome requests (GigaChat-max) + 1/week (admin model). Creator unlimited."""
+"""Quota: 3 welcome requests (GigaChat-max) + 1/week (admin model). Creator unlimited.
+   Лимит отключается через DISABLE_DAILY_LIMIT в .env или disable_daily_limit в админке."""
 
 from datetime import date
 
@@ -32,10 +33,17 @@ async def check_and_consume_quota(
     """
     Check if user can make a suggest request and consume quota.
     Returns (allowed, provider_for_mix, model_for_mix).
-    - Provider: "gigachat" for welcome (GigaChat-max), else from admin
-    - Model: GigaChat-2-Max for welcome, else from admin
+    Если лимит отключён (DISABLE_DAILY_LIMIT в .env или disable_daily_limit в БД) — всегда разрешаем.
     """
     from app.core.app_settings import get_app_settings
+
+    app_cfg = await get_app_settings(db)
+    limit_disabled = (
+        settings.DISABLE_DAILY_LIMIT
+        or app_cfg.get("disable_daily_limit", "true").lower() == "true"
+    )
+    if limit_disabled:
+        return True, _admin_provider(app_cfg, user), _admin_model(app_cfg) or GIGACHAT_MAX_MODEL
 
     if is_creator(user.telegram_id):
         app_cfg = await get_app_settings(db)
@@ -45,11 +53,12 @@ async def check_and_consume_quota(
             return True, llm_provider, llm_model or ""
         return True, "gigachat", llm_model or settings.GIGACHAT_MODEL
 
-    # Welcome phase: first 3 requests
+    # Welcome phase: first 3 requests — используем провайдер из настроек (в т.ч. mock)
     if user.welcome_requests_used < WELCOME_QUOTA:
         user.welcome_requests_used += 1
         await db.flush()
-        return True, "gigachat", GIGACHAT_MAX_MODEL
+        app_cfg = await get_app_settings(db)
+        return True, _admin_provider(app_cfg, user), _admin_model(app_cfg) or GIGACHAT_MAX_MODEL
 
     # Weekly phase: 1 request per 7 days
     app_cfg = await get_app_settings(db)
@@ -71,8 +80,18 @@ async def check_and_consume_quota(
 async def get_remaining_quota(db: AsyncSession, user: User) -> tuple[int, bool]:
     """
     Returns (remaining, is_creator).
-    remaining: -1 = unlimited (creator), else 0–3 (welcome) or 0–1 (weekly)
+    remaining: -1 = unlimited (creator или лимит отключён), else 0–3 (welcome) or 0–1 (weekly)
     """
+    from app.core.app_settings import get_app_settings
+
+    app_cfg = await get_app_settings(db)
+    limit_disabled = (
+        settings.DISABLE_DAILY_LIMIT
+        or app_cfg.get("disable_daily_limit", "true").lower() == "true"
+    )
+    if limit_disabled:
+        return -1, False
+
     if is_creator(user.telegram_id):
         return -1, True
 

@@ -1,95 +1,223 @@
-.welcome {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  min-height: 60vh;
-}
-
-.figmaBg {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 55%;
-  height: 100%;
-  object-fit: cover;
-  object-position: right center;
+/* Iprit — Enter - 3. Фон макета на весь экран, контент поверх */
+.fullScreenBg {
+  position: fixed;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
 }
 
-.welcome > .alphaBadge,
-.welcome > .subtitle,
-.welcome > .title,
-.welcome > .counter,
-.welcome > .actions {
+.fullScreenBg .gradient,
+.fullScreenBg .overlay {
+  border-radius: 0;
+}
+
+.welcome {
   position: relative;
+  z-index: 1;
+  width: 100%;
+  overflow: visible;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.overlay img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gradient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, #222 0%, #ff6544 100%);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.1;
+  mix-blend-mode: hard-light;
+}
+
+/* Hero image — left -20px top 110px, rotate -9.59deg, 411x756 */
+.heroWrap {
+  position: absolute;
+  left: -20px;
+  top: 110px;
+  width: 531px;
+  height: 814px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.heroInner {
+  position: relative;
+  transform: rotate(-9.59deg);
+  width: 411px;
+  height: 756px;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.heroInner img {
+  position: absolute;
+  width: 163.58%;
+  height: 133.45%;
+  left: -28.75%;
+  top: -16.33%;
+  object-fit: cover;
+}
+
+/* Top: 3 progress bars + logo + Моя полка */
+.topBar {
+  position: absolute;
+  left: 0;
+  top: 58px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 2;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.logo {
+  width: 65px;
+  height: 30px;
+  flex-shrink: 0;
+  display: block;
+  object-fit: contain;
+}
+
+.shelfBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 16px 16px 24px;
+  border-radius: 50px;
+  border: none;
+  background: rgba(255, 101, 68, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #ff6544;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 200;
+  line-height: 16px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.shelfBtn:hover {
+  opacity: 0.9;
+}
+
+.shelfBtnIcon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* Bottom block — gradient strip + content */
+.bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  background: linear-gradient(180deg, rgba(231, 93, 58, 0) 0%, #e75d3a 100%);
   z-index: 1;
 }
 
-.alphaBadge {
-  display: inline-block;
-  width: fit-content;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  color: rgba(232, 93, 42, 1);
-  background: rgba(255, 255, 255, 1);
-  background-image: none;
-  border: none;
-  border-radius: 16px;
-  margin-bottom: 16px;
-  letter-spacing: 0.02em;
+.quotaRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: -16px;
 }
 
-.subtitle {
-  font-size: var(--text-subtitle, 22px);
-  font-weight: 100;
-  line-height: 100%;
+.quotaBadge {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ff6544;
+  border-radius: 50px;
+  font-family: var(--font-family);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 16px;
+  color: #f6f8ff;
+}
+
+.quotaLabel {
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 16px;
   color: #fff;
-  margin: 0 0 12px;
+  opacity: 0.6;
+  white-space: nowrap;
 }
 
 .title {
-  font-size: var(--text-hero, 43px);
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 35px;
   font-weight: 100;
-  line-height: 100%;
+  line-height: 1.2;
   color: #fff;
-  margin: 0 0 24px;
-  max-width: 320px;
-}
-
-.counter {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.65);
-  margin: 0 0 32px;
+  white-space: pre-wrap;
 }
 
 .actions {
-  margin-top: auto;
   display: flex;
+  gap: 4px;
   align-items: center;
-  gap: 12px;
+  width: 100%;
 }
 
 .primaryBtn {
-  flex: 1;
-  padding: 16px 24px;
-  border-radius: 24px;
+  width: fit-content;
+  flex: none;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px 16px 16px;
+  border-radius: 50px;
   border: none;
-  background: var(--accent, #e85d2a);
+  background: rgba(34, 34, 34, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   color: #fff;
-  font-family: 'Geologica', sans-serif;
-  font-size: var(--text-button, 14px);
+  font-family: var(--font-family);
+  font-size: 14px;
   font-weight: 200;
   line-height: 16px;
   text-align: left;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
   transition: opacity 0.2s;
 }
 
@@ -97,21 +225,50 @@
   opacity: 0.95;
 }
 
+.primaryBtnPadding {
+  padding-left: 16px;
+  padding-right: 24px;
+}
+
+/* Только для кнопки «Просто и быстро» на Welcome-экране */
+.primaryBtnWelcome {
+  padding-left: 24px;
+  padding-right: 16px;
+}
+
+.primaryBtnIcon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
 .secondaryBtn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: none;
-  background: #fff;
-  color: #1a1a2e;
-  font-size: 1.25rem;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  padding: 16px 16px 16px 24px;
+  border-radius: 50px;
+  border: none;
+  background: rgba(246, 248, 255, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #fff;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 200;
+  line-height: 16px;
+  cursor: pointer;
   transition: opacity 0.2s;
 }
 
 .secondaryBtn:hover {
   opacity: 0.9;
+}
+
+.secondaryBtnIcon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: block;
 }

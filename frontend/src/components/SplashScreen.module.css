@@ -1,0 +1,88 @@
+/* Экран предзагрузки — макет Figma node 48:350 «Enter - 2» точь-в-точь */
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  box-sizing: border-box;
+}
+
+/* Градиент: сверху #ff6544 → снизу #222; поверх — текстура 10% opacity hard-light */
+.bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, #ff6544 0%, #222 100%);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.1;
+  mix-blend-mode: hard-light;
+}
+
+.overlay img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Верхний текст: правый край, 36px отступы */
+.topText {
+  position: relative;
+  z-index: 1;
+  padding: 83px 36px 0;
+  text-align: right;
+}
+
+.topTextLine {
+  font-family: var(--font-family);
+  font-size: 24px;
+  font-weight: 100;
+  line-height: 1.09;
+  color: #fff;
+  margin: 0;
+  max-width: 303px;
+  margin-left: auto;
+  white-space: pre-line;
+}
+
+/* Нижний блок: логотип + подпись, 44px от низа, 8px между логотипом и текстом */
+.bottomBlock {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 8px;
+  padding-bottom: calc(44px + env(safe-area-inset-bottom, 0));
+  padding-left: 44px;
+}
+
+.logo {
+  width: 135px;
+  height: 62px;
+  object-fit: contain;
+  object-position: center;
+  flex-shrink: 0;
+}
+
+.subtitle {
+  font-family: var(--font-family);
+  font-size: 18px;
+  font-weight: 100;
+  line-height: 18px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  text-align: left;
+  white-space: pre-line;
+}

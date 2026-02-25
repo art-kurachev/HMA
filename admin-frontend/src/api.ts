@@ -6,6 +6,18 @@ function getToken(): string | null {
   return localStorage.getItem('admin_token')
 }
 
+function parseErrorDetail(err: { detail?: unknown }): string {
+  const d = err?.detail
+  if (typeof d === 'string') return d
+  if (Array.isArray(d) && d.length > 0) {
+    const first = d[0]
+    return typeof first === 'object' && first != null && 'msg' in first
+      ? String((first as { msg: unknown }).msg)
+      : JSON.stringify(d)
+  }
+  return ''
+}
+
 export async function login(username: string, password: string): Promise<string> {
   const res = await fetch(`${API_BASE}/admin/login`, {
     method: 'POST',
@@ -14,7 +26,7 @@ export async function login(username: string, password: string): Promise<string>
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(err.detail || 'Login failed')
+    throw new Error(parseErrorDetail(err) || 'Login failed')
   }
   const data = await res.json()
   return data.token
@@ -31,8 +43,12 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
     },
   })
   if (!res.ok) {
+    if (res.status === 401) {
+      localStorage.removeItem('admin_token')
+      window.dispatchEvent(new CustomEvent('admin:unauthorized'))
+    }
     const err = await res.json().catch(() => ({}))
-    throw new Error(err.detail || String(res.status))
+    throw new Error(parseErrorDetail(err) || `HTTP ${res.status}`)
   }
   return res.json()
 }

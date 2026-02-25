@@ -1,97 +1,253 @@
-.titleRow {
+/* Экран «Твоя цель» — макет Figma node 49-229, второй шаг «Просто и быстро» */
+
+.wrap {
+  width: 100%;
+  position: relative;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100vh;
+  padding: 0 0 24px;
+  padding-bottom: calc(88px + env(safe-area-inset-bottom, 0));
+}
+
+.header {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 24px;
+  padding: 8px 0 24px;
+  flex-shrink: 0;
+}
+
+.logoWrap {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 100%;
+  width: auto;
+  max-width: 65px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 56px;
+  padding: 16px 16px 16px 24px;
+  border-radius: 50px;
+  border: 2px solid rgba(246, 248, 255, 0.2);
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.tagText {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 200;
+  line-height: 16px;
+  color: #fff;
+}
+
+.tagIconSvg {
+  flex-shrink: 0;
+  color: #fff;
+}
+
+/* Контентный блок по макету (node 49:235): заголовок → карточки → кнопка */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 24px;
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 0;
+}
+
+/* Ряд с заголовком по макету (49:236): px-[24px], не часть хедера */
+.titleRow {
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  flex-shrink: 0;
+  width: 100%;
 }
 
 .title {
-  font-size: var(--text-hero, 43px);
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-family);
+  font-size: 32px;
   font-weight: 100;
-  line-height: 100%;
+  line-height: 1;
   color: #fff;
   margin: 0;
-  flex: 1;
+  padding: 0;
+  width: 100%;
 }
 
-.shareBtn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.bowlPlaceholder {
+  position: absolute;
+  top: 120px;
+  left: auto;
+  right: 24px;
+  transform: rotate(-15deg);
+  width: 193px;
+  height: 224px;
   flex-shrink: 0;
-  transition: background 0.2s;
+  pointer-events: none;
 }
 
-.shareBtn:hover {
-  background: rgba(255, 255, 255, 0.2);
+.bowlImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
 }
 
-.cards {
+.cardsGrid {
+  width: 100%;
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  min-height: 0;
+  max-height: 440px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.colLeft {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 4px;
+}
+
+.colRight {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .card {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   justify-content: space-between;
-  padding: 20px;
-  border-radius: 20px;
+  text-align: left;
+  padding: 16px;
   border: none;
-  background: rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  background: rgba(34, 34, 34, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   color: #fff;
   cursor: pointer;
-  text-align: left;
-  transition: all 0.2s;
+  transition: background 0.2s, box-shadow 0.2s;
+  min-height: 0;
 }
 
 .card:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(34, 34, 34, 0.85);
 }
 
 .card.selected {
-  background: var(--accent, #e85d2a);
+  background: rgba(255, 101, 68, 0.2);
+  box-shadow: 0 0 0 2px rgba(255, 101, 68, 0.5);
 }
 
-.cardSubtitle {
-  display: block;
-  font-size: var(--text-button, 14px);
-  font-weight: 200;
-  line-height: 1.2;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 4px;
+/* Под фильм — скругление сверху слева больше */
+.cardMovie {
+  border-radius: 40px 24px 24px 24px;
+  flex: 1;
+  min-height: 0;
 }
 
-.cardLabel {
-  display: block;
-  font-size: var(--text-card-title, 36px);
-  font-weight: 100;
-  line-height: 100%;
-  color: #fff;
+/* Расслабиться — скругление снизу слева больше */
+.cardRelax {
+  border-radius: 24px 24px 24px 40px;
+  flex: 1;
+  min-height: 0;
 }
 
-.arrow {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
-  color: #fff;
+/* Удиви меня — скругление справа, иконка в правом верхнем углу */
+.cardSurprise {
+  border-radius: 24px 40px 40px 24px;
+  flex: 1;
+  min-height: 0;
+}
+
+.cardIconWrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 50px;
+  background: rgba(255, 101, 68, 0.1);
+  color: #ff6544;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.card.selected .arrow {
-  background: #fff;
-  color: var(--accent);
+.cardMovie .cardIconWrap {
+  align-self: flex-start;
+}
+
+/* Расслабиться — иконка в кружке в левом нижнем углу */
+.cardRelax .cardIconWrap {
+  align-self: flex-start;
+}
+
+.cardSurprise .cardIconTop {
+  margin-bottom: 8px;
+}
+
+.cardIconTop {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.cardText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.cardLabel {
+  font-family: var(--font-family);
+  font-size: 22px;
+  font-weight: 200;
+  line-height: 24px;
+  color: #fff;
+}
+
+.cardDesc {
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 200;
+  line-height: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Нижний блок на экране «Твоя цель»: без градиента, выравнивание по макету */
+.bottomDirection {
+  background: unset;
+  background-color: unset;
+  background-image: none;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 0;
 }

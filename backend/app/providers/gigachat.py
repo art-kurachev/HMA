@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import logging
 import time
@@ -39,6 +41,7 @@ class GigaChatProvider(BaseProvider):
                 "Content-Type": "application/x-www-form-urlencoded",
             },
             data={"scope": settings.GIGACHAT_SCOPE},
+            timeout=30,
         )
         resp.raise_for_status()
         body = resp.json()
@@ -47,32 +50,52 @@ class GigaChatProvider(BaseProvider):
         logger.info("GigaChat OAuth token obtained")
         return self._access_token  # type: ignore[return-value]
 
+    def _chat_payload(self, model: str, prompt: str) -> dict:
+        return {
+            "model": model,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": (
+                        "Ты — эксперт по кальянам. "
+                        "Строго соблюдай правописание и термины (уголь, калауд, колпак, забивка и т.д.). "
+                        "Отвечай ТОЛЬКО валидным JSON без markdown-обёрток."
+                    ),
+                },
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": 0.7,
+            "max_tokens": 1024,
+        }
+
     async def _chat(self, client: httpx.AsyncClient, prompt: str) -> str:
         token = await self._ensure_token(client)
-        resp = await client.post(
-            CHAT_URL,
-            headers={"Authorization": f"Bearer {token}"},
-            json={
-                "model": self._model,
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": (
-                            "Ты — эксперт по кальянам. "
-                            "Строго соблюдай правописание и термины (уголь, калауд, колпак, забивка и т.д.). "
-                            "Отвечай ТОЛЬКО валидным JSON без markdown-обёрток."
-                        ),
-                    },
-                    {"role": "user", "content": prompt},
-                ],
-                "temperature": 0.7,
-                "max_tokens": 1024,
-            },
-            timeout=30,
-        )
-        resp.raise_for_status()
-        content: str = resp.json()["choices"][0]["message"]["content"]
-        return content
+        models_to_try = [self._model, "GigaChat", "GigaChat-Pro"]
+        models_to_try = list(dict.fromkeys(models_to_try))
+
+        last_exc = None
+        for model in models_to_try:
+            try:
+                resp = await client.post(
+                    CHAT_URL,
+                    headers={"Authorization": f"Bearer {token}"},
+                    json=self._chat_payload(model, prompt),
+                    timeout=30,
+                )
+                resp.raise_for_status()
+                content: str = resp.json()["choices"][0]["message"]["content"]
+                if model != self._model:
+                    logger.info("GigaChat: модель %s недоступна, использована %s", self._model, model)
+                return content
+            except httpx.HTTPStatusError as e:
+                last_exc = e
+                if e.response.status_code == 404:
+                    logger.warning("GigaChat: модель %s вернула 404, пробуем другую", model)
+                    continue
+                raise
+        if last_exc:
+            raise last_exc
+        raise RuntimeError("GigaChat: не удалось выбрать модель")
 
     @staticmethod
     def _extract_json(raw: str) -> dict:
@@ -86,9 +109,11 @@ class GigaChatProvider(BaseProvider):
         return json.loads(text.strip())
 
     async def generate_mixes(self, input_data: MixProviderInput) -> SuggestResponse:
-        prompt = build_mixes_prompt(input_data.params, input_data.available_tobaccos)
+        prompt = input_data.custom_prompt or build_mixes_prompt(
+            input_data.params, input_data.available_tobaccos
+        )
 
-        async with httpx.AsyncClient(verify=False) as client:
+        async with httpx.AsyncClient(verify=False, timeout=60) as client:
             raw = await self._chat(client, prompt)
 
         data = self._extract_json(raw)
@@ -115,7 +140,7 @@ class GigaChatProvider(BaseProvider):
         }
         prompt = build_instruction_prompt(mix_dict, input_data.params)
 
-        async with httpx.AsyncClient(verify=False) as client:
+        async with httpx.AsyncClient(verify=False, timeout=60) as client:
             raw = await self._chat(client, prompt)
 
         data = self._extract_json(raw)

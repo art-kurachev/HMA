@@ -1,4 +1,6 @@
-from typing import Literal
+from __future__ import annotations
+
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -7,7 +9,7 @@ class MixParams(BaseModel):
     bowl: Literal["turka", "phunnel", "killer"]
     heat_control: Literal["kaloud", "foil"]
     has_cap: bool
-    coal_size: Literal[25, 26]
+    coal_size: Literal[23, 25, 26]
     coal_count_start: Literal[2, 3, 4]
     strength: Literal["low", "medium", "high"]
     profiles: list[str]
@@ -19,12 +21,18 @@ class MixItem(BaseModel):
     title: str
     tobaccos: list[str]
     flavor: str
-    mix_db_id: int | None = None
+    mix_db_id: Optional[int] = None
 
 
 class SuggestRequest(BaseModel):
     telegram_id: int
     params: MixParams
+
+
+class QuickSuggestRequest(BaseModel):
+    telegram_id: int
+    direction: Literal["movie", "relax", "surprise"]
+    no_tobacco: bool = False
 
 
 class SuggestResponse(BaseModel):

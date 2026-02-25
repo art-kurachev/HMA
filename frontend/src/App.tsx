@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getTelegramId, initTelegram } from './telegram'
-import { suggestMixes, getInstruction, submitFeedback } from './api'
+import { suggestMixes, quickSuggestMixes, getInstruction, submitFeedback } from './api'
 import type { Mix, InstructionResponse } from './api'
 import type { FormState } from './types'
 import type { Direction } from './components/DirectionScreen'
 import { WelcomeScreen } from './components/WelcomeScreen'
+import { SplashScreen } from './components/SplashScreen'
+import { ShelfSheet } from './components/ShelfSheet'
 import { saveDraft, loadDraft, clearDraft } from './draftStorage'
 import { DirectionScreen } from './components/DirectionScreen'
 import { SetupScreen } from './components/SetupScreen'
@@ -16,8 +18,8 @@ import styles from './App.module.css'
 
 const LOADING_MESSAGES: Record<Step, string> = {
   welcome: 'Загрузка...',
-  direction: 'Загрузка...',
-  setup: 'Подбираем миксы...',
+  direction: 'Подбираю миксы...',
+  setup: 'Подбираю миксы...',
   mixes: 'Генерирую инструкцию...',
   instruction: 'Загрузка...',
   feedback: 'Отправляю...',
@@ -34,6 +36,7 @@ type Step =
   | 'done'
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true)
   const [telegramId, setTelegramId] = useState<number | null>(null)
   const [step, setStep] = useState<Step>('welcome')
   const [error, setError] = useState<string | null>(null)
@@ -45,6 +48,9 @@ export default function App() {
   const [selectedMix, setSelectedMix] = useState<Mix | null>(null)
   const [instruction, setInstruction] = useState<InstructionResponse | null>(null)
   const [timerState, setTimerState] = useState<import('./draftStorage').TimerState | null>(null)
+  const [shelfOpen, setShelfOpen] = useState(false)
+  /** С какого экрана пришли на выбор миксов: от него зависит «Назад» */
+  const [mixesFromStep, setMixesFromStep] = useState<'direction' | 'setup'>('direction')
 
   useEffect(() => {
     initTelegram()
@@ -52,10 +58,13 @@ export default function App() {
     setTelegramId(id ?? 123456789)
   }, [])
 
+  // Сплаш закрывается через 2 секунды (таймер в SplashScreen)
+
   useEffect(() => {
     const draft = loadDraft()
     if (!draft) return
-    setStep(draft.step)
+    // Не восстанавливаем step — приложение всегда стартует с первого экрана (welcome).
+    // Остальные данные черновика подставляются при переходе на соответствующие экраны.
     setDirection(draft.direction)
     setFormState(draft.formState)
     setMixes(draft.mixes ?? [])
@@ -74,8 +83,33 @@ export default function App() {
     setSelectedMix(null)
     setInstruction(null)
     setTimerState(null)
+    setMixesFromStep('direction')
     clearDraft()
   }, [])
+
+  useEffect(() => {
+    const root = document.getElementById('root')
+    if (step === 'welcome') root?.classList.add('welcome-full-bleed')
+    else root?.classList.remove('welcome-full-bleed')
+    if (step === 'direction') root?.classList.add('direction-full-bleed')
+    else root?.classList.remove('direction-full-bleed')
+    if (step === 'setup') root?.classList.add('setup-full-bleed')
+    else root?.classList.remove('setup-full-bleed')
+    if (step === 'mixes') root?.classList.add('mixes-full-bleed')
+    else root?.classList.remove('mixes-full-bleed')
+    if (step === 'instruction') root?.classList.add('instruction-full-bleed')
+    else root?.classList.remove('instruction-full-bleed')
+    if (step === 'feedback') root?.classList.add('feedback-full-bleed')
+    else root?.classList.remove('feedback-full-bleed')
+    return () => {
+      root?.classList.remove('welcome-full-bleed')
+      root?.classList.remove('direction-full-bleed')
+      root?.classList.remove('setup-full-bleed')
+      root?.classList.remove('mixes-full-bleed')
+      root?.classList.remove('instruction-full-bleed')
+      root?.classList.remove('feedback-full-bleed')
+    }
+  }, [step])
 
   useEffect(() => {
     if (step === 'welcome') return
@@ -100,10 +134,36 @@ export default function App() {
         : params
       const res = await suggestMixes(uid, apiParams)
       setMixes(res.mixes)
+      setMixesFromStep('setup')
       setStep('mixes')
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Ошибка'
       setError(msg === 'quota_exceeded' ? 'Лимит запросов исчерпан. Следующий — через неделю.' : msg)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleQuickSuggest = async (d: NonNullable<Direction>) => {
+    setError(null)
+    setLoading(true)
+    try {
+      const res = await quickSuggestMixes(uid, d)
+      setMixes(res.mixes)
+      setDirection(d)
+      setMixesFromStep('direction')
+      setStep('mixes')
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Ошибка'
+      const isQuota = msg === 'quota_exceeded'
+      const isAbort = e instanceof Error && e.name === 'AbortError'
+      setError(
+        isQuota
+          ? 'Лимит запросов исчерпан. Следующий — через неделю.'
+          : isAbort
+            ? 'Превышено время ожидания. Проверьте интернет или попробуйте позже.'
+            : msg
+      )
     } finally {
       setLoading(false)
     }
@@ -140,6 +200,7 @@ export default function App() {
 
   return (
     <div className={styles.app}>
+      {showSplash && <SplashScreen onDismiss={() => setShowSplash(false)} />}
       {loading && (
         <Loader message={LOADING_MESSAGES[step]} />
       )}
@@ -154,20 +215,23 @@ export default function App() {
         <WelcomeScreen
           telegramId={uid}
           onStart={() => setStep('direction')}
+          onSetup={() => setStep('setup')}
+          onOpenShelf={() => setShelfOpen(true)}
         />
+      )}
+      {shelfOpen && (
+        <ShelfSheet telegramId={uid} onClose={() => setShelfOpen(false)} />
       )}
       {step === 'direction' && (
         <DirectionScreen
           onBack={() => setStep('welcome')}
-          onNext={(d) => {
-            setDirection(d)
-            setStep('setup')
-          }}
+          onNext={(d) => d && handleQuickSuggest(d)}
         />
       )}
       {step === 'setup' && (
         <SetupScreen
-          onBack={() => setStep('direction')}
+          telegramId={uid}
+          onBack={() => setStep('welcome')}
           onSubmit={handleFormSubmit}
           loading={loading}
           initialFormState={formState}
@@ -177,7 +241,7 @@ export default function App() {
         <MixesStep
           mixes={mixes}
           onSelect={handleMixSelect}
-          onBack={() => setStep('setup')}
+          onBack={() => setStep(mixesFromStep)}
         />
       )}
       {step === 'instruction' && instruction && selectedMix && (
@@ -202,6 +266,7 @@ export default function App() {
       {step === 'feedback' && (
         <FeedbackStep
           onSubmit={handleFeedbackSubmit}
+          onSkip={goToWelcome}
           onBack={() => setStep('instruction')}
           loading={loading}
         />

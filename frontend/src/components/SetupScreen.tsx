@@ -1,10 +1,20 @@
 import { useState } from 'react'
 import type { FormState } from '../types'
 import { BOWL_OPTIONS, PROFILE_OPTIONS } from '../types'
+import { loadShelf, shelfToText } from '../shelfStorage'
 import { ScreenLayout } from './ScreenLayout'
-import { BottomNav } from './BottomNav'
-import { ShareIcon, BowlTurkaIcon, BowlPhunnelIcon, BowlKillerIcon, TobaccoIcon } from './Icons'
+import { ProgressRow } from './ProgressRow'
+import { ArrowLeftIcon, BlackHoleIcon } from './Icons'
+import { ShelfSheet } from './ShelfSheet'
+import instructionStyles from './InstructionStep.module.css'
+import welcomeStyles from './WelcomeScreen.module.css'
+import directionStyles from './DirectionScreen.module.css'
+import feedbackStyles from './FeedbackStep.module.css'
 import styles from './SetupScreen.module.css'
+
+const ICON_LOGO = '/icons/Union.svg'
+const ICON_ROUND_GRAPH = '/icons/RoundGraph.svg'
+const ICON_TICK_CIRCLE = '/icons/tick-circle.svg'
 
 const PROFILE_LABELS: Record<string, string> = {
   tea: 'Чайные',
@@ -18,31 +28,34 @@ const PROFILE_LABELS: Record<string, string> = {
 
 const API_DEFAULTS = {
   heat_control: 'kaloud' as const,
-  coal_size: 25 as const,
+  has_cap: true as const,
   coal_count_start: 3 as const,
   strength: 'medium' as const,
 }
 
 const EMPTY_UI = {
   bowl: null as 'turka' | 'phunnel' | 'killer' | null,
-  has_cap: null as boolean | null,
+  coal_size: null as 23 | 25 | null,
   profiles: [] as string[],
   hasTobacco: null as boolean | null,
   available_tobaccos_text: '',
 }
 
 interface SetupScreenProps {
+  telegramId: number
   onBack: () => void
   onSubmit: (params: FormState) => void
   loading: boolean
   initialFormState?: FormState | null
 }
 
-export function SetupScreen({ onBack, onSubmit, loading, initialFormState }: SetupScreenProps) {
+export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialFormState }: SetupScreenProps) {
   const initial = initialFormState
     ? {
         bowl: initialFormState.bowl as 'turka' | 'phunnel' | 'killer' | null,
-        has_cap: initialFormState.has_cap as boolean | null,
+        coal_size: (initialFormState.coal_size === 23 || initialFormState.coal_size === 25
+          ? initialFormState.coal_size
+          : null) as 23 | 25 | null,
         profiles: initialFormState.profiles,
         hasTobacco: initialFormState.available_tobaccos_text.trim()
           ? true
@@ -51,12 +64,14 @@ export function SetupScreen({ onBack, onSubmit, loading, initialFormState }: Set
       }
     : EMPTY_UI
   const [bowl, setBowl] = useState<'turka' | 'phunnel' | 'killer' | null>(initial.bowl)
-  const [has_cap, setHasCap] = useState<boolean | null>(initial.has_cap)
+  const [coal_size, setCoalSize] = useState<23 | 25 | null>(initial.coal_size)
   const [profiles, setProfiles] = useState<string[]>(initial.profiles)
   const [hasTobacco, setHasTobacco] = useState<boolean | null>(initial.hasTobacco)
   const [available_tobaccos_text, setAvailableTobaccosText] = useState(
     initial.available_tobaccos_text
   )
+  const [hasCap, setHasCap] = useState(initialFormState?.has_cap ?? false)
+  const [showTobaccoSheet, setShowTobaccoSheet] = useState(false)
 
   const toggleProfile = (p: string) => {
     setProfiles((prev) => {
@@ -72,12 +87,12 @@ export function SetupScreen({ onBack, onSubmit, loading, initialFormState }: Set
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault()
-    if (bowl === null || has_cap === null || hasTobacco === null) return
+    if (bowl === null || coal_size === null || hasTobacco === null) return
     onSubmit({
       bowl,
-      has_cap,
+      has_cap: hasCap,
       heat_control: API_DEFAULTS.heat_control,
-      coal_size: API_DEFAULTS.coal_size,
+      coal_size,
       coal_count_start: API_DEFAULTS.coal_count_start,
       strength: API_DEFAULTS.strength,
       profiles,
@@ -87,127 +102,199 @@ export function SetupScreen({ onBack, onSubmit, loading, initialFormState }: Set
 
   const canSubmit =
     bowl !== null &&
-    has_cap !== null &&
+    coal_size !== null &&
     hasTobacco !== null &&
     !(hasTobacco && !available_tobaccos_text.trim())
 
+  const filledBlocks =
+    (bowl !== null ? 1 : 0) +
+    (coal_size !== null ? 1 : 0) +
+    (profiles.length > 0 ? 1 : 0) +
+    (hasTobacco !== null && (hasTobacco === false || available_tobaccos_text.trim().length > 0) ? 1 : 0)
+
   return (
-    <ScreenLayout onBack={onBack} progressStep={2} totalSteps={3}>
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <div className={styles.titleRow}>
-          <h2 className={styles.title}>Всего три параметра</h2>
-          <button type="button" className={styles.shareBtn} aria-label="Поделиться">
-            <ShareIcon size={20} />
-          </button>
+    <ScreenLayout onBack={onBack} hideBackButton totalSteps={0} fullBleed>
+      <div className={`${instructionStyles.wrap} ${styles.wrapSetup}`}>
+        <header className={welcomeStyles.topBar}>
+          <ProgressRow filledCount={filledBlocks} />
+          <div className={welcomeStyles.headerRow}>
+            <img
+              src={ICON_LOGO}
+              alt="Iprit"
+              className={welcomeStyles.logo}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+            />
+            <div className={instructionStyles.tag} aria-hidden>
+              <span className={instructionStyles.tagText}>Сетап</span>
+              <img
+                src={ICON_ROUND_GRAPH}
+                alt=""
+                className={instructionStyles.tagIconSvg}
+                aria-hidden
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            </div>
+          </div>
+        </header>
+
+        <div className={`${instructionStyles.mainContent} ${styles.mainContentSetup}`}>
+          <div className={styles.headerWithBowl}>
+            <div className={directionStyles.titleRow}>
+              <div className={styles.headerText}>
+                <h2 className={directionStyles.title}>Всего четыре параметра</h2>
+                <p className={instructionStyles.flavor}>
+                  {hasCap ? 'Колпак в наличии, я это учту!' : 'Нажми на колпак, если он у тебя есть!'}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className={`${directionStyles.bowlPlaceholder} ${styles.kolpakWrap} ${hasCap ? styles.kolpakActive : ''}`}
+              onClick={() => setHasCap((prev) => !prev)}
+              aria-pressed={hasCap}
+              aria-label={hasCap ? 'Колпак в наличии' : 'Нажми, если есть колпак'}
+            >
+              <img src="/bowl.png" alt="" width={193} height={224} className={directionStyles.bowlImage} />
+              {hasCap && (
+                <img src={ICON_TICK_CIRCLE} alt="" className={styles.kolpakTick} aria-hidden />
+              )}
+            </button>
+          </div>
+          <form className={styles.blocksLayout} onSubmit={handleSubmit}>
+            <div className={styles.blocksRow}>
+              <section className={styles.blockCard}>
+                <div className={styles.blockHeader}>
+                  <h3 className={styles.blockTitle}>Чаша?</h3>
+                  <p className={styles.blockSubtitle}>Дам совет по забивке</p>
+                </div>
+                <div className={styles.pills}>
+                  {BOWL_OPTIONS.map((o) => (
+                    <button
+                      key={o.value}
+                      type="button"
+                      className={`${styles.pill} ${bowl === o.value ? styles.active : ''}`}
+                      onClick={() => setBowl(o.value)}
+                    >
+                      {o.value === 'turka' && <img src="/icons/bowl-turka.png" alt="" width={24} height={24} />}
+                      {o.value === 'phunnel' && <img src="/icons/bowl-phunnel.png" alt="" width={24} height={24} />}
+                      {o.value === 'killer' && <img src="/icons/bowl-killer.png" alt="" width={24} height={24} />}
+                      {o.label}
+                    </button>
+                  ))}
+                </div>
+              </section>
+              <section className={styles.blockCard}>
+                <div className={styles.blockHeader}>
+                  <h3 className={styles.blockTitle}>Вкус?</h3>
+                  <p className={styles.blockSubtitle}>Подберу лучший микс</p>
+                </div>
+                <div className={styles.chips}>
+                  {PROFILE_OPTIONS.map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      className={`${styles.chip} ${profiles.includes(p) ? styles.active : ''}`}
+                      onClick={() => toggleProfile(p)}
+                    >
+                      {PROFILE_LABELS[p] ?? p}
+                    </button>
+                  ))}
+                </div>
+              </section>
+            </div>
+
+            <div className={`${styles.blocksRow} ${styles.blocksRowBottom}`}>
+              <section className={styles.blockCard}>
+                <div className={styles.blockHeader}>
+                  <h3 className={styles.blockTitle}>Есть табак?</h3>
+                  <p className={styles.blockSubtitle}>Подберу из наличия</p>
+                </div>
+                <div className={`${styles.pills} ${styles.pillsRow}`}>
+                  <button
+                    type="button"
+                    className={`${styles.pill} ${hasTobacco === true ? styles.active : ''}`}
+                    onClick={() => setShowTobaccoSheet(true)}
+                  >
+                    Да
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.pill} ${hasTobacco === false ? styles.active : ''}`}
+                    onClick={() => {
+                      setHasTobacco(false)
+                      setAvailableTobaccosText('')
+                    }}
+                  >
+                    Нет
+                  </button>
+                </div>
+              </section>
+              <section className={styles.blockCard}>
+                <div className={styles.blockHeader}>
+                  <h3 className={styles.blockTitle}>Уголь?</h3>
+                  <p className={styles.blockSubtitle}>Скажу как долго греть</p>
+                </div>
+                <div className={`${styles.pills} ${styles.pillsRow}`}>
+                  <button
+                    type="button"
+                    className={`${styles.pill} ${coal_size === 23 ? styles.active : ''}`}
+                    onClick={() => setCoalSize(23)}
+                  >
+                    23
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.pill} ${coal_size === 25 ? styles.active : ''}`}
+                    onClick={() => setCoalSize(25)}
+                  >
+                    25
+                  </button>
+                </div>
+              </section>
+            </div>
+          </form>
         </div>
 
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>Чаша?</h3>
-            <span className={styles.hint}>Дам совет по забивке</span>
+        <div className={`${welcomeStyles.bottom} ${instructionStyles.bottomInstruction} ${styles.bottomSetup}`}>
+          <div className={instructionStyles.bottomBlock}>
+            <button
+              type="button"
+              className={`${instructionStyles.finishBtn} ${styles.finishBtnSetup}`}
+              onClick={onBack}
+              aria-label="Вернуться"
+            >
+              <ArrowLeftIcon size={24} />
+            </button>
+            <button
+              type="button"
+              className={`${feedbackStyles.submitBtnWhite} ${styles.submitBtnSetup}`}
+              onClick={() => handleSubmit()}
+              disabled={loading || !canSubmit}
+            >
+              {loading ? 'Загрузка...' : 'Миксуй'}
+              <BlackHoleIcon size={24} />
+            </button>
           </div>
-          <div className={styles.pills}>
-            {BOWL_OPTIONS.map((o) => (
-              <button
-                key={o.value}
-                type="button"
-                className={`${styles.pill} ${bowl === o.value ? styles.active : ''}`}
-                onClick={() => setBowl(o.value)}
-              >
-                {o.value === 'turka' && <BowlTurkaIcon size={28} />}
-                {o.value === 'phunnel' && <BowlPhunnelIcon size={28} />}
-                {o.value === 'killer' && <BowlKillerIcon size={28} />}
-                {o.label}
-              </button>
-            ))}
-          </div>
-        </section>
+        </div>
+      </div>
 
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>Наличие колпака?</h3>
-            <span className={styles.hint}>Колпак в наличии, я это учту!</span>
-          </div>
-          <div className={styles.pills}>
-            <button
-              type="button"
-              className={`${styles.pill} ${has_cap === true ? styles.active : ''}`}
-              onClick={() => setHasCap(true)}
-            >
-              Да, есть
-            </button>
-            <button
-              type="button"
-              className={`${styles.pill} ${has_cap === false ? styles.active : ''}`}
-              onClick={() => setHasCap(false)}
-            >
-              Нет
-            </button>
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>Вкус?</h3>
-            <span className={styles.hint}>Подберу лучший микс</span>
-          </div>
-          <div className={styles.chips}>
-            {PROFILE_OPTIONS.map((p) => (
-              <button
-                key={p}
-                type="button"
-                className={`${styles.chip} ${profiles.includes(p) ? styles.active : ''}`}
-                onClick={() => toggleProfile(p)}
-              >
-                {PROFILE_LABELS[p] ?? p}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>Есть табак?</h3>
-            <span className={styles.hint}>Будет проще</span>
-          </div>
-          <div className={styles.pills}>
-            <button
-              type="button"
-              className={`${styles.pill} ${hasTobacco === true ? styles.active : ''}`}
-              onClick={() => setHasTobacco(true)}
-            >
-              <TobaccoIcon size={28} />
-              Да, есть
-            </button>
-            <button
-              type="button"
-              className={`${styles.pill} ${hasTobacco === false ? styles.active : ''}`}
-              onClick={() => {
-                setHasTobacco(false)
-                setAvailableTobaccosText('')
-              }}
-            >
-              Нет, пусто
-            </button>
-          </div>
-          {hasTobacco === true && (
-            <textarea
-              className={styles.textarea}
-              value={available_tobaccos_text}
-              onChange={(e) => setAvailableTobaccosText(e.target.value)}
-              placeholder="название табаков"
-              rows={2}
-            />
-          )}
-        </section>
-      </form>
-      <BottomNav
-        onBack={onBack}
-        primaryLabel="Подобрать миксы"
-        onPrimary={() => handleSubmit()}
-        primaryDisabled={loading || !canSubmit}
-        primaryAccent
-      />
+      {showTobaccoSheet && (
+        <ShelfSheet
+          telegramId={telegramId}
+          onClose={() => {
+            setShowTobaccoSheet(false)
+            const shelf = loadShelf(telegramId)
+            if (shelf.length > 0) {
+              setHasTobacco(true)
+              setAvailableTobaccosText(shelfToText(shelf))
+            }
+          }}
+        />
+      )}
     </ScreenLayout>
   )
 }

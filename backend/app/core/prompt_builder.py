@@ -77,6 +77,44 @@ def build_mixes_prompt(params: dict, available_tobaccos: list[str]) -> str:
 }}"""
 
 
+DIRECTION_HINTS = {
+    "movie": "Миксы должны быть привычные, не навязчивые — чтобы не отвлекать от просмотра.",
+    "relax": "Миксы средние или крепкие, возможно с необычным интересным вкусом — для расслабления.",
+    "surprise": "Абсолютно любой микс — полная свобода выбора, рандомные сочетания.",
+}
+
+
+def build_quick_mixes_prompt(direction: str, no_tobacco: bool) -> str:
+    """Промпт для быстрого совета по цели вечера: только direction + нет/есть табак, остальное не учитывается."""
+    hint = DIRECTION_HINTS.get(direction, DIRECTION_HINTS["surprise"])
+    if no_tobacco:
+        tobacco_block = """
+У пользователя нет своих табаков. Предложи миксы из реальных, существующих табаков.
+Используй ТОЛЬКО табаки от этих производителей: Darkside, MUSTHAVE, Spectrum, Daily Hookah, Element, Satyr, Sebero, Black Burn, Bonche, Hype, Severniy, Jent, Deus, Nash, Trofimoff's.
+Указывай полное название: «Бренд Вкус». НЕ ИСПОЛЬЗУЙ табаки других брендов. НЕ ВЫДУМЫВАЙ несуществующие вкусы."""
+    else:
+        tobacco_block = """
+У пользователя есть свои табаки (список не указан в быстром запросе). Подбери миксы из популярных табаков тех же брендов: Darkside, MUSTHAVE, Spectrum, Element и т.д. Указывай полное название бренда и вкуса."""
+
+    return f"""Ты — профессиональный кальянщик. Дай ровно 3 рандомных микса для кальяна — быстрый совет по цели вечера.
+{SPELLING_RULES}
+
+Цель вечера: {hint}
+{tobacco_block}
+
+Требования: каждый микс — от 2 до 4 табаков. Три микса должны быть РАЗНЫМИ. Название микса — короткое (2–3 слова). Описание вкуса — 4–6 слов.
+
+Верни ТОЛЬКО валидный JSON, без комментариев и markdown:
+{{
+  "mixes": [
+    {{ "id": "mix_1", "title": "...", "tobaccos": ["...", "..."], "flavor": "..." }},
+    {{ "id": "mix_2", "title": "...", "tobaccos": ["...", "...", "..."], "flavor": "..." }},
+    {{ "id": "mix_3", "title": "...", "tobaccos": ["...", "...", "...", "..."], "flavor": "..." }}
+  ],
+  "clarify": []
+}}"""
+
+
 def build_instruction_prompt(mix: dict, params: dict) -> str:
     coal_count = params.get("coal_count_start", 3)
     coal_size = params.get("coal_size", 25)

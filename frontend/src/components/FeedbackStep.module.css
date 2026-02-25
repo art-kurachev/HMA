@@ -1,33 +1,163 @@
-.form {
-  max-width: 420px;
-  margin: 0 auto;
+/* Экран фидбека — тёмные блоки по макету */
+
+/* Контейнер с картинкой — сзади контента (ниже z-index) */
+.bowlPlaceholderBehind {
+  z-index: 0;
 }
 
-.title {
-  font-size: 1.5rem;
-  margin: 0 0 1rem;
-  font-weight: 600;
-  color: #fff;
+/* Заголовок и картинка прижаты к нижнему блоку */
+.wrapFeedback .mainContentFront {
+  padding-top: 0px;
+  gap: 24px;
+  justify-content: flex-end;
+  align-items: flex-start;
 }
 
-.rating {
+.wrapFeedback .mainContentFront > div:first-child {
+  margin-bottom: 0px;
+  width: 100%;
+}
+
+.wrapFeedback .mainContentFront > div:first-child h2 {
+  width: 100%;
+}
+
+.wrapFeedback .bowlPlaceholderBehind {
+  top: 328px;
+  left: 308px;
+  width: 237px;
+  height: 255px;
+}
+
+.mainContentFront {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+}
+
+.wrapFeedback {
+  height: 100%;
+}
+
+.wrapFeedback header,
+.wrapFeedback .mainContentFront,
+.wrapFeedback .bottomFront {
+  position: relative;
+  z-index: 1;
+}
+
+.wrapFeedback .mainContentFront {
+  height: 100%;
+}
+
+/* Прижать кнопки к низу экрана — как на «выбор цели»: absolute bottom */
+.wrapFeedback .bottomFront {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+/* Вёрстка: верхний ряд + нижний блок — обжимает контент, прижат к низу */
+.blocksLayout {
   display: flex;
-  gap: 12px;
-  margin-bottom: 1.5rem;
+  flex-direction: column;
+  gap: 0px;
+  flex: 0 0 auto;
+  margin-top: 0px;
+  height: fit-content;
+  padding: 0;
+  width: 100%;
+}
+
+/* Верхний ряд: два блока подряд */
+.blocksRow {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-bottom: 4px;
+}
+
+.blocksRow .blockCard:nth-child(2) {
+  border-radius: 24px 40px 24px 24px;
+}
+
+/* Тёмный блок — общий стиль */
+.blockCard .blockTitle {
+  padding-bottom: 0;
+}
+
+.blocksRow .blockCard:first-child .blockTitle,
+.blocksRow .blockCard:first-child .blockSubtitle {
+  text-align: right;
+}
+
+.blockCard {
+  flex: 1;
+  padding: 8px;
+  border-radius: 40px 24px 24px 24px;
+  background: rgba(34, 34, 34, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: fit-content;
+  min-width: 0;
+}
+
+/* Нижний блок во всю ширину */
+.blockComment {
+  flex: 0 0 auto;
+  width: 100%;
+  padding: 12px;
+  gap: 8px;
+  border-radius: 24px 24px 40px 40px;
+  height: fit-content;
+}
+
+.blockTitle {
+  font-family: var(--font-family);
+  font-size: 22px;
+  font-weight: 200;
+  line-height: 24px;
+  color: #fff;
+  margin: 0 0 0;
+  padding: 8px 8px 8px 8px;
+  text-align: left;
+}
+
+.blockSubtitle {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 200;
+  line-height: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 8px;
+  padding: 0 8px 0 8px;
+  text-align: left;
+}
+
+/* Кнопки оценки: два квадрата с иконками */
+.ratingButtons {
+  display: flex;
+  gap: 4px;
+  height: 64px;
+  margin-top: 24px;
 }
 
 .ratingBtn {
   flex: 1;
-  padding: 14px;
-  border-radius: 24px;
-  border: 1px solid rgba(232, 93, 42, 0.5);
-  background: rgba(232, 93, 42, 0.15);
-  color: #fff;
-  font-family: 'Geologica', sans-serif;
-  font-size: var(--text-button, 14px);
-  font-weight: var(--font-extralight, 200);
+  aspect-ratio: 1;
+  border-radius: 16px;
+  border: none;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 1);
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .ratingBtn:hover {
@@ -36,32 +166,51 @@
 
 .ratingBtn.active {
   background: rgba(255, 255, 255, 0.95);
-  color: #1a1a2e;
+  color: #292d32;
   border-color: transparent;
 }
 
-.label {
-  display: block;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.65);
-  margin-bottom: 0.5rem;
+.ratingIcon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.reasons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px;
+.ratingIcon img {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+/* На активной кнопке (белый фон) — инвертируем иконку для контраста */
+.ratingBtn.active .ratingIcon img {
+  filter: invert(1);
+}
+
+/* Теги — сетка 2×2, компактная */
+.tagsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  column-gap: 4px;
+  row-gap: 4px;
+  margin-top: 24px;
+  width: fit-content;
 }
 
 .chip {
-  padding: 10px 16px;
+  padding: 8px 12px;
+  width: fit-content;
+  height: 30px;
   border-radius: 50px;
-  border: 1px solid rgba(232, 93, 42, 0.5);
-  background: rgba(232, 93, 42, 0.15);
-  color: #fff;
-  font-family: inherit;
-  font-size: 0.9rem;
+  border: none;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 200;
+  line-height: 16px;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -72,40 +221,79 @@
 
 .chip.active {
   background: rgba(255, 255, 255, 0.95);
-  color: #1a1a2e;
+  color: #292d32;
   border-color: transparent;
 }
 
 .input {
   width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.05);
+  height: 48px;
+  margin-top: 8px;
+  padding: 12px 16px;
+  border-radius: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.2);
   color: #fff;
-  font-size: 1rem;
-  margin-bottom: 1rem;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 200;
+  line-height: 16px;
+  box-sizing: border-box;
 }
 
 .input::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 
-.submit {
-  width: 100%;
-  padding: 16px 24px;
-  border-radius: 24px;
-  border: none;
-  background: var(--accent, #e85d2a);
-  color: #fff;
-  font-family: 'Geologica', sans-serif;
-  font-size: var(--text-button, 14px);
-  font-weight: var(--font-extralight, 200);
-  text-align: left;
-  cursor: pointer;
+.input:focus {
+  outline: 1px solid #FF6544;
 }
 
-.submit:disabled {
-  opacity: 0.6;
+/* Белая кнопка «Отправить» */
+.submitBtnWhite {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 16px 24px 16px 16px;
+  border-radius: 50px;
+  border: none;
+  background: rgba(246, 248, 255, 1);
+  color: rgba(41, 45, 50, 1);
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 200;
+  line-height: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.submitBtnWhite:hover {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.submitBtnWhite:disabled {
+  opacity: 1;
   cursor: not-allowed;
+}
+
+/* Стили кнопки «Отправить» только на экране фидбека */
+.wrapFeedback .submitBtnWhite {
+  background: rgba(246, 248, 255, 0.2);
+  color: #F6F8FF;
+}
+
+.wrapFeedback .submitBtnWhite img {
+  filter: brightness(0) invert(1);
+}
+
+.wrapFeedback .submitBtnWhite:not(:disabled) {
+  background: #F6F8FF;
+  color: #292D32;
+}
+
+.wrapFeedback .submitBtnWhite:not(:disabled) img {
+  filter: brightness(0);
 }
