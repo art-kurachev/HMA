@@ -6,15 +6,16 @@ import welcomeStyles from './WelcomeScreen.module.css'
 import styles from './FeedbackStep.module.css'
 
 const ICON_LOGO = '/icons/Union.svg'
+const ICON_LIKE = '/icons/like.svg'
+const ICON_DISLIKE = '/icons/dislike.svg'
 const ICON_LIKE_DISLIKE = '/icons/like-dislike.svg'
 const ICON_TICK_CIRCLE = '/icons/tick-circle.svg'
 
 const REASONS = [
   { value: 'горчит', label: 'Горчит' },
   { value: 'слабый вкус', label: 'Слабый вкус' },
-  { value: 'слишком крепко', label: 'Слишком крепко' },
-  { value: 'не зашло', label: 'Не зашло' },
-  { value: 'другое', label: 'Другое' },
+  { value: 'крепко', label: 'Крепко' },
+  { value: 'просто не то', label: 'Просто, не то' },
 ]
 
 interface FeedbackStepProps {
@@ -27,10 +28,12 @@ interface FeedbackStepProps {
 export function FeedbackStep({ onSubmit, onSkip, onBack, loading }: FeedbackStepProps) {
   const [rating, setRating] = useState<boolean | null>(null)
   const [reason, setReason] = useState('')
+  const [comment, setComment] = useState('')
 
   const handleSubmit = () => {
     if (rating === null) return
-    onSubmit(rating, reason || (rating ? 'понравилось' : 'другое'))
+    const text = comment.trim() || (rating ? 'понравилось' : reason || 'другое')
+    onSubmit(rating, text)
   }
 
   return (
@@ -69,36 +72,40 @@ export function FeedbackStep({ onSubmit, onSkip, onBack, loading }: FeedbackStep
           <div className={instructionStyles.headerBlock}>
             <h2 className={instructionStyles.title}>Оценка рекомендации</h2>
           </div>
+          <div className={styles.blocksLayout}>
+            {/* Верхний ряд: два блока подряд */}
+            <div className={styles.blocksRow}>
+              <section className={styles.blockCard}>
+                <h3 className={styles.blockTitle}>Зашло?</h3>
+                <p className={styles.blockSubtitle}>Общие впечатления</p>
+                <div className={styles.ratingButtons}>
+                  <button
+                    type="button"
+                    className={`${styles.ratingBtn} ${rating === true ? styles.active : ''}`}
+                    onClick={() => setRating(true)}
+                    aria-label="Зашло"
+                  >
+                    <span className={styles.ratingIcon}>
+                      <img src={ICON_LIKE} alt="" width={24} height={24} aria-hidden />
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.ratingBtn} ${rating === false ? styles.active : ''}`}
+                    onClick={() => setRating(false)}
+                    aria-label="Не зашло"
+                  >
+                    <span className={styles.ratingIcon}>
+                      <img src={ICON_DISLIKE} alt="" width={24} height={24} aria-hidden />
+                    </span>
+                  </button>
+                </div>
+              </section>
 
-          <div className={instructionStyles.cardsList}>
-            {/* Placeholder: вставить <img src="..." /> — картинка будет позже */}
-            <div className={styles.imagePlaceholder} />
-
-            <section className={instructionStyles.sectionCard}>
-              <div className={styles.rating}>
-                <button
-                  type="button"
-                  className={`${styles.ratingBtn} ${rating === true ? styles.active : ''}`}
-                  onClick={() => setRating(true)}
-                >
-                  <span className={styles.ratingIcon}>👍</span>
-                  Зашло
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.ratingBtn} ${rating === false ? styles.active : ''}`}
-                  onClick={() => setRating(false)}
-                >
-                  <span className={styles.ratingIcon}>👎</span>
-                  Не зашло
-                </button>
-              </div>
-            </section>
-
-            {rating === false && (
-              <section className={instructionStyles.sectionCard}>
-                <label className={styles.label}>Почему? (если не зашло)</label>
-                <div className={styles.reasons}>
+              <section className={styles.blockCard}>
+                <h3 className={styles.blockTitle}>Почему?</h3>
+                <p className={styles.blockSubtitle}>Если нет</p>
+                <div className={styles.tagsGrid}>
                   {REASONS.map((r) => (
                     <button
                       key={r.value}
@@ -110,15 +117,20 @@ export function FeedbackStep({ onSubmit, onSkip, onBack, loading }: FeedbackStep
                     </button>
                   ))}
                 </div>
-                <input
-                  type="text"
-                  className={styles.input}
-                  placeholder="Свой вариант (опционально)"
-                  value={REASONS.some((r) => r.value === reason) ? '' : reason}
-                  onChange={(e) => setReason(e.target.value)}
-                />
               </section>
-            )}
+            </div>
+
+            {/* Нижний блок во всю ширину */}
+            <section className={`${styles.blockCard} ${styles.blockComment}`}>
+              <h3 className={styles.blockTitle}>Комментарий</h3>
+              <input
+                type="text"
+                className={styles.input}
+                placeholder="Получилось очень вкусно!"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              />
+            </section>
           </div>
         </div>
 
