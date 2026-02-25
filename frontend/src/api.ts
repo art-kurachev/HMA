@@ -1,4 +1,13 @@
+import { getInitData } from './telegram'
+
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
+
+function defaultHeaders(): Record<string, string> {
+  const h: Record<string, string> = { 'Content-Type': 'application/json' }
+  const initData = getInitData()
+  if (initData) h['X-Telegram-Init-Data'] = initData
+  return h
+}
 
 export interface MixParams {
   bowl: 'turka' | 'phunnel' | 'killer'
@@ -49,7 +58,7 @@ async function request<T>(path: string, options: RequestInit & { timeout?: numbe
     ...fetchOptions,
     signal: controller?.signal,
     headers: {
-      'Content-Type': 'application/json',
+      ...defaultHeaders(),
       ...fetchOptions.headers,
     },
   })

@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.core.llm_queue import run_through_llm_queue
+from app.utils.telegram_auth import resolve_telegram_id
 from app.core.provider_router import (
     ensure_user_and_provider_group,
     generate_instruction_input,
@@ -25,10 +27,12 @@ router = APIRouter(prefix="/mixes", tags=["mixes"])
 @router.get("/quota")
 async def get_quota(
     telegram_id: int = Query(..., description="Telegram user ID"),
+    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
     db: AsyncSession = Depends(get_db),
 ):
     """Return remaining requests: -1 = unlimited (creator), else 0–3 (welcome) or 0–1 (weekly)."""
-    user = await ensure_user_and_provider_group(db, telegram_id)
+    uid = resolve_telegram_id(x_telegram_init_data, telegram_id, settings.BOT_TOKEN)
+    user = await ensure_user_and_provider_group(db, uid)
     remaining, is_creator = await get_remaining_quota(db, user)
     return {"remaining": remaining, "is_creator": is_creator}
 
@@ -36,9 +40,11 @@ async def get_quota(
 @router.post("/suggest", response_model=SuggestResponse)
 async def suggest_mixes(
     body: SuggestRequest,
+    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
     db: AsyncSession = Depends(get_db),
 ):
-    user = await ensure_user_and_provider_group(db, body.telegram_id)
+    uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
+    user = await ensure_user_and_provider_group(db, uid)
     allowed, provider_name, model_name = await check_and_consume_quota(db, user)
     if not allowed:
         raise HTTPException(status_code=429, detail="quota_exceeded")
@@ -77,10 +83,12 @@ async def suggest_mixes(
 @router.post("/quick-suggest", response_model=SuggestResponse)
 async def quick_suggest_mixes(
     body: QuickSuggestRequest,
+    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
     db: AsyncSession = Depends(get_db),
 ):
     """Быстрый совет: 3 рандомных микса по цели вечера (без полного сетапа)."""
-    user = await ensure_user_and_provider_group(db, body.telegram_id)
+    uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
+    user = await ensure_user_and_provider_group(db, uid)
     allowed, provider_name, model_name = await check_and_consume_quota(db, user)
     if not allowed:
         raise HTTPException(status_code=429, detail="quota_exceeded")
@@ -121,9 +129,11 @@ async def quick_suggest_mixes(
 async def get_instruction(
     mix_id: str,
     body: InstructionRequest,
+    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
     db: AsyncSession = Depends(get_db),
 ):
-    user = await ensure_user_and_provider_group(db, body.telegram_id)
+    uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
+    user = await ensure_user_and_provider_group(db, uid)
 
     from sqlalchemy import select
 

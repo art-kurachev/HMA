@@ -1,6 +1,8 @@
 import asyncio
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Header, HTTPException
+
+from app.utils.telegram_auth import resolve_telegram_id
 from pydantic import BaseModel
 
 from app.config import settings
@@ -47,20 +49,28 @@ def _cancel_warmup_task(telegram_id: int) -> bool:
 
 
 @router.post("/warmup")
-async def schedule_warmup_notify(body: WarmupNotifyRequest):
+async def schedule_warmup_notify(
+    body: WarmupNotifyRequest,
+    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
+):
     """Schedule a Telegram notification when warmup timer ends."""
     if not settings.BOT_TOKEN:
         raise HTTPException(status_code=503, detail="BOT_TOKEN not configured")
     if body.warmup_seconds < 1 or body.warmup_seconds > 3600:
         raise HTTPException(status_code=400, detail="warmup_seconds must be 1-3600")
-    _cancel_warmup_task(body.telegram_id)
-    task = asyncio.create_task(_schedule_warmup_notify(body.telegram_id, body.warmup_seconds))
-    _warmup_tasks[body.telegram_id] = task
+    uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
+    _cancel_warmup_task(uid)
+    task = asyncio.create_task(_schedule_warmup_notify(uid, body.warmup_seconds))
+    _warmup_tasks[uid] = task
     return {"ok": True}
 
 
 @router.post("/warmup/cancel")
-async def cancel_warmup_notify(body: WarmupCancelRequest):
+async def cancel_warmup_notify(
+    body: WarmupCancelRequest,
+    x_telegram_init_data: str | None = Header(None, alias="X-Telegram-Init-Data"),
+):
     """Cancel scheduled warmup notification (when user pauses timer)."""
-    cancelled = _cancel_warmup_task(body.telegram_id)
+    uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
+    cancelled = _cancel_warmup_task(uid)
     return {"ok": True, "cancelled": cancelled}
