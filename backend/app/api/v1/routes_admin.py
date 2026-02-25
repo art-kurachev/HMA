@@ -4,8 +4,6 @@ import logging
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-
-logger = logging.getLogger(__name__)
 from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,6 +13,7 @@ from app.core.app_settings import get_app_settings, set_setting
 from app.db.models import DailyUsage, Feedback, GeneratedMix, Session, User
 from app.db.session import get_db
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 

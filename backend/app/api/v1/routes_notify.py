@@ -1,5 +1,4 @@
 import asyncio
-from typing import Dict
 
 import httpx
 from fastapi import APIRouter, HTTPException
@@ -10,7 +9,7 @@ from app.config import settings
 router = APIRouter(prefix="/notify", tags=["notify"])
 
 # Храним задачи уведомлений по telegram_id для возможности отмены при паузе
-_warmup_tasks: Dict[int, asyncio.Task] = {}
+_warmup_tasks: dict[int, asyncio.Task] = {}
 
 
 class WarmupNotifyRequest(BaseModel):
