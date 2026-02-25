@@ -278,3 +278,22 @@
   opacity: 1;
   cursor: not-allowed;
 }
+
+/* Стили кнопки «Отправить» только на экране фидбека */
+.wrapFeedback .submitBtnWhite {
+  background: rgba(246, 248, 255, 0.2);
+  color: #F6F8FF;
+}
+
+.wrapFeedback .submitBtnWhite img {
+  filter: brightness(0) invert(1);
+}
+
+.wrapFeedback .submitBtnWhite:not(:disabled) {
+  background: #F6F8FF;
+  color: #292D32;
+}
+
+.wrapFeedback .submitBtnWhite:not(:disabled) img {
+  filter: brightness(0);
+}

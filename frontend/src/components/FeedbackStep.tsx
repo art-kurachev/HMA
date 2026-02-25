@@ -9,7 +9,7 @@ const ICON_LOGO = '/icons/Union.svg'
 const ICON_LIKE = '/icons/like.svg'
 const ICON_DISLIKE = '/icons/dislike.svg'
 const ICON_LIKE_DISLIKE = '/icons/like-dislike.svg'
-const ICON_TICK_CIRCLE = '/icons/tick-circle.svg'
+const ICON_TICK_CIRCLE = '/icons/submit-tick.svg'
 
 const REASONS = [
   { value: 'горчит', label: 'Горчит' },
