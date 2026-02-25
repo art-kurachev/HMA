@@ -3,6 +3,7 @@ Telegram WebApp initData validator.
 Stub implementation - always returns True for MVP.
 Real implementation should verify hash using bot token.
 """
+
 from __future__ import annotations
 
 

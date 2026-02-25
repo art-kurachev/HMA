@@ -1,5 +1,5 @@
 """Quota: 3 welcome requests (GigaChat-max) + 1/week (admin model). Creator unlimited.
-   Лимит отключается через DISABLE_DAILY_LIMIT в .env или disable_daily_limit в админке."""
+Лимит отключается через DISABLE_DAILY_LIMIT в .env или disable_daily_limit в админке."""
 
 from datetime import date
 
@@ -38,10 +38,7 @@ async def check_and_consume_quota(
     from app.core.app_settings import get_app_settings
 
     app_cfg = await get_app_settings(db)
-    limit_disabled = (
-        settings.DISABLE_DAILY_LIMIT
-        or app_cfg.get("disable_daily_limit", "true").lower() == "true"
-    )
+    limit_disabled = settings.DISABLE_DAILY_LIMIT or app_cfg.get("disable_daily_limit", "true").lower() == "true"
     if limit_disabled:
         return True, _admin_provider(app_cfg, user), _admin_model(app_cfg) or GIGACHAT_MAX_MODEL
 
@@ -85,10 +82,7 @@ async def get_remaining_quota(db: AsyncSession, user: User) -> tuple[int, bool]:
     from app.core.app_settings import get_app_settings
 
     app_cfg = await get_app_settings(db)
-    limit_disabled = (
-        settings.DISABLE_DAILY_LIMIT
-        or app_cfg.get("disable_daily_limit", "true").lower() == "true"
-    )
+    limit_disabled = settings.DISABLE_DAILY_LIMIT or app_cfg.get("disable_daily_limit", "true").lower() == "true"
     if limit_disabled:
         return -1, False
 

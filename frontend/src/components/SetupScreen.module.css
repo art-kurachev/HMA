@@ -45,6 +45,11 @@
   height: fit-content;
 }
 
+.titleRowSetup {
+  padding-right: 130px;
+  margin-right: 0;
+}
+
 .headerText {
   position: relative;
   z-index: 2;
@@ -52,7 +57,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-right: 100px;
+  padding-right: 0;
 }
 
 /* Кликабельный блок с колпаком — без анимации вверх/вниз, поворот по клику */

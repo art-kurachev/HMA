@@ -43,6 +43,7 @@ async def runtime_error_handler(request, exc: RuntimeError):
     if "GIGACHAT_AUTH_KEY" in msg or "YandexGPT" in msg or "API" in msg:
         logger.warning("LLM provider error: %s", msg)
         from fastapi.responses import JSONResponse
+
         return JSONResponse(
             status_code=503,
             content={"detail": msg},
@@ -59,6 +60,7 @@ async def unhandled_exception_handler(request, exc):
         traceback.format_exc(),
     )
     from fastapi.responses import JSONResponse
+
     msg = str(exc)
     if "httpx" in type(exc).__module__:
         if "404" in msg:

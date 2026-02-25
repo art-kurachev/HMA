@@ -24,8 +24,10 @@ def _has_gigachat_key() -> bool:
 
 def _has_yandexgpt_keys() -> bool:
     return bool(
-        settings.YANDEXGPT_API_KEY and str(settings.YANDEXGPT_API_KEY).strip()
-        and settings.YANDEXGPT_FOLDER_ID and str(settings.YANDEXGPT_FOLDER_ID).strip()
+        settings.YANDEXGPT_API_KEY
+        and str(settings.YANDEXGPT_API_KEY).strip()
+        and settings.YANDEXGPT_FOLDER_ID
+        and str(settings.YANDEXGPT_FOLDER_ID).strip()
     )
 
 

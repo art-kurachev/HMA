@@ -144,7 +144,7 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
 
         <div className={`${instructionStyles.mainContent} ${styles.mainContentSetup}`}>
           <div className={styles.headerWithBowl}>
-            <div className={directionStyles.titleRow}>
+            <div className={`${directionStyles.titleRow} ${styles.titleRowSetup}`}>
               <div className={styles.headerText}>
                 <h2 className={directionStyles.title}>Всего четыре параметра</h2>
                 <p className={instructionStyles.flavor}>

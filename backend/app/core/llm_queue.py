@@ -1,4 +1,5 @@
 """Очередь вызовов к LLM: только один запрос одновременно (несколько пользователей — по одному в момент)."""
+
 import asyncio
 from collections.abc import Coroutine
 from typing import TypeVar
