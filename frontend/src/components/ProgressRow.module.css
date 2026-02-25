@@ -24,7 +24,8 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Setup: заполнена при выборе данных в блоке */
+/* Setup: заполнена при выборе данных в блоке — без прозрачности */
 .progressBarFilled {
-  background: #FF6544;
+  background: rgb(255, 101, 68);
+  opacity: 1;
 }
