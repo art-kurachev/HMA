@@ -54,6 +54,21 @@ export default function App() {
     initTelegram()
     const id = getTelegramId()
     setTelegramId(id ?? 123456789)
+    // Telegram WebApp может подгрузить initData позже — перепроверяем
+    if (id == null && typeof window !== 'undefined' && window.Telegram?.WebApp) {
+      const t = setInterval(() => {
+        const late = getTelegramId()
+        if (late != null) {
+          setTelegramId(late)
+          clearInterval(t)
+        }
+      }, 100)
+      const stop = setTimeout(() => clearInterval(t), 5000)
+      return () => {
+        clearInterval(t)
+        clearTimeout(stop)
+      }
+    }
   }, [])
 
   useEffect(() => {
