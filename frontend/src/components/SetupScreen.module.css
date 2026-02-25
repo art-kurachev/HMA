@@ -57,7 +57,7 @@
 /* Кликабельный блок с колпаком — без анимации вверх/вниз, поворот по клику */
 .kolpakWrap {
   position: absolute;
-  top: 120px;
+  top: 70px;
   left: auto;
   right: 24px;
   z-index: 1;
@@ -131,6 +131,8 @@
 
 /* Блоки — вёрстка как на фидбеке */
 .blocksLayout {
+  position: relative;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   gap: 0;
