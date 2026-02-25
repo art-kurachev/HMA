@@ -2,6 +2,13 @@ import { getInitData } from './telegram'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
+/** Fallback ID когда getTelegramId() не сработал (браузер, не Mini App). Не делаем запросы. */
+export const FALLBACK_TELEGRAM_ID = 123456789
+
+function isFallbackId(id: number): boolean {
+  return id === FALLBACK_TELEGRAM_ID
+}
+
 function defaultHeaders(): Record<string, string> {
   const h: Record<string, string> = { 'Content-Type': 'application/json' }
   const initData = getInitData()
@@ -88,10 +95,16 @@ export interface QuotaResponse {
 }
 
 export async function getQuota(telegramId: number): Promise<QuotaResponse> {
+  if (isFallbackId(telegramId)) {
+    return Promise.resolve({ remaining: 0, is_creator: false })
+  }
   return request<QuotaResponse>(`/v1/mixes/quota?telegram_id=${telegramId}`)
 }
 
 export async function suggestMixes(telegramId: number, params: MixParams): Promise<SuggestResponse> {
+  if (isFallbackId(telegramId)) {
+    return Promise.reject(new Error('Открой приложение через Telegram'))
+  }
   return request<SuggestResponse>('/v1/mixes/suggest', {
     method: 'POST',
     body: JSON.stringify({ telegram_id: telegramId, params }),
@@ -106,6 +119,9 @@ export async function quickSuggestMixes(
   direction: QuickSuggestDirection,
   noTobacco = true
 ): Promise<SuggestResponse> {
+  if (isFallbackId(telegramId)) {
+    return Promise.reject(new Error('Открой приложение через Telegram'))
+  }
   return request<SuggestResponse>('/v1/mixes/quick-suggest', {
     method: 'POST',
     body: JSON.stringify({
@@ -118,6 +134,9 @@ export async function quickSuggestMixes(
 }
 
 export async function getInstruction(telegramId: number, mixId: string): Promise<InstructionResponse> {
+  if (isFallbackId(telegramId)) {
+    return Promise.reject(new Error('Открой приложение через Telegram'))
+  }
   return request<InstructionResponse>(`/v1/mixes/${mixId}/instruction`, {
     method: 'POST',
     body: JSON.stringify({ telegram_id: telegramId }),
@@ -128,6 +147,7 @@ export async function scheduleWarmupNotify(
   telegramId: number,
   warmupSeconds: number
 ): Promise<void> {
+  if (isFallbackId(telegramId)) return
   await request('/v1/notify/warmup', {
     method: 'POST',
     body: JSON.stringify({
@@ -138,6 +158,7 @@ export async function scheduleWarmupNotify(
 }
 
 export async function cancelWarmupNotify(telegramId: number): Promise<void> {
+  if (isFallbackId(telegramId)) return
   await request('/v1/notify/warmup/cancel', {
     method: 'POST',
     body: JSON.stringify({ telegram_id: telegramId }),
@@ -150,6 +171,9 @@ export async function submitFeedback(
   rating: boolean,
   reason: string
 ): Promise<void> {
+  if (isFallbackId(telegramId)) {
+    return Promise.reject(new Error('Открой приложение через Telegram'))
+  }
   await request('/v1/feedback/', {
     method: 'POST',
     body: JSON.stringify({

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getTelegramId, initTelegram } from './telegram'
-import { suggestMixes, quickSuggestMixes, getInstruction, submitFeedback } from './api'
+import { FALLBACK_TELEGRAM_ID, suggestMixes, quickSuggestMixes, getInstruction, submitFeedback } from './api'
 import type { Mix, InstructionResponse } from './api'
 import type { FormState } from './types'
 import type { Direction } from './components/DirectionScreen'
@@ -53,7 +53,7 @@ export default function App() {
   useEffect(() => {
     initTelegram()
     const id = getTelegramId()
-    setTelegramId(id ?? 123456789)
+    setTelegramId(id ?? FALLBACK_TELEGRAM_ID)
     // Telegram WebApp может подгрузить initData позже — перепроверяем
     if (id == null && typeof window !== 'undefined' && window.Telegram?.WebApp) {
       const t = setInterval(() => {
@@ -84,7 +84,7 @@ export default function App() {
     setMixesFromStep(draft.mixesFromStep ?? (draft.formState ? 'setup' : 'direction'))
   }, [])
 
-  const uid = telegramId ?? 123456789
+  const uid = telegramId ?? FALLBACK_TELEGRAM_ID
 
   const goToWelcome = useCallback(() => {
     setStep('welcome')

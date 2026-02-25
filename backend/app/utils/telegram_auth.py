@@ -43,7 +43,10 @@ def extract_user_id_from_init_data(init_data: str) -> int | None:
 
 
 def resolve_telegram_id(init_data: str | None, fallback: int, bot_token: str | None) -> int:
-    """Use initData user_id if valid, else fallback."""
+    """Используем initData только когда fallback=123456789 (Main button, getTelegramId не сработал).
+    Иначе — fallback (Menu button, getTelegramId дал реальный ID)."""
+    if fallback != 123456789:
+        return fallback  # Menu button: уже есть реальный telegram_id
     if init_data and bot_token and validate_init_data(init_data, bot_token):
         uid = extract_user_id_from_init_data(init_data)
         if uid is not None:
