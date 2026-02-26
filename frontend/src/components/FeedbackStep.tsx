@@ -4,6 +4,7 @@ import { EndIcon } from './Icons'
 import instructionStyles from './InstructionStep.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
 import mixesStyles from './MixesStep.module.css'
+import progressRowStyles from './ProgressRow.module.css'
 import styles from './FeedbackStep.module.css'
 
 const ICON_LOGO = '/icons/Union.svg'
@@ -48,6 +49,7 @@ export function FeedbackStep({ onSubmit, onSkip, onBack, loading }: FeedbackStep
     <ScreenLayout onBack={onBack} hideBackButton totalSteps={0} fullBleed>
       <div className={`${instructionStyles.wrap} ${styles.wrapFeedback}`}>
         <header className={welcomeStyles.topBar}>
+          <div className={progressRowStyles.progressRow} aria-hidden />
           <div className={welcomeStyles.headerRow}>
             <img
               src={ICON_LOGO}

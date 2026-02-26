@@ -1,8 +1,7 @@
 /* Экран фидбека — тёмные блоки по макету */
 
-/* Заголовок и контент прижаты к нижнему блоку */
+/* Заголовок и контент — тот же отступ сверху, что и на инструкции (общее правило) */
 .wrapFeedback .mainContentFront {
-  padding-top: 0px;
   gap: 24px;
   justify-content: flex-end;
   align-items: flex-start;

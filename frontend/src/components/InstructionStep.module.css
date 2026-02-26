@@ -318,7 +318,7 @@
   padding: 16px 24px 16px 16px;
   border-radius: 50px;
   border: none;
-  background: rgba(255, 102, 63, 0.2);
+  background: rgba(246, 248, 255, 0.2);
   color: rgba(255, 255, 255, 1);
   cursor: pointer;
   font-family: var(--font-family);
@@ -335,7 +335,7 @@
 }
 
 .problemsBtn:active {
-  background: rgba(255, 102, 63, 0.3);
+  background: rgba(246, 248, 255, 0.3);
 }
 
 .timerBtn {
