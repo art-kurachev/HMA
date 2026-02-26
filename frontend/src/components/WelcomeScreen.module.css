@@ -289,7 +289,7 @@
   align-items: flex-end;
   justify-content: center;
   z-index: 100;
-  padding: 0 16px 24px;
+  padding: 0 16px 32px;
 }
 
 .packagesModal {
@@ -297,34 +297,37 @@
   max-width: 360px;
   max-height: 70vh;
   overflow-y: auto;
-  background: linear-gradient(180deg, #2a1f1c 0%, #1a1210 100%);
-  border-radius: 16px 16px 0 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 20px;
+  background: linear-gradient(180deg, rgba(34, 34, 34, 1) 0%, rgba(54, 22, 15, 1) 100%);
+  border-radius: 24px;
+  padding: 12px;
 }
 
 .packagesHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-left: 12px;
 }
 
 .packagesHeader h3 {
   margin: 0;
   font-family: var(--font-family);
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 200;
+  line-height: 1.2;
   color: #fff;
 }
 
 .packagesClose {
-  width: 36px;
-  height: 36px;
+  width: fit-content;
+  height: fit-content;
+  padding: 8px 16px;
   border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.84);
   font-size: 24px;
   line-height: 1;
   cursor: pointer;
@@ -346,7 +349,7 @@
 .packagesList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
 }
 
 .packageBtn {
@@ -354,9 +357,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: 16px;
+  background: rgba(255, 101, 68, 0.1);
   color: #fff;
   font-family: var(--font-family);
   font-size: 15px;
@@ -374,7 +377,7 @@
 }
 
 .packageLabel {
-  font-weight: 400;
+  font-weight: 200;
 }
 
 .packageStars {
