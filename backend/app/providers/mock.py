@@ -27,15 +27,15 @@ _MOCK_QUICK_MIXES = {
         ),
         MixItem(
             id="mix_2",
-            title="Классика ягода",
-            tobaccos=["Element Земляника", "Spectrum Ананас"],
-            flavor="Привычная сладость, ненавязчиво",
-        ),
-        MixItem(
-            id="mix_3",
             title="Мята и манго",
             tobaccos=["Darkside Core", "Daily Hookah Манго", "Severniy Мята"],
             flavor="Свежий спокойный вкус",
+        ),
+        MixItem(
+            id="mix_3",
+            title="Четвёрка под кино",
+            tobaccos=["Element Земляника", "Spectrum Ананас", "Bonche Клюква", "Hype Мята"],
+            flavor="Привычная сладость, ненавязчиво",
         ),
     ],
     "relax": [
@@ -67,15 +67,15 @@ _MOCK_QUICK_MIXES = {
         ),
         MixItem(
             id="mix_2",
-            title="Микс-сюрприз",
-            tobaccos=["Darkside Hola", "Nash Кола", "Deus Клубника", "Severniy Мята"],
-            flavor="Любые сочетания на выбор",
+            title="Тройка-сюрприз",
+            tobaccos=["MUSTHAVE Pinkman", "Daily Hookah Манго", "Darkside Core"],
+            flavor="Абсолютно любой микс",
         ),
         MixItem(
             id="mix_3",
-            title="Удиви меня",
-            tobaccos=["MUSTHAVE Pinkman", "Daily Hookah Манго"],
-            flavor="Абсолютно любой микс",
+            title="Микс-сюрприз",
+            tobaccos=["Darkside Hola", "Nash Кола", "Deus Клубника", "Severniy Мята"],
+            flavor="Любые сочетания на выбор",
         ),
     ],
 }

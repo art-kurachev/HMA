@@ -286,7 +286,9 @@ async def admin_update_settings(
             if isinstance(g, int) and isinstance(s, int) and g >= 1 and s >= 1:
                 valid.append({"generations": g, "stars": s})
         if not valid:
-            raise HTTPException(status_code=400, detail="stars_packages must have at least one package with generations>=1, stars>=1")
+            raise HTTPException(
+                status_code=400, detail="stars_packages must have at least one package with generations>=1, stars>=1"
+            )
         await set_setting(db, "stars_packages", json.dumps(valid))
 
     cfg = await get_app_settings(db)

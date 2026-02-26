@@ -20,6 +20,7 @@ interface MixesStepProps {
 }
 
 export function MixesStep({ mixes, onSelect, onBack }: MixesStepProps) {
+  // Бэкенд возвращает в порядке: слева 4 табака, справа сверху 2, справа снизу 3
   const [first, second, third] = mixes
 
   return (

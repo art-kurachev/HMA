@@ -25,6 +25,24 @@ from app.utils.telegram_auth import resolve_telegram_id
 
 router = APIRouter(prefix="/mixes", tags=["mixes"])
 
+# Порядок для отображения: слева 4 табака, справа сверху 2, справа снизу 3
+_DISPLAY_ORDER = (4, 2, 3)
+
+
+def _reorder_mixes_for_display(mixes: list[MixItem]) -> list[MixItem]:
+    """Сортировка: слева 4 табака, справа сверху 2, справа снизу 3."""
+    by_count: dict[int, list[MixItem]] = {}
+    for m in mixes:
+        n = len(m.tobaccos) if m.tobaccos else 0
+        by_count.setdefault(n, []).append(m)
+    result = []
+    for n in _DISPLAY_ORDER:
+        if n in by_count and by_count[n]:
+            result.append(by_count[n].pop(0))
+    for items in by_count.values():
+        result.extend(items)
+    return result
+
 
 @router.get("/quota")
 async def get_quota(
@@ -79,6 +97,7 @@ async def suggest_mixes(
         mix_dict = mix.model_dump()
         mix_dict["mix_db_id"] = gm.id
         mixes_out.append(MixItem(**mix_dict))
+    mixes_out = _reorder_mixes_for_display(mixes_out)
     return SuggestResponse(mixes=mixes_out, clarify=response.clarify)
 
 
@@ -124,6 +143,7 @@ async def quick_suggest_mixes(
         mix_dict = mix.model_dump()
         mix_dict["mix_db_id"] = gm.id
         mixes_out.append(MixItem(**mix_dict))
+    mixes_out = _reorder_mixes_for_display(mixes_out)
     return SuggestResponse(mixes=mixes_out, clarify=response.clarify)
 
 
