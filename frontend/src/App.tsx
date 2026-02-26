@@ -55,7 +55,11 @@ export default function App() {
   useEffect(() => {
     initTelegram()
     const id = getTelegramId()
-    setTelegramId(id ?? FALLBACK_TELEGRAM_ID)
+    const devId = import.meta.env.DEV && import.meta.env.VITE_DEV_TELEGRAM_ID
+      ? parseInt(import.meta.env.VITE_DEV_TELEGRAM_ID, 10)
+      : null
+    const fallback = (devId && !isNaN(devId) ? devId : FALLBACK_TELEGRAM_ID)
+    setTelegramId(id ?? fallback)
     // Telegram WebApp может подгрузить initData позже — перепроверяем
     if (id == null && typeof window !== 'undefined' && window.Telegram?.WebApp) {
       const t = setInterval(() => {

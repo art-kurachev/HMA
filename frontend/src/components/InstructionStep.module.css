@@ -45,7 +45,7 @@
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  padding-top: 170px;
+  padding-top: 186px;
   padding-bottom: 0;
   padding-left: 8px;
   padding-right: 8px;
@@ -363,10 +363,14 @@
 }
 
 .timerBtn.timerRunning {
-  background: #ff663f;
-  color: #fff;
-  box-shadow: 0 0 16px rgba(255, 102, 63, 0.4);
-  animation: pulse 2s ease-in-out infinite;
+  background: #F6F8FF;
+  color: #292D32;
+  box-shadow: none;
+}
+
+.timerBtn.timerRunning span,
+.timerBtn.timerRunning svg {
+  color: #292D32;
 }
 
 .timerBtn.timerDone {
