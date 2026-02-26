@@ -5,15 +5,13 @@ import logging
 from typing import Optional
 
 import httpx
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.core.app_settings import get_app_settings
 from app.core.provider_router import ensure_user_and_provider_group
-from app.db.models import User
 from app.db.session import get_db
 from app.utils.telegram_auth import resolve_telegram_id
 
@@ -51,15 +49,15 @@ async def create_stars_invoice(
     if not settings.BOT_TOKEN:
         raise HTTPException(status_code=503, detail="BOT_TOKEN not configured")
     uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
-    user = await ensure_user_and_provider_group(db, uid)
+    await ensure_user_and_provider_group(db, uid)
 
     # Проверить, что пакет есть в настройках
     cfg = await get_app_settings(db)
     raw = cfg.get("stars_packages", "[]")
     try:
         packages = json.loads(raw)
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=400, detail="stars_packages misconfigured")
+    except json.JSONDecodeError as e:
+        raise HTTPException(status_code=400, detail="stars_packages misconfigured") from e
     matched = next(
         (p for p in packages if p.get("generations") == body.generations and p.get("stars") == body.stars),
         None,

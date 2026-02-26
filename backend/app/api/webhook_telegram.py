@@ -6,11 +6,11 @@ from typing import Optional
 
 import httpx
 from fastapi import APIRouter, Request, Response
+from sqlalchemy import select
 
 from app.config import settings
-from app.db.session import async_session_maker
 from app.db.models import User
-from sqlalchemy import select
+from app.db.session import async_session_maker
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["webhook"])
