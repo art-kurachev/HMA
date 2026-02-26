@@ -123,6 +123,38 @@
   z-index: 1;
 }
 
+.buyGenerationsBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: -16px; /* 32px (bottom gap) - 16px = 16px to quotaRow */
+  padding: 8px 16px 8px 8px;
+  border-radius: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: unset;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: #fff;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 200;
+  line-height: 16px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  align-self: flex-start;
+}
+
+.buyGenerationsBtn:hover {
+  opacity: 0.9;
+}
+
+.buyGenerationsIcon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: block;
+}
+
 .quotaRow {
   display: flex;
   gap: 8px;
@@ -246,4 +278,106 @@
   height: 24px;
   flex-shrink: 0;
   display: block;
+}
+
+/* Packages modal (Stars) */
+.packagesOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+  padding: 0 16px 24px;
+}
+
+.packagesModal {
+  width: 100%;
+  max-width: 360px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #2a1f1c 0%, #1a1210 100%);
+  border-radius: 16px 16px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px;
+}
+
+.packagesHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.packagesHeader h3 {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.packagesClose {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.packagesClose:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.packagesError {
+  padding: 12px;
+  margin-bottom: 12px;
+  background: rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 14px;
+}
+
+.packagesList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.packageBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-family: var(--font-family);
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.packageBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.packageBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.packageLabel {
+  font-weight: 400;
+}
+
+.packageStars {
+  font-weight: 500;
+  color: #ffd700;
 }

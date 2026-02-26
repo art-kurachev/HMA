@@ -22,6 +22,7 @@ class User(Base):
     welcome_requests_used: Mapped[int] = mapped_column(Integer, default=0)  # 0–3
     last_weekly_refill: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     friday_bonus: Mapped[int] = mapped_column(Integer, default=0)  # +1 по пятницам 19:00, если остаток ≤3
+    paid_generations: Mapped[int] = mapped_column(Integer, default=0)  # куплено за Stars
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
 

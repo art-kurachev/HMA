@@ -8,13 +8,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.db.models import AppSetting
 
-_SETTINGS_KEYS = ("daily_request_limit", "disable_daily_limit", "llm_provider", "llm_model")
+_SETTINGS_KEYS = ("daily_request_limit", "disable_daily_limit", "llm_provider", "llm_model", "stars_packages")
 
 _DEFAULTS = {
     "daily_request_limit": str(settings.DAILY_REQUEST_LIMIT),
     "disable_daily_limit": str(settings.DISABLE_DAILY_LIMIT).lower(),
     "llm_provider": settings.LLM_PROVIDER,
     "llm_model": "",  # пусто = из .env
+    "stars_packages": '[{"generations":1,"stars":1},{"generations":5,"stars":5},{"generations":10,"stars":10}]',
 }
 
 

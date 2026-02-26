@@ -58,6 +58,14 @@ async def check_and_consume_quota(
         app_cfg = await get_app_settings(db)
         return True, _admin_provider(app_cfg, user), _admin_model(app_cfg)
 
+    # Paid generations (куплено за Stars)
+    paid = getattr(user, "paid_generations", 0) or 0
+    if paid > 0:
+        user.paid_generations = paid - 1
+        await db.flush()
+        app_cfg = await get_app_settings(db)
+        return True, _admin_provider(app_cfg, user), _admin_model(app_cfg)
+
     # Welcome phase: first 3 requests — используем провайдер из настроек (в т.ч. mock)
     if user.welcome_requests_used < WELCOME_QUOTA:
         user.welcome_requests_used += 1
@@ -98,16 +106,18 @@ async def get_remaining_quota(db: AsyncSession, user: User) -> tuple[int, bool]:
         return -1, True
 
     bonus = getattr(user, "friday_bonus", 0) or 0
+    paid = getattr(user, "paid_generations", 0) or 0
+
     if user.welcome_requests_used < WELCOME_QUOTA:
-        return bonus + (WELCOME_QUOTA - user.welcome_requests_used), False
+        return bonus + paid + (WELCOME_QUOTA - user.welcome_requests_used), False
 
     today = date.today()
     if user.last_weekly_refill is None:
-        return bonus + 1, False
+        return bonus + paid + 1, False
     days_since = (today - user.last_weekly_refill).days
     if days_since >= WEEKLY_REFILL_DAYS:
-        return bonus + 1, False
-    return bonus + 0, False
+        return bonus + paid + 1, False
+    return bonus + paid + 0, False
 
 
 def _admin_provider(app_cfg: dict, user: User) -> str:

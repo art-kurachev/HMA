@@ -28,7 +28,7 @@
 ### Новые эндпоинты
 
 - `POST /v1/stars/create-invoice` — принимает `telegram_id`, `amount` (в Stars), `product_label` → вызывает `createInvoiceLink`, возвращает URL
-- Webhook для бота (напр. `POST /webhook/telegram`) — обрабатывает `pre_checkout_query` и `successful_payment`
+- Webhook для бота: `POST /webhook/telegram` — обрабатывает `pre_checkout_query` и `successful_payment`. Нужно вызвать `setWebhook` с URL `https://ваш-домен/webhook/telegram`.
 
 ### Модель User
 

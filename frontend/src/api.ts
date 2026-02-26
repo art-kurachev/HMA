@@ -165,6 +165,29 @@ export async function cancelWarmupNotify(telegramId: number): Promise<void> {
   })
 }
 
+export interface StarsPackage {
+  generations: number
+  stars: number
+}
+
+export async function getStarsPackages(): Promise<{ packages: StarsPackage[] }> {
+  return request<{ packages: StarsPackage[] }>('/v1/stars/packages')
+}
+
+export async function createStarsInvoice(
+  telegramId: number,
+  generations: number,
+  stars: number
+): Promise<{ invoice_link: string }> {
+  if (isFallbackId(telegramId)) {
+    return Promise.reject(new Error('Открой приложение через Telegram'))
+  }
+  return request<{ invoice_link: string }>('/v1/stars/create-invoice', {
+    method: 'POST',
+    body: JSON.stringify({ telegram_id: telegramId, generations, stars }),
+  })
+}
+
 export async function submitFeedback(
   telegramId: number,
   mixDbId: number,
