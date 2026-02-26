@@ -207,7 +207,7 @@ export function WelcomeScreen({
             onClick={(e) => e.stopPropagation()}
           >
             <div className={styles.packagesHeader}>
-              <h3>Добавить рекомендации</h3>
+              <h3>Добавить</h3>
               <button
                 type="button"
                 className={styles.packagesClose}
