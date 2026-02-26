@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1 import api_router
+from app.api.webhook_telegram import router as webhook_router
 from app.core.app_settings import init_app_settings
 from app.core.friday_refill import run_friday_refill
 from app.db.session import async_session_maker, init_db
@@ -52,6 +53,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(api_router)
+app.include_router(webhook_router)
 
 
 @app.exception_handler(RuntimeError)

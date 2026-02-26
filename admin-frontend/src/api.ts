@@ -80,11 +80,17 @@ export function getFeedback(limit?: number, offset?: number): Promise<FeedbackIt
   return request<FeedbackItem[]>(`/admin/feedback?${params}`)
 }
 
+export interface StarsPackage {
+  generations: number
+  stars: number
+}
+
 export interface Settings {
   daily_request_limit: number
   disable_daily_limit: boolean
   llm_provider: string
   llm_model: string
+  stars_packages: StarsPackage[]
 }
 
 export function getSettings(): Promise<Settings> {

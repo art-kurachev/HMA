@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS users (
 -- ALTER TABLE users ADD COLUMN IF NOT EXISTS last_weekly_refill DATE NULL;
 -- Migration: friday bonus (каждую пятницу 19:00 +1, если остаток ≤3)
 -- ALTER TABLE users ADD COLUMN IF NOT EXISTS friday_bonus INTEGER DEFAULT 0;
+-- Migration: paid_generations (куплено за Telegram Stars)
+-- ALTER TABLE users ADD COLUMN IF NOT EXISTS paid_generations INTEGER DEFAULT 0;
 CREATE INDEX IF NOT EXISTS ix_users_telegram_id ON users(telegram_id);
 
 CREATE TABLE IF NOT EXISTS daily_usage (

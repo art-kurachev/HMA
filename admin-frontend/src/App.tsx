@@ -258,6 +258,7 @@ function SettingsPage() {
   const [disableLimit, setDisableLimit] = useState(true)
   const [provider, setProvider] = useState('mock')
   const [model, setModel] = useState('')
+  const [starsPackages, setStarsPackages] = useState<api.StarsPackage[]>([])
 
   const load = useCallback(() => {
     api
@@ -268,6 +269,7 @@ function SettingsPage() {
         setDisableLimit(s.disable_daily_limit)
         setProvider(s.llm_provider)
         setModel(s.llm_model || '')
+        setStarsPackages(s.stars_packages?.length ? [...s.stars_packages] : [{ generations: 1, stars: 1 }])
       })
       .catch((e) => setErr(e instanceof Error ? e.message : 'Ошибка'))
   }, [])
@@ -285,6 +287,7 @@ function SettingsPage() {
         disable_daily_limit: disableLimit,
         llm_provider: provider,
         llm_model: model,
+        stars_packages: starsPackages,
       })
       load()
     } catch (e) {
@@ -292,6 +295,17 @@ function SettingsPage() {
     } finally {
       setSaving(false)
     }
+  }
+
+  const updateStarsPackage = (i: number, field: 'generations' | 'stars', val: number) => {
+    const next = [...starsPackages]
+    next[i] = { ...next[i], [field]: Math.max(1, val) }
+    setStarsPackages(next)
+  }
+  const addStarsPackage = () => setStarsPackages([...starsPackages, { generations: 1, stars: 1 }])
+  const removeStarsPackage = (i: number) => {
+    if (starsPackages.length <= 1) return
+    setStarsPackages(starsPackages.filter((_, j) => j !== i))
   }
 
   const showModelSelector = provider === 'gigachat' || provider === 'yandexgpt'
@@ -352,6 +366,49 @@ function SettingsPage() {
             </select>
           </label>
         )}
+        <div className={styles.settingsSection}>
+          <h3>Пакеты Stars (рекомендаций = звёзд)</h3>
+          <p className={styles.hint}>Кол-во рекомендаций и звёзд настраиваются для каждого пакета.</p>
+          <table className={styles.packagesTable}>
+            <thead>
+              <tr>
+                <th>Кол-во рекомендаций</th>
+                <th>Кол-во звёзд</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {starsPackages.map((p, i) => (
+                <tr key={i}>
+                  <td>
+                    <input
+                      type="number"
+                      min={1}
+                      value={p.generations}
+                      onChange={(e) => updateStarsPackage(i, 'generations', Number(e.target.value) || 1)}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      min={1}
+                      value={p.stars}
+                      onChange={(e) => updateStarsPackage(i, 'stars', Number(e.target.value) || 1)}
+                    />
+                  </td>
+                  <td>
+                    <button type="button" onClick={() => removeStarsPackage(i)} disabled={starsPackages.length <= 1}>
+                      ×
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button type="button" onClick={addStarsPackage} className={styles.addPackageBtn}>
+            + Добавить пакет
+          </button>
+        </div>
         {err && <div className={styles.error}>{err}</div>}
         <button onClick={handleSave} disabled={saving}>
           {saving ? 'Сохранение...' : 'Сохранить'}

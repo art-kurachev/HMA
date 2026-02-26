@@ -26,11 +26,17 @@ class LoginResponse(BaseModel):
     token: str
 
 
+class StarsPackage(BaseModel):
+    generations: int
+    stars: int
+
+
 class SettingsUpdate(BaseModel):
     daily_request_limit: Optional[int] = None
     disable_daily_limit: Optional[bool] = None
     llm_provider: Optional[str] = None
     llm_model: Optional[str] = None
+    stars_packages: Optional[list[StarsPackage]] = None
 
 
 @router.post("/login", response_model=LoginResponse)
@@ -236,12 +242,20 @@ async def admin_get_settings(
     db: AsyncSession = Depends(get_db),
     _: None = Depends(require_admin),
 ):
+    import json
+
     cfg = await get_app_settings(db)
+    raw = cfg.get("stars_packages", "[]")
+    try:
+        stars_packages = json.loads(raw)
+    except json.JSONDecodeError:
+        stars_packages = [{"generations": 1, "stars": 1}]
     return {
         "daily_request_limit": int(cfg.get("daily_request_limit", "5")),
         "disable_daily_limit": cfg.get("disable_daily_limit", "true").lower() == "true",
         "llm_provider": cfg.get("llm_provider", "mock"),
         "llm_model": cfg.get("llm_model", ""),
+        "stars_packages": stars_packages,
     }
 
 
@@ -263,11 +277,29 @@ async def admin_update_settings(
         await set_setting(db, "llm_provider", body.llm_provider)
     if body.llm_model is not None:
         await set_setting(db, "llm_model", body.llm_model.strip())
+    if body.stars_packages is not None:
+        import json
+
+        valid = []
+        for p in body.stars_packages:
+            g, s = p.generations, p.stars
+            if isinstance(g, int) and isinstance(s, int) and g >= 1 and s >= 1:
+                valid.append({"generations": g, "stars": s})
+        if not valid:
+            raise HTTPException(status_code=400, detail="stars_packages must have at least one package with generations>=1, stars>=1")
+        await set_setting(db, "stars_packages", json.dumps(valid))
+
     cfg = await get_app_settings(db)
     logger.info("Admin settings saved: llm_provider=%s llm_model=%s", cfg.get("llm_provider"), cfg.get("llm_model"))
+    raw = cfg.get("stars_packages", "[]")
+    try:
+        stars_packages = json.loads(raw)
+    except json.JSONDecodeError:
+        stars_packages = [{"generations": 1, "stars": 1}]
     return {
         "daily_request_limit": int(cfg.get("daily_request_limit", "5")),
         "disable_daily_limit": cfg.get("disable_daily_limit", "true").lower() == "true",
         "llm_provider": cfg.get("llm_provider", "mock"),
         "llm_model": cfg.get("llm_model", ""),
+        "stars_packages": stars_packages,
     }

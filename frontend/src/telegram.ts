@@ -10,9 +10,15 @@ declare global {
         /** Bot API 8.0+ — fullscreen (скрывает панели Telegram) */
         requestFullscreen?: () => void
         isVersionAtLeast?: (version: string) => boolean
+        /** Открывает окно оплаты Stars по invoice link */
+        openInvoice?: (url: string, callback?: (status: string) => void) => void
       }
     }
   }
+}
+
+export function openInvoice(url: string, callback?: (status: string) => void): void {
+  window.Telegram?.WebApp?.openInvoice?.(url, callback)
 }
 
 export function getTelegramId(): number | null {
