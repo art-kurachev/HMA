@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import type { InstructionResponse } from '../api'
 import { scheduleWarmupNotify, cancelWarmupNotify } from '../api'
 import type { TimerState } from '../draftStorage'
@@ -354,7 +355,7 @@ export function InstructionStep({
         </div>
       </div>
 
-      {showSheet && (
+      {showSheet && createPortal(
         <div className={styles.overlay} onClick={() => setShowSheet(false)}>
           <div className={styles.sheet} onClick={(e) => e.stopPropagation()}>
             <div className={styles.sheetHeader}>
@@ -382,7 +383,8 @@ export function InstructionStep({
               })}
             </ul>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </ScreenLayout>
   )

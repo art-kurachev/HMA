@@ -7,6 +7,9 @@ declare global {
         ready: () => void
         expand: () => void
         close: () => void
+        /** Bot API 8.0+ — fullscreen (скрывает панели Telegram) */
+        requestFullscreen?: () => void
+        isVersionAtLeast?: (version: string) => boolean
       }
     }
   }
@@ -43,5 +46,9 @@ export function initTelegram() {
   if (tg) {
     tg.ready()
     tg.expand()
+    // Bot API 8.0+: всегда fullscreen (main button и menu button)
+    if (typeof tg.requestFullscreen === 'function' && tg.isVersionAtLeast?.('8.0')) {
+      tg.requestFullscreen()
+    }
   }
 }

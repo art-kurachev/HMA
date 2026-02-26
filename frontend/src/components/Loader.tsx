@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import styles from './Loader.module.css'
 
 interface LoaderProps {
@@ -5,10 +6,11 @@ interface LoaderProps {
 }
 
 export function Loader({ message = 'Загрузка...' }: LoaderProps) {
-  return (
+  const content = (
     <div className={styles.overlay} role="status" aria-live="polite">
       <div className={styles.spinner} />
       <p className={styles.message}>{message}</p>
     </div>
   )
+  return createPortal(content, document.body)
 }

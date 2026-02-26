@@ -63,7 +63,7 @@
 /* Кликабельный блок с колпаком — без анимации вверх/вниз, поворот по клику */
 .kolpakWrap {
   position: absolute;
-  top: 70px;
+  top: 130px;
   left: auto;
   right: 24px;
   z-index: 1;
