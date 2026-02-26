@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """One-off: add friday_bonus column to users. Run: cd backend && uv run python run_migrate_friday_bonus.py"""
+
 import asyncio
 
 from sqlalchemy import text

@@ -10,13 +10,11 @@
   align-items: flex-end;
 }
 
-/* Hero image — left -20px top 110px, rotate -9.59deg, 411x756 */
+/* Hero image — positioned at right and bottom, adaptive size, rotate -9.59deg */
 .heroWrap {
   position: absolute;
-  left: -20px;
-  top: 110px;
-  width: 531px;
-  height: 814px;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
@@ -26,8 +24,9 @@
 .heroInner {
   position: relative;
   transform: rotate(-9.59deg);
-  width: 411px;
-  height: 756px;
+  width: min(411px, 75vw, calc(80vh * 411 / 756));
+  height: auto;
+  aspect-ratio: 411 / 756;
   flex-shrink: 0;
   overflow: visible;
 }
