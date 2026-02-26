@@ -131,33 +131,48 @@ class MockProvider(BaseProvider):
             tobacco_items.append(TobaccoItem(name=name, percent=pct))
             remaining -= pct
 
-        coal_count = input_data.params.get("coal_count_start", 3)
-        has_cap = input_data.params.get("has_cap", True)
-        warmup_note = "С колпаком — ждать равномерного прогрева." if has_cap else "Без колпака — прогрев быстрее."
+        is_quick = input_data.params.get("_quick_flow", False)
 
+        if is_quick:
+            return InstructionResponse(
+                tobaccos=tobacco_items,
+                packing=[
+                    "Порезать, перемешать, забить. Отступ 1 мм.",
+                    "Базовый табак вниз, акцентный сверху.",
+                ],
+                warmup=[
+                    "Прогрев 5–8 минут, первые тяги аккуратные.",
+                    "Не раскрылся — добавь уголь на 1–2 минуты.",
+                ],
+                warmup_seconds=480,
+                smoking=[
+                    "Средняя тяга, паузы 20–30 сек.",
+                    "Через 10–15 мин можно чуть усилить жар.",
+                ],
+                if_not_opened=[
+                    "Горчит — снять 1 уголь на пару минут.",
+                    "Мало дыма — добавить уголь.",
+                ],
+            )
+
+        coal_count = input_data.params.get("coal_count_start", 3)
         return InstructionResponse(
             tobaccos=tobacco_items,
             packing=[
-                "Табак мелко порезать",
-                "Тщательно перемешать",
-                "Забивка плотная",
-                "1 мм отступ",
-                "Контакт допустим, но не «в кашу»",
+                "Порезать, перемешать, забить плотно. Отступ 1 мм.",
+                "Центр не трогать.",
             ],
             warmup=[
-                f"Старт: {coal_count} угля",
-                "Прогрев: ~8 минут",
-                warmup_note,
-                "Первые тяги аккуратные",
+                f"Старт: {coal_count} угля, прогрев 5–8 минут.",
+                "Не раскрылся — добавь уголь на ребро на 1–2 минуты.",
             ],
             warmup_seconds=480,
             smoking=[
-                "Тяга средняя, спокойная",
-                "Паузы 20–30 секунд",
-                "После 10–15 минут можно чуть усилить жар (сдвинуть угли к центру)",
+                "Средняя тяга, паузы 20–30 сек.",
+                "Через 10–15 мин можно усилить жар.",
             ],
             if_not_opened=[
-                "3-й уголь на ребро на 60–90 сек",
-                "Затем убрать",
+                "Горчит — снять 1 уголь на пару минут.",
+                "Мало дыма — добавить уголь.",
             ],
         )

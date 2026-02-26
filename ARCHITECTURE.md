@@ -15,7 +15,7 @@
 │   localhost:8000         │
 │                          │
 │  ┌─────────────────────┐│
-│  │  Provider Router     ││  mock / gigachat / yandexgpt / ab
+│  │  Provider Router     ││  mock / gigachat
 │  │  (A/B testing)       ││
 │  └──────────┬──────────┘│
 │             ▼            │
@@ -53,8 +53,7 @@ backend/app/
 │   ├── base.py             # BaseProvider ABC
 │   ├── mock.py             # Захардкоженные ответы
 │   ├── gigachat.py         # Stub → GigaChat API
-│   └── yandexgpt.py        # Stub → YandexGPT API
-├── schemas/
+│   ├── schemas/
 │   ├── mix.py              # MixParams, MixItem, SuggestRequest/Response
 │   ├── instruction.py      # TobaccoItem, InstructionResponse
 │   └── feedback.py         # FeedbackRequest
@@ -121,8 +120,7 @@ generated_mixes ──► feedback
 ```
 LLM_PROVIDER=mock       → MockProvider (захардкоженные ответы)
 LLM_PROVIDER=gigachat   → GigaChatProvider (stub → Sber API)
-LLM_PROVIDER=yandexgpt  → YandexGPTProvider (stub → Yandex API)
-LLM_PROVIDER=ab         → 50/50 split: gigachat | yandexgpt (per user)
+LLM_PROVIDER=gigachat  → GigaChatProvider (Sber API)
 ```
 
 Группа A/B сохраняется в `users.provider_group` при первом запросе.

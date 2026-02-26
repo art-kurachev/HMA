@@ -10,19 +10,13 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str = "sqlite+aiosqlite:///./hookah.db"
     LLM_PROVIDER: str = "mock"
-    AB_SPLIT: int = 50
     DAILY_REQUEST_LIMIT: int = 5
     DISABLE_DAILY_LIMIT: bool = True
 
     # GigaChat
     GIGACHAT_AUTH_KEY: Optional[str] = None
     GIGACHAT_SCOPE: str = "GIGACHAT_API_PERS"
-    GIGACHAT_MODEL: str = "GigaChat"
-
-    # YandexGPT
-    YANDEXGPT_API_KEY: Optional[str] = None
-    YANDEXGPT_FOLDER_ID: Optional[str] = None
-    YANDEXGPT_MODEL: str = "yandexgpt-lite/latest"
+    GIGACHAT_MODEL: str = "GigaChat-2-Pro"
 
     # Telegram Bot (уведомления)
     BOT_TOKEN: Optional[str] = None

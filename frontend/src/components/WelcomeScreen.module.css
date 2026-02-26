@@ -97,10 +97,6 @@
   transition: opacity 0.2s;
 }
 
-.shelfBtn:hover {
-  opacity: 0.9;
-}
-
 .shelfBtnIcon {
   width: 24px;
   height: 24px;
@@ -142,10 +138,6 @@
   cursor: pointer;
   transition: opacity 0.2s;
   align-self: flex-start;
-}
-
-.buyGenerationsBtn:hover {
-  opacity: 0.9;
 }
 
 .buyGenerationsIcon {
@@ -228,10 +220,6 @@
   transition: opacity 0.2s;
 }
 
-.primaryBtn:hover {
-  opacity: 0.95;
-}
-
 .primaryBtnPadding {
   padding-left: 16px;
   padding-right: 24px;
@@ -267,10 +255,6 @@
   line-height: 16px;
   cursor: pointer;
   transition: opacity 0.2s;
-}
-
-.secondaryBtn:hover {
-  opacity: 0.9;
 }
 
 .secondaryBtnIcon {
@@ -333,10 +317,6 @@
   cursor: pointer;
 }
 
-.packagesClose:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
 .packagesError {
   padding: 12px;
   margin-bottom: 12px;
@@ -366,10 +346,6 @@
   font-size: 15px;
   cursor: pointer;
   transition: background 0.2s;
-}
-
-.packageBtn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
 }
 
 .packageBtn:disabled {

@@ -310,10 +310,6 @@
   transition: all 0.2s;
 }
 
-.pill:hover {
-  background: rgba(232, 93, 42, 0.25);
-}
-
 .pill.active {
   background: rgba(255, 101, 68, 1);
   color: rgba(246, 248, 255, 1);
@@ -339,10 +335,6 @@
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s;
-}
-
-.chip:hover {
-  background: rgba(232, 93, 42, 0.25);
 }
 
 .chip.active {

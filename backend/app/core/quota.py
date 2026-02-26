@@ -10,7 +10,6 @@ from app.db.models import User
 
 WELCOME_QUOTA = 3
 WEEKLY_REFILL_DAYS = 7
-GIGACHAT_MAX_MODEL = "GigaChat-2-Max"
 
 
 def _creator_ids() -> set[int]:
@@ -40,7 +39,8 @@ async def check_and_consume_quota(
     app_cfg = await get_app_settings(db)
     limit_disabled = settings.DISABLE_DAILY_LIMIT or app_cfg.get("disable_daily_limit", "true").lower() == "true"
     if limit_disabled:
-        return True, _admin_provider(app_cfg, user), _admin_model(app_cfg) or GIGACHAT_MAX_MODEL
+        m = _admin_model(app_cfg)
+        return True, _admin_provider(app_cfg, user), m if m else None
 
     if is_creator(user.telegram_id):
         app_cfg = await get_app_settings(db)
@@ -71,7 +71,8 @@ async def check_and_consume_quota(
         user.welcome_requests_used += 1
         await db.flush()
         app_cfg = await get_app_settings(db)
-        return True, _admin_provider(app_cfg, user), _admin_model(app_cfg) or GIGACHAT_MAX_MODEL
+        m = _admin_model(app_cfg)
+        return True, _admin_provider(app_cfg, user), m if m else None
 
     # Weekly phase: 1 request per 7 days
     app_cfg = await get_app_settings(db)

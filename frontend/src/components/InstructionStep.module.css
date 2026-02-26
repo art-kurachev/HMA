@@ -271,10 +271,6 @@
   transition: background 0.2s;
 }
 
-.finishBtn:hover {
-  background: rgba(34, 34, 34, 0.7);
-}
-
 .finishBtn:active {
   background: rgba(34, 34, 34, 0.7);
 }
@@ -571,10 +567,6 @@
   justify-content: center;
   flex-shrink: 0;
   transition: background 0.2s;
-}
-
-.sheetCloseBtn:hover {
-  background: rgba(246, 248, 255, 0.12);
 }
 
 .sheetCloseBtn:active {

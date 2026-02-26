@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import random
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,7 +11,6 @@ from app.db.models import User
 from app.providers.base import BaseProvider, InstructionProviderInput, MixProviderInput
 from app.providers.gigachat import GigaChatProvider
 from app.providers.mock import MockProvider
-from app.providers.yandexgpt import YandexGPTProvider
 
 logger = logging.getLogger(__name__)
 
@@ -22,16 +20,10 @@ def _has_gigachat_key() -> bool:
     return bool(key and str(key).strip())
 
 
-def _has_yandexgpt_keys() -> bool:
-    return bool(
-        settings.YANDEXGPT_API_KEY
-        and str(settings.YANDEXGPT_API_KEY).strip()
-        and settings.YANDEXGPT_FOLDER_ID
-        and str(settings.YANDEXGPT_FOLDER_ID).strip()
-    )
-
-
 def _get_provider_by_name(name: str, llm_model: str = "") -> BaseProvider:
+    # yandexgpt и ab удалены — при старых настройках fallback на gigachat
+    if name in ("yandexgpt", "ab"):
+        name = "gigachat"
     model = llm_model.strip() or None
     logger.info("LLM provider=%s model=%s (from admin settings)", name, model or "(default)")
     if name == "gigachat":
@@ -39,11 +31,6 @@ def _get_provider_by_name(name: str, llm_model: str = "") -> BaseProvider:
             logger.warning("GIGACHAT_AUTH_KEY не задан в .env — используем mock-провайдер")
             return MockProvider()
         return GigaChatProvider(model=model)
-    if name == "yandexgpt":
-        if not _has_yandexgpt_keys():
-            logger.warning("YandexGPT API key или folder_id не заданы в .env — используем mock-провайдер")
-            return MockProvider()
-        return YandexGPTProvider(model=model)
     return MockProvider()
 
 
@@ -56,11 +43,6 @@ async def ensure_user_and_provider_group(db: AsyncSession, telegram_id: int) -> 
         user = User(telegram_id=telegram_id)
         db.add(user)
         await db.flush()
-    app_cfg = await get_app_settings(db)
-    llm_provider = app_cfg.get("llm_provider", settings.LLM_PROVIDER)
-    if llm_provider == "ab" and user.provider_group is None:
-        user.provider_group = "gigachat" if random.random() * 100 < settings.AB_SPLIT else "yandexgpt"
-        await db.flush()
     return user
 
 
@@ -70,8 +52,6 @@ def get_provider_for_user(
     llm_model: str = "",
 ) -> BaseProvider:
     provider_name = llm_provider or settings.LLM_PROVIDER
-    if provider_name == "ab" and user and user.provider_group:
-        provider_name = user.provider_group
     return _get_provider_by_name(provider_name, llm_model=llm_model)
 
 
@@ -100,13 +80,8 @@ async def generate_mixes(
     return provider, input_data
 
 
-# Дефолтные параметры сетапа для быстрого совета (инструкция потом строится по ним).
 QUICK_SUGGEST_MINIMAL_PARAMS: dict = {
-    "bowl": "phunnel",
-    "heat_control": "kaloud",
-    "has_cap": True,
-    "coal_size": 25,
-    "coal_count_start": 3,
+    "_quick_flow": True,
     "strength": "medium",
     "profiles": [],
     "available_tobaccos_text": "",

@@ -45,10 +45,6 @@
   transition: background 0.2s;
 }
 
-.back:hover {
-  background: rgba(0, 0, 0, 0.6);
-}
-
 .content {
   width: 100%;
   height: 100%;

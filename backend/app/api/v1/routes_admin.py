@@ -272,8 +272,8 @@ async def admin_update_settings(
     if body.disable_daily_limit is not None:
         await set_setting(db, "disable_daily_limit", str(body.disable_daily_limit).lower())
     if body.llm_provider is not None:
-        if body.llm_provider not in ("mock", "gigachat", "yandexgpt", "ab"):
-            raise HTTPException(status_code=400, detail="llm_provider must be mock, gigachat, yandexgpt, or ab")
+        if body.llm_provider not in ("mock", "gigachat"):
+            raise HTTPException(status_code=400, detail="llm_provider must be mock or gigachat")
         await set_setting(db, "llm_provider", body.llm_provider)
     if body.llm_model is not None:
         await set_setting(db, "llm_model", body.llm_model.strip())

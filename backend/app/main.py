@@ -60,7 +60,7 @@ app.include_router(webhook_router)
 async def runtime_error_handler(request, exc: RuntimeError):
     """LLM-провайдеры кидают RuntimeError при проблемах с ключами — отдаём 503 с понятным сообщением."""
     msg = str(exc)
-    if "GIGACHAT_AUTH_KEY" in msg or "YandexGPT" in msg or "API" in msg:
+    if "GIGACHAT_AUTH_KEY" in msg or "API" in msg:
         logger.warning("LLM provider error: %s", msg)
         from fastapi.responses import JSONResponse
 

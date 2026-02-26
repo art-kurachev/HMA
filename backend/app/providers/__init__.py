@@ -5,7 +5,6 @@ from app.providers.base import (
 )
 from app.providers.gigachat import GigaChatProvider
 from app.providers.mock import MockProvider
-from app.providers.yandexgpt import YandexGPTProvider
 
 __all__ = [
     "BaseProvider",
@@ -13,5 +12,4 @@ __all__ = [
     "InstructionProviderInput",
     "MixProviderInput",
     "MockProvider",
-    "YandexGPTProvider",
 ]

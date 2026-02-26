@@ -81,10 +81,6 @@
   transition: background 0.2s;
 }
 
-.closeBtn:hover {
-  background: rgba(246, 248, 255, 0.12);
-}
-
 .closeBtn:active {
   background: rgba(246, 248, 255, 0.08);
 }
@@ -145,10 +141,6 @@
   transition: background 0.2s;
 }
 
-.removeBtn:hover {
-  background: rgba(255, 101, 68, 0.2);
-}
-
 .removeBtn:active {
   background: rgba(255, 101, 68, 0.15);
 }
@@ -171,10 +163,6 @@
   line-height: 16px;
   text-align: left;
   transition: background 0.2s;
-}
-
-.addRow:hover {
-  background: rgba(255, 101, 68, 0.18);
 }
 
 .addRow:active {

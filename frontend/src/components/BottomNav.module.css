@@ -28,10 +28,6 @@
   transition: background 0.2s;
 }
 
-.backBtn:hover {
-  background: rgba(0, 0, 0, 0.7);
-}
-
 .primaryBtn {
   flex: 1;
   padding: 14px 20px;

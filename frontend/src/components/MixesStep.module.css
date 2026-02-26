@@ -145,10 +145,6 @@
   min-height: 0;
 }
 
-.card:hover {
-  background: rgba(34, 34, 34, 0.85);
-}
-
 .card:active {
   transform: scale(0.98);
 }
@@ -205,16 +201,19 @@
   gap: 2px;
   margin-top: 0;
   margin-bottom: 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .tobaccoTag {
   display: inline-flex;
   align-items: center;
+  flex: 0 1 auto;
   padding: 6px 8px;
   border-radius: 50px;
   border: 1px solid rgba(255, 101, 68, 0.2);
   background: transparent;
-  max-width: 140px;
+  max-width: min(160px, 100%);
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -64,14 +64,15 @@ class GigaChatProvider(BaseProvider):
                 },
                 {"role": "user", "content": prompt},
             ],
-            "temperature": 0.7,
+            "temperature": 0.85,
             "max_tokens": 1024,
         }
 
     async def _chat(self, client: httpx.AsyncClient, prompt: str) -> str:
         token = await self._ensure_token(client)
-        models_to_try = [self._model, "GigaChat", "GigaChat-Pro"]
-        models_to_try = list(dict.fromkeys(models_to_try))
+        # Только три модели: GigaChat-2-Max, GigaChat-2-Pro, GigaChat-2-Lite
+        fallbacks = ["GigaChat-2-Pro", "GigaChat-2-Lite", "GigaChat-2-Max"]
+        models_to_try = [self._model] + [m for m in fallbacks if m != self._model]
 
         last_exc = None
         for model in models_to_try:

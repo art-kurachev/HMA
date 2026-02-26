@@ -168,10 +168,6 @@
   min-height: 0;
 }
 
-.card:hover {
-  background: rgba(34, 34, 34, 0.85);
-}
-
 .card.selected {
   background: rgba(255, 101, 68, 0.2);
   box-shadow: 0 0 0 2px rgba(255, 101, 68, 0.5);

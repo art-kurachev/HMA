@@ -179,12 +179,13 @@ async def get_instruction(
     params = session.params or {}
     mix_data = gm.mix_json
 
+    # Используем текущие настройки из админки (модель, провайдер), а не сохранённые в миксе
     provider, input_data = await generate_instruction_input(
         db,
         user,
         mix_data,
         params,
-        provider_name=gm.provider,
-        llm_model=gm.llm_model_used,
+        provider_name=None,
+        llm_model=None,
     )
     return await run_through_llm_queue(provider.generate_instruction(input_data))

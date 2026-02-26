@@ -236,18 +236,9 @@ function DashboardPage() {
 
 const GIGACHAT_MODELS = [
   { value: '', label: 'По умолчанию (.env)' },
-  { value: 'GigaChat', label: 'GigaChat' },
-  { value: 'GigaChat-Pro', label: 'GigaChat Pro' },
-  { value: 'GigaChat-2-Lite', label: 'GigaChat 2 Lite' },
-  { value: 'GigaChat-Lite', label: 'GigaChat Lite (deprecated)' },
-  { value: 'GigaChat-2-Pro', label: 'GigaChat 2 Pro' },
   { value: 'GigaChat-2-Max', label: 'GigaChat 2 Max' },
-]
-
-const YANDEXGPT_MODELS = [
-  { value: '', label: 'По умолчанию (.env)' },
-  { value: 'yandexgpt-lite/latest', label: 'YandexGPT Lite' },
-  { value: 'yandexgpt/latest', label: 'YandexGPT' },
+  { value: 'GigaChat-2-Pro', label: 'GigaChat 2 Pro' },
+  { value: 'GigaChat-2-Lite', label: 'GigaChat 2 Lite' },
 ]
 
 function SettingsPage() {
@@ -308,8 +299,8 @@ function SettingsPage() {
     setStarsPackages(starsPackages.filter((_, j) => j !== i))
   }
 
-  const showModelSelector = provider === 'gigachat' || provider === 'yandexgpt'
-  const modelOptions = provider === 'gigachat' ? GIGACHAT_MODELS : YANDEXGPT_MODELS
+  const showModelSelector = provider === 'gigachat'
+  const modelOptions = GIGACHAT_MODELS
 
   if (err && !settings) return <div className={styles.error}>{err}</div>
   if (!settings) return <div className={styles.loading}>Загрузка...</div>
@@ -344,14 +335,11 @@ function SettingsPage() {
             onChange={(e) => {
               const next = e.target.value
               setProvider(next)
-              const opts = next === 'gigachat' ? GIGACHAT_MODELS : next === 'yandexgpt' ? YANDEXGPT_MODELS : []
-              if (next === 'mock' || next === 'ab' || !opts.some((o) => o.value === model)) setModel('')
+              if (next === 'mock' || !GIGACHAT_MODELS.some((o) => o.value === model)) setModel('')
             }}
           >
             <option value="mock">mock</option>
             <option value="gigachat">gigachat</option>
-            <option value="yandexgpt">yandexgpt</option>
-            <option value="ab">ab (A/B тест)</option>
           </select>
         </label>
         {showModelSelector && (
