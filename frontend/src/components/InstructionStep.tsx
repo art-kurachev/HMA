@@ -21,6 +21,7 @@ import {
 } from './Icons'
 import styles from './InstructionStep.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
+import progressRowStyles from './ProgressRow.module.css'
 
 const ICON_LOGO = '/icons/Union.svg'
 const ICON_SHARE_CIRCLE = '/icons/ShareCircle.svg'
@@ -208,6 +209,7 @@ export function InstructionStep({
     <ScreenLayout onBack={timerStarted ? undefined : onBack} hideBackButton totalSteps={0} fullBleed>
       <div className={styles.wrap}>
         <header className={welcomeStyles.topBar}>
+          <div className={progressRowStyles.progressRow} aria-hidden />
           <div className={welcomeStyles.headerRow}>
             <img src={ICON_LOGO} alt="Iprit" className={welcomeStyles.logo} onError={(e) => { e.currentTarget.style.display = 'none' }} />
             <div className={styles.tag} aria-hidden>
