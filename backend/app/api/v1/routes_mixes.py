@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.core.llm_queue import run_through_llm_queue
-from app.utils.telegram_auth import resolve_telegram_id
 from app.core.provider_router import (
     ensure_user_and_provider_group,
     generate_instruction_input,
@@ -22,6 +21,7 @@ from app.schemas.mix import (
     SuggestRequest,
     SuggestResponse,
 )
+from app.utils.telegram_auth import resolve_telegram_id
 
 router = APIRouter(prefix="/mixes", tags=["mixes"])
 

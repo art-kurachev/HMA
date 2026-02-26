@@ -37,6 +37,7 @@
 }
 
 .headerWithBowl {
+  position: relative;
   width: 100%;
   display: flex;
   align-items: center;
@@ -63,7 +64,7 @@
 /* Кликабельный блок с колпаком — без анимации вверх/вниз, поворот по клику */
 .kolpakWrap {
   position: absolute;
-  top: 130px;
+  top: -60px;
   left: auto;
   right: 24px;
   z-index: 1;

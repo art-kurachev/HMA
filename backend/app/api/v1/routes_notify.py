@@ -2,12 +2,11 @@ import asyncio
 from typing import Optional
 
 from fastapi import APIRouter, Header, HTTPException
-
-from app.utils.telegram_auth import resolve_telegram_id
 from pydantic import BaseModel
 
 from app.config import settings
 from app.core.telegram import send_telegram_message
+from app.utils.telegram_auth import resolve_telegram_id
 
 router = APIRouter(prefix="/notify", tags=["notify"])
 

@@ -1,9 +1,9 @@
 """Telegram WebApp initData validator and user extraction."""
 
 import hashlib
-from typing import Optional
 import hmac
 import json
+from typing import Optional
 from urllib.parse import parse_qs
 
 

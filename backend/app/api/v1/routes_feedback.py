@@ -2,15 +2,14 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy import select
-
-from app.config import settings
-from app.utils.telegram_auth import resolve_telegram_id
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.db.models import Feedback as FeedbackModel
 from app.db.models import GeneratedMix, Session, User
 from app.db.session import get_db
 from app.schemas.feedback import FeedbackRequest
+from app.utils.telegram_auth import resolve_telegram_id
 
 router = APIRouter(prefix="/feedback", tags=["feedback"])
 
