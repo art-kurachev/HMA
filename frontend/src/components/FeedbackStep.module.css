@@ -1,13 +1,7 @@
 /* Экран фидбека — тёмные блоки по макету */
 
-/* Контейнер с картинкой — сзади контента (ниже z-index) */
-.bowlPlaceholderBehind {
-  z-index: 0;
-}
-
-/* Заголовок и картинка прижаты к нижнему блоку */
+/* Заголовок и контент — тот же отступ сверху, что и на инструкции (общее правило) */
 .wrapFeedback .mainContentFront {
-  padding-top: 0px;
   gap: 24px;
   justify-content: flex-end;
   align-items: flex-start;
@@ -20,13 +14,6 @@
 
 .wrapFeedback .mainContentFront > div:first-child h2 {
   width: 100%;
-}
-
-.wrapFeedback .bowlPlaceholderBehind {
-  top: 328px;
-  left: 308px;
-  width: 237px;
-  height: 255px;
 }
 
 .mainContentFront {
@@ -142,13 +129,14 @@
 .ratingButtons {
   display: flex;
   gap: 4px;
-  height: 64px;
   margin-top: 24px;
+  width: 100%;
 }
 
 .ratingBtn {
   flex: 1;
-  aspect-ratio: 1;
+  min-width: 0;
+  height: fit-content;
   border-radius: 16px;
   border: none;
   background: rgba(0, 0, 0, 0.2);
@@ -158,6 +146,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px 16px;
 }
 
 .ratingBtn:hover {

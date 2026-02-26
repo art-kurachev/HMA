@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getTelegramId, initTelegram } from './telegram'
-import { suggestMixes, quickSuggestMixes, getInstruction, submitFeedback } from './api'
+import { FALLBACK_TELEGRAM_ID, suggestMixes, quickSuggestMixes, getInstruction, submitFeedback } from './api'
 import type { Mix, InstructionResponse } from './api'
 import type { FormState } from './types'
 import type { Direction } from './components/DirectionScreen'
 import { WelcomeScreen } from './components/WelcomeScreen'
-import { SplashScreen } from './components/SplashScreen'
 import { ShelfSheet } from './components/ShelfSheet'
 import { saveDraft, loadDraft, clearDraft } from './draftStorage'
 import { DirectionScreen } from './components/DirectionScreen'
@@ -15,6 +14,8 @@ import { InstructionStep } from './components/InstructionStep'
 import { FeedbackStep } from './components/FeedbackStep'
 import { Loader } from './components/Loader'
 import styles from './App.module.css'
+
+const IMG_OVERLAY = '/texture-overlay.png'
 
 const LOADING_MESSAGES: Record<Step, string> = {
   welcome: 'Загрузка...',
@@ -36,7 +37,6 @@ type Step =
   | 'done'
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState(true)
   const [telegramId, setTelegramId] = useState<number | null>(null)
   const [step, setStep] = useState<Step>('welcome')
   const [error, setError] = useState<string | null>(null)
@@ -55,25 +55,42 @@ export default function App() {
   useEffect(() => {
     initTelegram()
     const id = getTelegramId()
-    setTelegramId(id ?? 123456789)
+    const devId = import.meta.env.DEV && import.meta.env.VITE_DEV_TELEGRAM_ID
+      ? parseInt(import.meta.env.VITE_DEV_TELEGRAM_ID, 10)
+      : null
+    const fallback = (devId && !isNaN(devId) ? devId : FALLBACK_TELEGRAM_ID)
+    setTelegramId(id ?? fallback)
+    // Telegram WebApp может подгрузить initData позже — перепроверяем
+    if (id == null && typeof window !== 'undefined' && window.Telegram?.WebApp) {
+      const t = setInterval(() => {
+        const late = getTelegramId()
+        if (late != null) {
+          setTelegramId(late)
+          clearInterval(t)
+        }
+      }, 100)
+      const stop = setTimeout(() => clearInterval(t), 5000)
+      return () => {
+        clearInterval(t)
+        clearTimeout(stop)
+      }
+    }
   }, [])
-
-  // Сплаш закрывается через 2 секунды (таймер в SplashScreen)
 
   useEffect(() => {
     const draft = loadDraft()
     if (!draft) return
-    // Не восстанавливаем step — приложение всегда стартует с первого экрана (welcome).
-    // Остальные данные черновика подставляются при переходе на соответствующие экраны.
+    setStep(draft.step)
     setDirection(draft.direction)
     setFormState(draft.formState)
     setMixes(draft.mixes ?? [])
     setSelectedMix(draft.selectedMix)
     setInstruction(draft.instruction)
     setTimerState(draft.timerState ?? null)
+    setMixesFromStep(draft.mixesFromStep ?? (draft.formState ? 'setup' : 'direction'))
   }, [])
 
-  const uid = telegramId ?? 123456789
+  const uid = telegramId ?? FALLBACK_TELEGRAM_ID
 
   const goToWelcome = useCallback(() => {
     setStep('welcome')
@@ -121,8 +138,9 @@ export default function App() {
       selectedMix,
       instruction,
       timerState: step === 'instruction' ? timerState : null,
+      mixesFromStep,
     })
-  }, [step, direction, formState, mixes, selectedMix, instruction, timerState])
+  }, [step, direction, formState, mixes, selectedMix, instruction, timerState, mixesFromStep])
 
   const handleFormSubmit = async (params: FormState) => {
     setError(null)
@@ -200,7 +218,6 @@ export default function App() {
 
   return (
     <div className={styles.app}>
-      {showSplash && <SplashScreen onDismiss={() => setShowSplash(false)} />}
       {loading && (
         <Loader message={LOADING_MESSAGES[step]} />
       )}
@@ -222,16 +239,24 @@ export default function App() {
       {shelfOpen && (
         <ShelfSheet telegramId={uid} onClose={() => setShelfOpen(false)} />
       )}
+      {['welcome', 'direction', 'setup', 'mixes', 'instruction', 'feedback'].includes(step) && (
+        <div className={styles.fullScreenBg} aria-hidden>
+          <div className={styles.fullScreenBgGradient} />
+          <div className={styles.fullScreenBgOverlay}>
+            <img src={IMG_OVERLAY} alt="" onError={(e) => { e.currentTarget.style.display = 'none' }} />
+          </div>
+        </div>
+      )}
       {step === 'direction' && (
         <DirectionScreen
-          onBack={() => setStep('welcome')}
+          onBack={goToWelcome}
           onNext={(d) => d && handleQuickSuggest(d)}
         />
       )}
       {step === 'setup' && (
         <SetupScreen
           telegramId={uid}
-          onBack={() => setStep('welcome')}
+          onBack={goToWelcome}
           onSubmit={handleFormSubmit}
           loading={loading}
           initialFormState={formState}

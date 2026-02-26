@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import type { InstructionResponse } from '../api'
-import { scheduleWarmupNotify } from '../api'
+import { scheduleWarmupNotify, cancelWarmupNotify } from '../api'
 import type { TimerState } from '../draftStorage'
 import { ScreenLayout } from './ScreenLayout'
 import {
@@ -20,6 +21,7 @@ import {
 } from './Icons'
 import styles from './InstructionStep.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
+import progressRowStyles from './ProgressRow.module.css'
 
 const ICON_LOGO = '/icons/Union.svg'
 const ICON_SHARE_CIRCLE = '/icons/ShareCircle.svg'
@@ -172,6 +174,7 @@ export function InstructionStep({
     clearTimer()
     setIsRunning(false)
     setPaused(true)
+    cancelWarmupNotify(telegramId).catch(() => { /* ignore */ })
     onTimerStateChange({
       mixId,
       state: 'paused',
@@ -187,10 +190,12 @@ export function InstructionStep({
     startTimeRef.current = startTime
     setPaused(false)
     setIsRunning(true)
+    scheduleWarmupNotify(telegramId, timeLeft).catch(() => { /* ignore */ })
     onTimerStateChange({ mixId, state: 'running', startTime, duration: timeLeft })
   }
 
   const handleReset = () => {
+    if (isRunning) cancelWarmupNotify(telegramId).catch(() => { /* ignore */ })
     clearTimer()
     setIsRunning(false)
     setPaused(false)
@@ -204,6 +209,7 @@ export function InstructionStep({
     <ScreenLayout onBack={timerStarted ? undefined : onBack} hideBackButton totalSteps={0} fullBleed>
       <div className={styles.wrap}>
         <header className={welcomeStyles.topBar}>
+          <div className={progressRowStyles.progressRow} aria-hidden />
           <div className={welcomeStyles.headerRow}>
             <img src={ICON_LOGO} alt="Iprit" className={welcomeStyles.logo} onError={(e) => { e.currentTarget.style.display = 'none' }} />
             <div className={styles.tag} aria-hidden>
@@ -351,7 +357,7 @@ export function InstructionStep({
         </div>
       </div>
 
-      {showSheet && (
+      {showSheet && createPortal(
         <div className={styles.overlay} onClick={() => setShowSheet(false)}>
           <div className={styles.sheet} onClick={(e) => e.stopPropagation()}>
             <div className={styles.sheetHeader}>
@@ -379,7 +385,8 @@ export function InstructionStep({
               })}
             </ul>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </ScreenLayout>
   )

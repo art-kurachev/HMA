@@ -1,11 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+
+from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.db.models import Feedback as FeedbackModel
 from app.db.models import GeneratedMix, Session, User
 from app.db.session import get_db
 from app.schemas.feedback import FeedbackRequest
+from app.utils.telegram_auth import resolve_telegram_id
 
 router = APIRouter(prefix="/feedback", tags=["feedback"])
 
@@ -13,9 +17,11 @@ router = APIRouter(prefix="/feedback", tags=["feedback"])
 @router.post("/")
 async def submit_feedback(
     body: FeedbackRequest,
+    x_telegram_init_data: Optional[str] = Header(None, alias="X-Telegram-Init-Data"),
     db: AsyncSession = Depends(get_db),
 ):
-    user_row = await db.execute(select(User).where(User.telegram_id == body.telegram_id))
+    uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
+    user_row = await db.execute(select(User).where(User.telegram_id == uid))
     user = user_row.scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail="user_not_found")

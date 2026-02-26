@@ -8,7 +8,7 @@
   flex-direction: column;
   flex: 1;
   padding: 0 0 24px;
-  padding-bottom: calc(88px + env(safe-area-inset-bottom, 0));
+  padding-bottom: 88px;
 }
 
 /* Тег в хедере — как на экране «Выбор цели» */
@@ -45,7 +45,7 @@
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  padding-top: 138px;
+  padding-top: 186px;
   padding-bottom: 0;
   padding-left: 8px;
   padding-right: 8px;
@@ -318,7 +318,7 @@
   padding: 16px 24px 16px 16px;
   border-radius: 50px;
   border: none;
-  background: rgba(255, 102, 63, 0.2);
+  background: rgba(246, 248, 255, 0.2);
   color: rgba(255, 255, 255, 1);
   cursor: pointer;
   font-family: var(--font-family);
@@ -335,7 +335,7 @@
 }
 
 .problemsBtn:active {
-  background: rgba(255, 102, 63, 0.3);
+  background: rgba(246, 248, 255, 0.3);
 }
 
 .timerBtn {
@@ -363,10 +363,14 @@
 }
 
 .timerBtn.timerRunning {
-  background: #ff663f;
-  color: #fff;
-  box-shadow: 0 0 16px rgba(255, 102, 63, 0.4);
-  animation: pulse 2s ease-in-out infinite;
+  background: #F6F8FF;
+  color: #292D32;
+  box-shadow: none;
+}
+
+.timerBtn.timerRunning span,
+.timerBtn.timerRunning svg {
+  color: #292D32;
 }
 
 .timerBtn.timerDone {
@@ -475,7 +479,7 @@
   flex-direction: column;
   background: linear-gradient(180deg, #222 0%, #36160f 100%);
   border-radius: 24px 24px 0 0;
-  padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0));
+  padding: 12px 12px 12px;
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
   color: #fff;
   overflow-y: auto;

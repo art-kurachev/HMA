@@ -39,6 +39,7 @@ async def _run_migrations() -> None:
     for sql in [
         "ALTER TABLE users ADD COLUMN welcome_requests_used INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN last_weekly_refill DATE",
+        "ALTER TABLE users ADD COLUMN friday_bonus INTEGER DEFAULT 0",
         "ALTER TABLE generated_mixes ADD COLUMN llm_model_used VARCHAR(64)",
     ]:
         try:

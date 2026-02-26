@@ -3,6 +3,8 @@ import { ScreenLayout } from './ScreenLayout'
 import { EndIcon } from './Icons'
 import instructionStyles from './InstructionStep.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
+import mixesStyles from './MixesStep.module.css'
+import progressRowStyles from './ProgressRow.module.css'
 import styles from './FeedbackStep.module.css'
 
 const ICON_LOGO = '/icons/Union.svg'
@@ -47,6 +49,7 @@ export function FeedbackStep({ onSubmit, onSkip, onBack, loading }: FeedbackStep
     <ScreenLayout onBack={onBack} hideBackButton totalSteps={0} fullBleed>
       <div className={`${instructionStyles.wrap} ${styles.wrapFeedback}`}>
         <header className={welcomeStyles.topBar}>
+          <div className={progressRowStyles.progressRow} aria-hidden />
           <div className={welcomeStyles.headerRow}>
             <img
               src={ICON_LOGO}
@@ -71,13 +74,12 @@ export function FeedbackStep({ onSubmit, onSkip, onBack, loading }: FeedbackStep
           </div>
         </header>
 
-        <div className={`${instructionStyles.bowlPlaceholder} ${styles.bowlPlaceholderBehind}`} aria-hidden>
-          <img src="/hand-thumbs-up.png" alt="" width={193} height={224} className={instructionStyles.bowlImage} />
-        </div>
-
         <div className={`${instructionStyles.mainContent} ${styles.mainContentFront}`}>
-          <div className={instructionStyles.headerBlock}>
-            <h2 className={instructionStyles.title}>Оценка рекомендации</h2>
+          <div className={mixesStyles.titleRow}>
+            <div className={mixesStyles.bowlPlaceholder} aria-hidden>
+              <img src="/hand-thumbs-up.png" alt="" width={193} height={224} className={mixesStyles.bowlImage} />
+            </div>
+            <h2 className={mixesStyles.title}>Оценка рекомендации</h2>
           </div>
           <div className={styles.blocksLayout}>
             {/* Верхний ряд: два блока подряд */}

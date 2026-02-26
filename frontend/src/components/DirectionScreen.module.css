@@ -8,7 +8,7 @@
   flex: 1;
   min-height: 100vh;
   padding: 0 0 24px;
-  padding-bottom: calc(88px + env(safe-area-inset-bottom, 0));
+  padding-bottom: 88px;
 }
 
 .header {
@@ -75,8 +75,10 @@
 
 /* Ряд с заголовком по макету (49:236): px-[24px], не часть хедера */
 .titleRow {
+  position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 0 24px;
   flex-shrink: 0;
   width: 100%;
@@ -84,7 +86,7 @@
 
 .title {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   font-family: var(--font-family);
   font-size: 32px;
   font-weight: 100;
@@ -95,16 +97,22 @@
   width: 100%;
 }
 
+@keyframes bowlFloat {
+  0%, 100% { transform: rotate(-15deg) translateY(0); }
+  50% { transform: rotate(-15deg) translateY(-24px); }
+}
+
 .bowlPlaceholder {
   position: absolute;
-  top: 120px;
-  left: auto;
-  right: 24px;
+  top: -55px;
+  right: 0;
   transform: rotate(-15deg);
   width: 193px;
   height: 224px;
   flex-shrink: 0;
   pointer-events: none;
+  z-index: 0;
+  animation: bowlFloat 4s ease-in-out infinite;
 }
 
 .bowlImage {
@@ -141,6 +149,8 @@
 }
 
 .card {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -247,6 +257,7 @@
   background: unset;
   background-color: unset;
   background-image: none;
+  gap: 0px;
   justify-content: flex-start;
   align-items: center;
   padding-top: 0;

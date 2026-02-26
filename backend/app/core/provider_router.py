@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.core.app_settings import get_app_settings
-from app.db.models import User
 from app.core.prompt_builder import build_quick_mixes_prompt
+from app.db.models import User
 from app.providers.base import BaseProvider, InstructionProviderInput, MixProviderInput
 from app.providers.gigachat import GigaChatProvider
 from app.providers.mock import MockProvider
@@ -24,8 +24,10 @@ def _has_gigachat_key() -> bool:
 
 def _has_yandexgpt_keys() -> bool:
     return bool(
-        settings.YANDEXGPT_API_KEY and str(settings.YANDEXGPT_API_KEY).strip()
-        and settings.YANDEXGPT_FOLDER_ID and str(settings.YANDEXGPT_FOLDER_ID).strip()
+        settings.YANDEXGPT_API_KEY
+        and str(settings.YANDEXGPT_API_KEY).strip()
+        and settings.YANDEXGPT_FOLDER_ID
+        and str(settings.YANDEXGPT_FOLDER_ID).strip()
     )
 
 

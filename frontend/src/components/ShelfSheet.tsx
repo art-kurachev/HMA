@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { loadShelf, saveShelf } from '../shelfStorage'
 import { CloseIcon, MinusCircleIcon, AddCircleIcon } from './Icons'
 import styles from './ShelfSheet.module.css'
@@ -38,7 +39,7 @@ export function ShelfSheet({ telegramId, onClose }: ShelfSheetProps) {
     if (e.target === e.currentTarget) onClose()
   }
 
-  return (
+  const content = (
     <div className={styles.backdrop} onClick={handleBackdropClick} role="dialog" aria-modal="true" aria-label="Полка табаков">
       <div className={styles.panel} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
@@ -82,4 +83,5 @@ export function ShelfSheet({ telegramId, onClose }: ShelfSheetProps) {
       </div>
     </div>
   )
+  return createPortal(content, document.body)
 }

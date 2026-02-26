@@ -1,16 +1,3 @@
-/* Iprit — Enter - 3. Фон макета на весь экран, контент поверх */
-.fullScreenBg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.fullScreenBg .gradient,
-.fullScreenBg .overlay {
-  border-radius: 0;
-}
-
 .welcome {
   position: relative;
   z-index: 1;
@@ -23,34 +10,11 @@
   align-items: flex-end;
 }
 
-.overlay img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.gradient {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(180deg, #222 0%, #ff6544 100%);
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.1;
-  mix-blend-mode: hard-light;
-}
-
-/* Hero image — left -20px top 110px, rotate -9.59deg, 411x756 */
+/* Hero image — positioned at right and bottom, adaptive size, rotate -9.59deg */
 .heroWrap {
   position: absolute;
-  left: -20px;
-  top: 110px;
-  width: 531px;
-  height: 814px;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
@@ -60,8 +24,9 @@
 .heroInner {
   position: relative;
   transform: rotate(-9.59deg);
-  width: 411px;
-  height: 756px;
+  width: min(411px, 75vw, calc(80vh * 411 / 756));
+  height: auto;
+  aspect-ratio: 411 / 756;
   flex-shrink: 0;
   overflow: visible;
 }
@@ -73,13 +38,23 @@
   left: -28.75%;
   top: -16.33%;
   object-fit: cover;
+  animation: hookahZoom 4s ease-in-out infinite;
+}
+
+@keyframes hookahZoom {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 /* Top: 3 progress bars + logo + Моя полка */
 .topBar {
   position: absolute;
   left: 0;
-  top: 58px;
+  top: 24px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -91,7 +66,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 62px 16px 0;
   width: 100%;
 }
 

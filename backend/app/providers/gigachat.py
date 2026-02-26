@@ -109,9 +109,7 @@ class GigaChatProvider(BaseProvider):
         return json.loads(text.strip())
 
     async def generate_mixes(self, input_data: MixProviderInput) -> SuggestResponse:
-        prompt = input_data.custom_prompt or build_mixes_prompt(
-            input_data.params, input_data.available_tobaccos
-        )
+        prompt = input_data.custom_prompt or build_mixes_prompt(input_data.params, input_data.available_tobaccos)
 
         async with httpx.AsyncClient(verify=False, timeout=60) as client:
             raw = await self._chat(client, prompt)

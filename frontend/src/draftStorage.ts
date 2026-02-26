@@ -16,6 +16,8 @@ export interface TimerState {
   remainingWhenPaused?: number
 }
 
+export type MixesFromStep = 'direction' | 'setup'
+
 export interface AppDraft {
   step: DraftStep
   direction: Direction | null
@@ -24,6 +26,7 @@ export interface AppDraft {
   selectedMix: Mix | null
   instruction: InstructionResponse | null
   timerState: TimerState | null
+  mixesFromStep?: MixesFromStep
 }
 
 export function saveDraft(draft: AppDraft): void {

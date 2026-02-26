@@ -3,7 +3,7 @@ import type { FormState } from '../types'
 import { BOWL_OPTIONS, PROFILE_OPTIONS } from '../types'
 import { loadShelf, shelfToText } from '../shelfStorage'
 import { ScreenLayout } from './ScreenLayout'
-import { ProgressRow } from './ProgressRow'
+import progressRowStyles from './ProgressRow.module.css'
 import { ArrowLeftIcon, BlackHoleIcon } from './Icons'
 import { ShelfSheet } from './ShelfSheet'
 import instructionStyles from './InstructionStep.module.css'
@@ -72,6 +72,7 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
   )
   const [hasCap, setHasCap] = useState(initialFormState?.has_cap ?? false)
   const [showTobaccoSheet, setShowTobaccoSheet] = useState(false)
+  const [rotationDeg, setRotationDeg] = useState(-15)
 
   const toggleProfile = (p: string) => {
     setProfiles((prev) => {
@@ -106,17 +107,11 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
     hasTobacco !== null &&
     !(hasTobacco && !available_tobaccos_text.trim())
 
-  const filledBlocks =
-    (bowl !== null ? 1 : 0) +
-    (coal_size !== null ? 1 : 0) +
-    (profiles.length > 0 ? 1 : 0) +
-    (hasTobacco !== null && (hasTobacco === false || available_tobaccos_text.trim().length > 0) ? 1 : 0)
-
   return (
     <ScreenLayout onBack={onBack} hideBackButton totalSteps={0} fullBleed>
       <div className={`${instructionStyles.wrap} ${styles.wrapSetup}`}>
         <header className={welcomeStyles.topBar}>
-          <ProgressRow filledCount={filledBlocks} />
+          <div className={progressRowStyles.progressRow} aria-hidden />
           <div className={welcomeStyles.headerRow}>
             <img
               src={ICON_LOGO}
@@ -143,7 +138,7 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
 
         <div className={`${instructionStyles.mainContent} ${styles.mainContentSetup}`}>
           <div className={styles.headerWithBowl}>
-            <div className={directionStyles.titleRow}>
+            <div className={`${directionStyles.titleRow} ${styles.titleRowSetup}`}>
               <div className={styles.headerText}>
                 <h2 className={directionStyles.title}>Всего четыре параметра</h2>
                 <p className={instructionStyles.flavor}>
@@ -154,13 +149,24 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
             <button
               type="button"
               className={`${directionStyles.bowlPlaceholder} ${styles.kolpakWrap} ${hasCap ? styles.kolpakActive : ''}`}
-              onClick={() => setHasCap((prev) => !prev)}
+              style={{ transform: `rotate(${rotationDeg}deg)` }}
+              onClick={() => {
+                const next = !hasCap
+                setHasCap(next)
+                setRotationDeg((r) => (next ? r + 45 : r - 45))
+              }}
               aria-pressed={hasCap}
               aria-label={hasCap ? 'Колпак в наличии' : 'Нажми, если есть колпак'}
             >
               <img src="/bowl.png" alt="" width={193} height={224} className={directionStyles.bowlImage} />
               {hasCap && (
-                <img src={ICON_TICK_CIRCLE} alt="" className={styles.kolpakTick} aria-hidden />
+                <img
+                  src={ICON_TICK_CIRCLE}
+                  alt=""
+                  className={styles.kolpakTick}
+                  style={{ transform: `rotate(${-rotationDeg}deg)` }}
+                  aria-hidden
+                />
               )}
             </button>
           </div>

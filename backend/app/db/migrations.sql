@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS users (
 -- Migration: add quota columns to existing users table
 -- ALTER TABLE users ADD COLUMN IF NOT EXISTS welcome_requests_used INTEGER DEFAULT 0;
 -- ALTER TABLE users ADD COLUMN IF NOT EXISTS last_weekly_refill DATE NULL;
+-- Migration: friday bonus (каждую пятницу 19:00 +1, если остаток ≤3)
+-- ALTER TABLE users ADD COLUMN IF NOT EXISTS friday_bonus INTEGER DEFAULT 0;
 CREATE INDEX IF NOT EXISTS ix_users_telegram_id ON users(telegram_id);
 
 CREATE TABLE IF NOT EXISTS daily_usage (

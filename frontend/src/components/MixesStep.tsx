@@ -5,7 +5,7 @@
  */
 import type { Mix } from '../api'
 import { ScreenLayout } from './ScreenLayout'
-import { ProgressRow } from './ProgressRow'
+import progressRowStyles from './ProgressRow.module.css'
 import { ArrowLeftIcon } from './Icons'
 import styles from './MixesStep.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
@@ -27,7 +27,7 @@ export function MixesStep({ mixes, onSelect, onBack }: MixesStepProps) {
       <div className={styles.wrap}>
         {/* Хедер как на «Выбор цели»: прогресс-бары + лого + тег */}
         <header className={welcomeStyles.topBar}>
-          <ProgressRow total={3} activeStep={2} />
+          <div className={progressRowStyles.progressRow} aria-hidden />
           <div className={welcomeStyles.headerRow}>
             <img
               src={ICON_LOGO}
@@ -47,11 +47,10 @@ export function MixesStep({ mixes, onSelect, onBack }: MixesStepProps) {
         {/* Контент: заголовок + сетка карточек (1 слева, 2 справа) */}
         <div className={styles.mainContent}>
           <div className={styles.titleRow}>
+            <div className={styles.bowlPlaceholder} aria-hidden>
+              <img src="/bowl-mixes.png" alt="" width={193} height={224} className={styles.bowlImage} />
+            </div>
             <h2 className={styles.title}>Предлагаю варианты</h2>
-          </div>
-
-          <div className={styles.bowlPlaceholder} aria-hidden>
-            <img src="/bowl-mixes.png" alt="" width={193} height={224} className={styles.bowlImage} />
           </div>
 
           <div className={styles.cardsGrid}>
