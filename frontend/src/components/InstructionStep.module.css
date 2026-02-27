@@ -148,6 +148,7 @@
   justify-content: space-between;
   gap: 8px;
   margin: 0 0 0;
+  padding-left: 8px;
 }
 
 .sectionTitle {
@@ -180,7 +181,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 8px;
+  padding: 0;
   min-height: 0;
 }
 
@@ -211,9 +212,8 @@
 /* Обычный пункт списка (Забивка, Прогрев, Курение, Если не раскрылся) */
 .sectionList {
   margin: 0;
-  padding: 0 24px;
-  list-style: disc;
-  list-style-position: outside;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -226,6 +226,7 @@
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.8);
   padding: 2px 4px;
+  margin-left: 8px;
 }
 
 /* Нижний блок — как на «Выбор цели»: без градиента */

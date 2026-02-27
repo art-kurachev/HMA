@@ -285,7 +285,7 @@ export function InstructionStep({
 
             <section className={styles.sectionCard}>
               <div className={styles.sectionTitleRow}>
-                <h3 className={styles.sectionTitle}>Если не раскрылся</h3>
+                <h3 className={styles.sectionTitle}>Быстрые советы</h3>
                 <div className={styles.navBtn} aria-hidden>
                   <InstructionCard5Icon size={16} />
                 </div>
