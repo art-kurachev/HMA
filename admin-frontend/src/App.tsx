@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import * as api from './api'
 import styles from './App.module.css'
 
-type Page = 'login' | 'dashboard' | 'settings' | 'feedback' | 'users' | 'mixes' | 'activity'
+type Page = 'login' | 'dashboard' | 'settings' | 'feedback' | 'users' | 'mixes' | 'activity' | 'purchases'
 
 export default function App() {
   const [page, setPage] = useState<Page>('login')
@@ -75,6 +75,12 @@ export default function App() {
             Миксы
           </button>
           <button
+            className={page === 'purchases' ? styles.navActive : ''}
+            onClick={() => setPage('purchases')}
+          >
+            Покупки
+          </button>
+          <button
             className={page === 'activity' ? styles.navActive : ''}
             onClick={() => setPage('activity')}
           >
@@ -97,6 +103,7 @@ export default function App() {
         {page === 'feedback' && <FeedbackPage />}
         {page === 'users' && <UsersPage />}
         {page === 'mixes' && <MixesPage />}
+        {page === 'purchases' && <PurchasesPage />}
         {page === 'activity' && <ActivityPage />}
       </main>
     </div>
@@ -201,6 +208,27 @@ function DashboardPage() {
           <span className={styles.cardLabel}>Feedback</span>
         </div>
       </div>
+      {stats.feedback_count > 0 && (
+        <>
+          <h3 className={styles.sectionTitle}>Feedback: зашло / не зашло</h3>
+          <div className={styles.feedbackStats}>
+            <div className={styles.feedbackBar}>
+              <div
+                className={styles.feedbackBarPositive}
+                style={{ width: `${(stats.feedback_positive / stats.feedback_count) * 100}%` }}
+              />
+            </div>
+            <div className={styles.feedbackNumbers}>
+              <span className={styles.feedbackPositive}>
+                Зашло: {stats.feedback_positive} ({((stats.feedback_positive / stats.feedback_count) * 100).toFixed(1)}%)
+              </span>
+              <span className={styles.feedbackNegative}>
+                Не зашло: {stats.feedback_negative} ({((stats.feedback_negative / stats.feedback_count) * 100).toFixed(1)}%)
+              </span>
+            </div>
+          </div>
+        </>
+      )}
       {providers.length > 0 && (
         <>
           <h3 className={styles.sectionTitle}>Провайдеры</h3>
@@ -415,9 +443,9 @@ function UsersPage() {
   }, [])
 
   const exportCsv = () => {
-    const headers = ['id', 'telegram_id', 'provider_group', 'attempts', 'sessions_count', 'feedback_count', 'created_at', 'last_activity']
+    const headers = ['id', 'telegram_id', 'provider_group', 'attempts', 'sessions_count', 'feedback_count', 'paid_generations', 'purchases_count', 'total_stars', 'created_at', 'last_activity']
     const rows = items.map((r) =>
-      [r.id, r.telegram_id, r.provider_group || '', r.attempts, r.sessions_count, r.feedback_count, r.created_at || '', r.last_activity || ''].join(';')
+      [r.id, r.telegram_id, r.provider_group || '', r.attempts, r.sessions_count, r.feedback_count, r.paid_generations, r.purchases_count, r.total_stars, r.created_at || '', r.last_activity || ''].join(';')
     )
     const csv = [headers.join(';'), ...rows].join('\n')
     const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' })
@@ -448,6 +476,9 @@ function UsersPage() {
               <th>Попыток</th>
               <th>Сессий</th>
               <th>Feedback</th>
+              <th>Оплачено</th>
+              <th>Покупок</th>
+              <th>Stars</th>
               <th>Регистрация</th>
               <th>Последняя активность</th>
             </tr>
@@ -461,6 +492,9 @@ function UsersPage() {
                 <td data-label="Попыток">{row.attempts}</td>
                 <td data-label="Сессий">{row.sessions_count}</td>
                 <td data-label="Feedback">{row.feedback_count}</td>
+                <td data-label="Оплачено">{row.paid_generations}</td>
+                <td data-label="Покупок">{row.purchases_count}</td>
+                <td data-label="Stars">{row.total_stars}</td>
                 <td data-label="Регистрация">{row.created_at ? new Date(row.created_at).toLocaleString('ru') : '—'}</td>
                 <td data-label="Последняя активность">{row.last_activity ? new Date(row.last_activity).toLocaleString('ru') : '—'}</td>
               </tr>
@@ -567,6 +601,8 @@ function FeedbackPage() {
               <th>Mix</th>
               <th>Telegram</th>
               <th>Оценка</th>
+              <th>Провайдер</th>
+              <th>Модель</th>
               <th>Причина</th>
               <th>Дата</th>
               <th></th>
@@ -583,6 +619,8 @@ function FeedbackPage() {
                     {row.rating ? 'Зашло' : 'Не зашло'}
                   </span>
                 </td>
+                <td data-label="Провайдер">{row.provider}</td>
+                <td data-label="Модель">{row.llm_model}</td>
                 <td data-label="Причина">{row.reason || '—'}</td>
                 <td data-label="Дата">{row.created_at ? new Date(row.created_at).toLocaleString('ru') : '—'}</td>
                 <td data-label="">
@@ -649,6 +687,69 @@ function MixesPage() {
       </div>
       {items.length === 0 && <p>Нет миксов</p>}
       {mixModalId != null && <MixModal mixId={mixModalId} onClose={() => setMixModalId(null)} />}
+    </div>
+  )
+}
+
+function PurchasesPage() {
+  const [items, setItems] = useState<api.PurchaseItem[]>([])
+  const [err, setErr] = useState<string | null>(null)
+
+  useEffect(() => {
+    api.getPurchases(200, 0).then(setItems).catch((e) => setErr(e instanceof Error ? e.message : 'Ошибка'))
+  }, [])
+
+  const exportCsv = () => {
+    const headers = ['id', 'telegram_id', 'generations', 'stars_paid', 'telegram_charge_id', 'created_at']
+    const rows = items.map((r) =>
+      [r.id, r.telegram_id, r.generations, r.stars_paid, r.telegram_charge_id || '', r.created_at || ''].join(';')
+    )
+    const csv = [headers.join(';'), ...rows].join('\n')
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' })
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = 'purchases.csv'
+    a.click()
+    URL.revokeObjectURL(a.href)
+  }
+
+  if (err) return <div className={styles.error}>{err}</div>
+
+  return (
+    <div className={styles.page}>
+      <div className={styles.pageHeader}>
+        <h2>Покупки</h2>
+        <button className={styles.exportBtn} onClick={exportCsv}>
+          Экспорт CSV
+        </button>
+      </div>
+      <div className={styles.tableWrap}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Telegram ID</th>
+              <th>Рекомендаций</th>
+              <th>Stars</th>
+              <th>Charge ID</th>
+              <th>Дата</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((row) => (
+              <tr key={row.id}>
+                <td data-label="ID">{row.id}</td>
+                <td data-label="Telegram ID">{row.telegram_id}</td>
+                <td data-label="Рекомендаций">{row.generations}</td>
+                <td data-label="Stars">{row.stars_paid}</td>
+                <td data-label="Charge ID">{row.telegram_charge_id || '—'}</td>
+                <td data-label="Дата">{row.created_at ? new Date(row.created_at).toLocaleString('ru') : '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {items.length === 0 && <p>Нет покупок</p>}
     </div>
   )
 }

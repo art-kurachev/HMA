@@ -58,6 +58,8 @@ export interface Stats {
   total_requests: number
   total_attempts: number
   feedback_count: number
+  feedback_positive: number
+  feedback_negative: number
 }
 
 export function getStats(): Promise<Stats> {
@@ -70,6 +72,8 @@ export interface FeedbackItem {
   telegram_id: number
   rating: boolean
   reason: string | null
+  provider: string
+  llm_model: string
   created_at: string | null
 }
 
@@ -114,6 +118,11 @@ export interface UserItem {
   sessions_count: number
   feedback_count: number
   last_activity: string | null
+  paid_generations: number
+  friday_bonus: number
+  welcome_requests_used: number
+  purchases_count: number
+  total_stars: number
 }
 
 export function getUsers(limit?: number, offset?: number): Promise<UserItem[]> {
@@ -168,4 +177,21 @@ export function getMixes(limit?: number, offset?: number): Promise<MixListItem[]
   if (limit != null) params.set('limit', String(limit))
   if (offset != null) params.set('offset', String(offset))
   return request<MixListItem[]>(`/admin/mixes?${params}`)
+}
+
+export interface PurchaseItem {
+  id: number
+  telegram_id: number
+  generations: number
+  stars_paid: number
+  telegram_charge_id: string | null
+  created_at: string | null
+}
+
+export function getPurchases(limit?: number, offset?: number, telegramId?: number): Promise<PurchaseItem[]> {
+  const params = new URLSearchParams()
+  if (limit != null) params.set('limit', String(limit))
+  if (offset != null) params.set('offset', String(offset))
+  if (telegramId != null) params.set('telegram_id', String(telegramId))
+  return request<PurchaseItem[]>(`/admin/purchases?${params}`)
 }

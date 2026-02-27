@@ -67,6 +67,18 @@ class Feedback(Base):
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
 
+class Purchase(Base):
+    __tablename__ = "purchases"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    telegram_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
+    generations: Mapped[int] = mapped_column(Integer, nullable=False)
+    stars_paid: Mapped[int] = mapped_column(Integer, nullable=False)
+    telegram_charge_id: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
+
 class AppSetting(Base):
     __tablename__ = "app_settings"
 

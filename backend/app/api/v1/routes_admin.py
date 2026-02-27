@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.admin_auth import check_admin_credentials, create_admin_token, require_admin
 from app.core.app_settings import get_app_settings, set_setting
-from app.db.models import DailyUsage, Feedback, GeneratedMix, Session, User
+from app.db.models import DailyUsage, Feedback, GeneratedMix, Purchase, Session, User
 from app.db.session import get_db
 
 logger = logging.getLogger(__name__)
@@ -63,11 +63,19 @@ async def admin_stats(
     feedback_count = await db.execute(select(func.count(Feedback.id)))
     total_feedback = feedback_count.scalar() or 0
 
+    fb_pos = await db.execute(select(func.count(Feedback.id)).where(Feedback.rating == True))
+    feedback_positive = fb_pos.scalar() or 0
+
+    fb_neg = await db.execute(select(func.count(Feedback.id)).where(Feedback.rating == False))
+    feedback_negative = fb_neg.scalar() or 0
+
     return {
         "users_count": total_users,
         "total_requests": total_requests,
         "total_attempts": int(total_attempts),
         "feedback_count": total_feedback,
+        "feedback_positive": feedback_positive,
+        "feedback_negative": feedback_negative,
     }
 
 
@@ -79,8 +87,9 @@ async def admin_feedback_list(
     offset: int = 0,
 ):
     result = await db.execute(
-        select(Feedback, User.telegram_id)
+        select(Feedback, User.telegram_id, GeneratedMix.provider, GeneratedMix.llm_model_used)
         .join(User, Feedback.user_id == User.id)
+        .outerjoin(GeneratedMix, Feedback.mix_id == GeneratedMix.id)
         .order_by(Feedback.created_at.desc())
         .limit(limit)
         .offset(offset)
@@ -93,9 +102,11 @@ async def admin_feedback_list(
             "telegram_id": tg_id,
             "rating": f.rating,
             "reason": f.reason,
+            "provider": provider or "—",
+            "llm_model": llm_model or "—",
             "created_at": f.created_at.isoformat() if f.created_at else None,
         }
-        for f, tg_id in rows
+        for f, tg_id, provider, llm_model in rows
     ]
 
 
@@ -122,21 +133,36 @@ async def admin_users_list(
         select(Session.user_id, func.max(Session.created_at).label("last_activity")).group_by(Session.user_id)
     ).subquery()
 
+    purchases_subq = (
+        select(
+            Purchase.user_id,
+            func.count(Purchase.id).label("purchases_count"),
+            func.coalesce(func.sum(Purchase.stars_paid), 0).label("total_stars"),
+        )
+        .group_by(Purchase.user_id)
+    ).subquery()
+
     q = (
         select(
             User.id,
             User.telegram_id,
             User.provider_group,
             User.created_at,
+            User.paid_generations,
+            User.friday_bonus,
+            User.welcome_requests_used,
             func.coalesce(attempts_subq.c.attempts, 0).label("attempts"),
             func.coalesce(sessions_subq.c.sessions_count, 0).label("sessions_count"),
             func.coalesce(feedback_subq.c.feedback_count, 0).label("feedback_count"),
             last_session_subq.c.last_activity,
+            func.coalesce(purchases_subq.c.purchases_count, 0).label("purchases_count"),
+            func.coalesce(purchases_subq.c.total_stars, 0).label("total_stars"),
         )
         .outerjoin(attempts_subq, User.id == attempts_subq.c.id)
         .outerjoin(sessions_subq, User.id == sessions_subq.c.user_id)
         .outerjoin(feedback_subq, User.id == feedback_subq.c.user_id)
         .outerjoin(last_session_subq, User.id == last_session_subq.c.user_id)
+        .outerjoin(purchases_subq, User.id == purchases_subq.c.user_id)
         .order_by(User.id.desc())
         .limit(limit)
         .offset(offset)
@@ -153,8 +179,43 @@ async def admin_users_list(
             "sessions_count": int(r.sessions_count),
             "feedback_count": int(r.feedback_count),
             "last_activity": r.last_activity.isoformat() if r.last_activity else None,
+            "paid_generations": r.paid_generations or 0,
+            "friday_bonus": r.friday_bonus or 0,
+            "welcome_requests_used": r.welcome_requests_used or 0,
+            "purchases_count": int(r.purchases_count),
+            "total_stars": int(r.total_stars),
         }
         for r in rows
+    ]
+
+
+@router.get("/purchases")
+async def admin_purchases_list(
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(require_admin),
+    limit: int = 100,
+    offset: int = 0,
+    telegram_id: Optional[int] = None,
+):
+    q = (
+        select(Purchase)
+        .order_by(Purchase.created_at.desc())
+    )
+    if telegram_id is not None:
+        q = q.where(Purchase.telegram_id == telegram_id)
+    q = q.limit(limit).offset(offset)
+    result = await db.execute(q)
+    rows = result.scalars().all()
+    return [
+        {
+            "id": p.id,
+            "telegram_id": p.telegram_id,
+            "generations": p.generations,
+            "stars_paid": p.stars_paid,
+            "telegram_charge_id": p.telegram_charge_id,
+            "created_at": p.created_at.isoformat() if p.created_at else None,
+        }
+        for p in rows
     ]
 
 

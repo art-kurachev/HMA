@@ -9,7 +9,7 @@ from fastapi import APIRouter, Request, Response
 from sqlalchemy import select
 
 from app.config import settings
-from app.db.models import User
+from app.db.models import Purchase, User
 from app.db.session import async_session_maker
 
 logger = logging.getLogger(__name__)
@@ -55,14 +55,23 @@ async def telegram_webhook(request: Request):
                     payload = json.loads(payload_str)
                     telegram_id = payload.get("telegram_id")
                     generations = int(payload.get("generations", 0))
+                    stars = int(payload.get("stars", 0))
+                    charge_id = sp.get("telegram_payment_charge_id")
                     if telegram_id and generations > 0:
                         async with async_session_maker() as db:
                             row = await db.execute(select(User).where(User.telegram_id == telegram_id))
                             user = row.scalar_one_or_none()
                             if user:
                                 user.paid_generations = (user.paid_generations or 0) + generations
+                                db.add(Purchase(
+                                    user_id=user.id,
+                                    telegram_id=telegram_id,
+                                    generations=generations,
+                                    stars_paid=stars,
+                                    telegram_charge_id=charge_id,
+                                ))
                                 await db.commit()
-                                logger.info("Stars paid: telegram_id=%s +%d generations", telegram_id, generations)
+                                logger.info("Stars paid: telegram_id=%s +%d generations, %d stars", telegram_id, generations, stars)
                             else:
                                 logger.warning("Stars paid: user not found telegram_id=%s", telegram_id)
                 except (json.JSONDecodeError, ValueError) as e:

@@ -65,7 +65,7 @@ async def create_stars_invoice(
     if not matched:
         raise HTTPException(status_code=400, detail="package_not_found")
 
-    payload = json.dumps({"telegram_id": uid, "generations": body.generations})
+    payload = json.dumps({"telegram_id": uid, "generations": body.generations, "stars": body.stars})
     title = f"{body.generations} рекомендаций"
     description = f"Дополнительно {body.generations} генераций микса"
     url = f"https://api.telegram.org/bot{settings.BOT_TOKEN}/createInvoiceLink"
