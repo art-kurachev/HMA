@@ -74,7 +74,7 @@ async def generate_mixes(
     import re
 
     text = params.get("available_tobaccos_text", "")
-    items = re.split(r"[,;/\n]+", text)
+    items = re.split(r"\n+", text)
     tobaccos = [x.strip() for x in items if x.strip()][:20] or ["Black Nana", "Blue Horse", "Darkside Core"]
     input_data = MixProviderInput(params=params, available_tobaccos=tobaccos)
     return provider, input_data

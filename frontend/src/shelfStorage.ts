@@ -28,14 +28,14 @@ export function saveShelf(telegramId: number, tobaccos: string[]): void {
   }
 }
 
-/** Формат для API: строка через запятую */
+/** Формат для API: строка через перенос строки (запятые внутри названия — часть одной позиции) */
 export function shelfToText(tobaccos: string[]): string {
-  return tobaccos.map((s) => s.trim()).filter(Boolean).join(', ')
+  return tobaccos.map((s) => s.trim()).filter(Boolean).join('\n')
 }
 
 export function textToShelf(text: string): string[] {
   return text
-    .split(/[,;\n]+/)
+    .split(/\n+/)
     .map((s) => s.trim())
     .filter(Boolean)
 }

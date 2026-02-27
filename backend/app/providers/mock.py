@@ -7,7 +7,7 @@ from app.schemas.mix import MixItem, SuggestResponse
 
 def _parse_tobaccos(text: str) -> list[str]:
     text = text.strip()
-    items = re.split(r"[,;/\n]+", text)
+    items = re.split(r"\n+", text)
     result = []
     for item in items:
         name = item.strip()
