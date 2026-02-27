@@ -18,8 +18,9 @@ class Settings(BaseSettings):
     GIGACHAT_SCOPE: str = "GIGACHAT_API_PERS"
     GIGACHAT_MODEL: str = "GigaChat-2-Pro"
 
-    # Telegram Bot (уведомления)
+    # Telegram Bot (уведомления + оплата Stars)
     BOT_TOKEN: Optional[str] = None
+    APP_URL: Optional[str] = None  # https://xxx.up.railway.app — для регистрации вебхука
 
     # Creator (без лимитов) — comma-separated Telegram IDs
     CREATOR_TELEGRAM_IDS: str = ""

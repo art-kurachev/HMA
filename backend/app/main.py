@@ -2,12 +2,14 @@ import logging
 import traceback
 from contextlib import asynccontextmanager
 
+import httpx
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1 import api_router
 from app.api.webhook_telegram import router as webhook_router
+from app.config import settings
 from app.core.app_settings import init_app_settings
 from app.core.friday_refill import run_friday_refill
 from app.db.session import async_session_maker, init_db
@@ -30,6 +32,24 @@ def _start_friday_scheduler() -> None:
     logger.info("Friday refill scheduler started (Fri 19:00 MSK)")
 
 
+async def _register_telegram_webhook() -> None:
+    if not settings.BOT_TOKEN or not settings.APP_URL:
+        logger.info("Telegram webhook: BOT_TOKEN or APP_URL not set, skipping")
+        return
+    webhook_url = f"{settings.APP_URL.rstrip('/')}/webhook/telegram"
+    api_url = f"https://api.telegram.org/bot{settings.BOT_TOKEN}/setWebhook"
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(api_url, json={"url": webhook_url}, timeout=10)
+            data = resp.json()
+            if data.get("ok"):
+                logger.info("Telegram webhook registered: %s", webhook_url)
+            else:
+                logger.warning("Telegram webhook registration failed: %s", data)
+    except Exception as e:
+        logger.warning("Telegram webhook registration error: %s", e)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
@@ -41,6 +61,7 @@ async def lifespan(app: FastAPI):
             await session.rollback()
             raise
     _start_friday_scheduler()
+    await _register_telegram_webhook()
     yield
 
 
