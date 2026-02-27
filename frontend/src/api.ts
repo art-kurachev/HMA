@@ -6,6 +6,7 @@ const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 export const FALLBACK_TELEGRAM_ID = 123456789
 
 function isFallbackId(id: number): boolean {
+  if (import.meta.env.DEV) return false
   return id === FALLBACK_TELEGRAM_ID
 }
 

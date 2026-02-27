@@ -223,7 +223,8 @@ export default function App() {
       )}
       {error && (
         <div className={styles.error}>
-          {error}
+          <img src="/icons/error.svg" alt="" className={styles.errorIcon} />
+          <span className={styles.errorText}>{error}</span>
           <button type="button" onClick={() => setError(null)}>×</button>
         </div>
       )}
