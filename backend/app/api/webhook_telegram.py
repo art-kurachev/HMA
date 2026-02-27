@@ -63,15 +63,22 @@ async def telegram_webhook(request: Request):
                             user = row.scalar_one_or_none()
                             if user:
                                 user.paid_generations = (user.paid_generations or 0) + generations
-                                db.add(Purchase(
-                                    user_id=user.id,
-                                    telegram_id=telegram_id,
-                                    generations=generations,
-                                    stars_paid=stars,
-                                    telegram_charge_id=charge_id,
-                                ))
+                                db.add(
+                                    Purchase(
+                                        user_id=user.id,
+                                        telegram_id=telegram_id,
+                                        generations=generations,
+                                        stars_paid=stars,
+                                        telegram_charge_id=charge_id,
+                                    )
+                                )
                                 await db.commit()
-                                logger.info("Stars paid: telegram_id=%s +%d generations, %d stars", telegram_id, generations, stars)
+                                logger.info(
+                                    "Stars paid: telegram_id=%s +%d generations, %d stars",
+                                    telegram_id,
+                                    generations,
+                                    stars,
+                                )
                             else:
                                 logger.warning("Stars paid: user not found telegram_id=%s", telegram_id)
                 except (json.JSONDecodeError, ValueError) as e:

@@ -138,8 +138,7 @@ async def admin_users_list(
             Purchase.user_id,
             func.count(Purchase.id).label("purchases_count"),
             func.coalesce(func.sum(Purchase.stars_paid), 0).label("total_stars"),
-        )
-        .group_by(Purchase.user_id)
+        ).group_by(Purchase.user_id)
     ).subquery()
 
     q = (
@@ -197,10 +196,7 @@ async def admin_purchases_list(
     offset: int = 0,
     telegram_id: Optional[int] = None,
 ):
-    q = (
-        select(Purchase)
-        .order_by(Purchase.created_at.desc())
-    )
+    q = select(Purchase).order_by(Purchase.created_at.desc())
     if telegram_id is not None:
         q = q.where(Purchase.telegram_id == telegram_id)
     q = q.limit(limit).offset(offset)
