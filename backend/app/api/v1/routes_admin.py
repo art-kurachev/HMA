@@ -63,10 +63,10 @@ async def admin_stats(
     feedback_count = await db.execute(select(func.count(Feedback.id)))
     total_feedback = feedback_count.scalar() or 0
 
-    fb_pos = await db.execute(select(func.count(Feedback.id)).where(Feedback.rating == True))
+    fb_pos = await db.execute(select(func.count(Feedback.id)).where(Feedback.rating.is_(True)))
     feedback_positive = fb_pos.scalar() or 0
 
-    fb_neg = await db.execute(select(func.count(Feedback.id)).where(Feedback.rating == False))
+    fb_neg = await db.execute(select(func.count(Feedback.id)).where(Feedback.rating.is_(False)))
     feedback_negative = fb_neg.scalar() or 0
 
     return {
