@@ -189,6 +189,48 @@ export async function createStarsInvoice(
   })
 }
 
+// ─── Shopping List ───────────────────────────────────────────────────────────
+
+export interface ShoppingMix {
+  id: string
+  title: string
+  tobaccos: string[]
+  flavor: string
+}
+
+export interface ShoppingListResponse {
+  mixes: ShoppingMix[]
+  checked_tobaccos: string[]
+  updated_at?: string
+}
+
+export async function getShoppingList(telegramId: number): Promise<ShoppingListResponse> {
+  if (isFallbackId(telegramId)) return Promise.reject(new Error('Открой приложение через Telegram'))
+  return request<ShoppingListResponse>(`/v1/shopping-list/?telegram_id=${telegramId}`)
+}
+
+export async function generateShoppingList(telegramId: number): Promise<ShoppingListResponse> {
+  if (isFallbackId(telegramId)) return Promise.reject(new Error('Открой приложение через Telegram'))
+  return request<ShoppingListResponse>('/v1/shopping-list/generate', {
+    method: 'POST',
+    body: JSON.stringify({ telegram_id: telegramId }),
+    timeout: 90000,
+  })
+}
+
+export async function updateShoppingListChecked(
+  telegramId: number,
+  checkedTobaccos: string[]
+): Promise<ShoppingListResponse> {
+  if (isFallbackId(telegramId)) return Promise.reject(new Error('Открой приложение через Telegram'))
+  return request<ShoppingListResponse>('/v1/shopping-list/check', {
+    method: 'PATCH',
+    body: JSON.stringify({ telegram_id: telegramId, checked_tobaccos: checkedTobaccos }),
+  })
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 export async function submitFeedback(
   telegramId: number,
   mixDbId: number,

@@ -25,6 +25,7 @@ interface WelcomeScreenProps {
   onStart: () => void
   onSetup: () => void
   onOpenShelf?: () => void
+  onOpenShoppingList?: () => void
 }
 
 export function WelcomeScreen({
@@ -32,6 +33,7 @@ export function WelcomeScreen({
   onStart,
   onSetup,
   onOpenShelf,
+  onOpenShoppingList,
 }: WelcomeScreenProps) {
   const [remaining, setRemaining] = useState<number | null>(null)
   const [packages, setPackages] = useState<StarsPackage[]>([])
@@ -197,6 +199,13 @@ export function WelcomeScreen({
               />
             </button>
           </div>
+          <button
+            type="button"
+            className={styles.shoppingListBtn}
+            onClick={onOpenShoppingList}
+          >
+            🛒 Список покупок
+          </button>
         </div>
       </div>
 

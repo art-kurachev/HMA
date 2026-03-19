@@ -6,6 +6,7 @@ import type { FormState } from './types'
 import type { Direction } from './components/DirectionScreen'
 import { WelcomeScreen } from './components/WelcomeScreen'
 import { ShelfSheet } from './components/ShelfSheet'
+import { ShoppingListScreen } from './components/ShoppingListScreen'
 import { saveDraft, loadDraft, clearDraft } from './draftStorage'
 import { DirectionScreen } from './components/DirectionScreen'
 import { SetupScreen } from './components/SetupScreen'
@@ -25,6 +26,7 @@ const LOADING_MESSAGES: Record<Step, string> = {
   instruction: 'Загрузка...',
   feedback: 'Отправляю...',
   done: 'Загрузка...',
+  'shopping-list': 'Загрузка...',
 }
 
 type Step =
@@ -35,6 +37,7 @@ type Step =
   | 'instruction'
   | 'feedback'
   | 'done'
+  | 'shopping-list'
 
 export default function App() {
   const [telegramId, setTelegramId] = useState<number | null>(null)
@@ -235,10 +238,14 @@ export default function App() {
           onStart={() => setStep('direction')}
           onSetup={() => setStep('setup')}
           onOpenShelf={() => setShelfOpen(true)}
+          onOpenShoppingList={() => setStep('shopping-list')}
         />
       )}
       {shelfOpen && (
         <ShelfSheet telegramId={uid} onClose={() => setShelfOpen(false)} />
+      )}
+      {step === 'shopping-list' && (
+        <ShoppingListScreen telegramId={uid} onBack={() => setStep('welcome')} />
       )}
       {['welcome', 'direction', 'setup', 'mixes', 'instruction', 'feedback'].includes(step) && (
         <div className={styles.fullScreenBg} aria-hidden>
