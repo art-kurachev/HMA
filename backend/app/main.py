@@ -60,7 +60,7 @@ async def lifespan(app: FastAPI):
         except Exception:
             await session.rollback()
             raise
-    _start_friday_scheduler()
+    # _start_friday_scheduler()  # TODO: включить когда будет готово к запуску
     await _register_telegram_webhook()
     yield
 
