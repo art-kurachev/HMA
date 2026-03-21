@@ -90,7 +90,9 @@ class ShoppingList(Base):
     __tablename__ = "shopping_lists"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True)
+    user_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True
+    )
     mixes: Mapped[list] = mapped_column(JSONB().with_variant(JSON(), "sqlite"), nullable=False)
     checked_tobaccos: Mapped[list] = mapped_column(JSONB().with_variant(JSON(), "sqlite"), nullable=False, default=list)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)

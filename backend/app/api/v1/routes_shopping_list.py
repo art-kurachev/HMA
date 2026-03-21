@@ -97,6 +97,7 @@ async def generate_shopping_list(
         shopping_list.mixes = mixes
         shopping_list.checked_tobaccos = []
         from datetime import datetime
+
         shopping_list.updated_at = datetime.utcnow()
 
     await db.flush()
@@ -126,6 +127,7 @@ async def update_checked(
 
     shopping_list.checked_tobaccos = body.checked_tobaccos
     from datetime import datetime
+
     shopping_list.updated_at = datetime.utcnow()
     await db.flush()
 

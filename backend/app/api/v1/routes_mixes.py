@@ -176,9 +176,7 @@ async def get_instruction(
         # Fallback: look up mix in the user's shopping list
         from app.db.models import ShoppingList
 
-        sl_result = await db.execute(
-            select(ShoppingList).where(ShoppingList.user_id == user.id)
-        )
+        sl_result = await db.execute(select(ShoppingList).where(ShoppingList.user_id == user.id))
         shopping_list = sl_result.scalar_one_or_none()
         sl_mix = None
         if shopping_list:
@@ -196,10 +194,7 @@ async def get_instruction(
 
         # Use latest session params for bowl/heat settings
         latest_session = await db.execute(
-            select(Session)
-            .where(Session.user_id == user.id)
-            .order_by(Session.created_at.desc())
-            .limit(1)
+            select(Session).where(Session.user_id == user.id).order_by(Session.created_at.desc()).limit(1)
         )
         latest_sess = latest_session.scalar_one_or_none()
         params = latest_sess.params if latest_sess else {}
