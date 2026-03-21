@@ -45,8 +45,6 @@ async def run_announcements() -> None:
 
             sent = 0
             for user in users:
-                if is_creator(user.telegram_id):
-                    continue
                 try:
                     await send_telegram_message(user.telegram_id, announce["message"])
                     sent += 1
