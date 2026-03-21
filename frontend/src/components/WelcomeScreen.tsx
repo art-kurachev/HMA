@@ -121,23 +121,37 @@ export function WelcomeScreen({
                 e.currentTarget.style.display = 'none'
               }}
             />
-            <button
-              type="button"
-              className={styles.shelfBtn}
-              onClick={onOpenShelf}
-              aria-label="Моя полка"
-            >
-              Моя полка
-              <img
-                src={ICON_DATABASE}
-                alt=""
-                className={styles.shelfBtnIcon}
-                aria-hidden
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                }}
-              />
-            </button>
+            <div className={styles.headerBtns}>
+              <button
+                type="button"
+                className={`${styles.shelfBtn} ${styles.shelfBtnIconOnly}`}
+                onClick={onOpenShoppingList}
+                aria-label="Список покупок"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden className={styles.shelfBtnIcon}>
+                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M3 6h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <button
+                type="button"
+                className={styles.shelfBtn}
+                onClick={onOpenShelf}
+                aria-label="Моя полка"
+              >
+                Моя полка
+                <img
+                  src={ICON_DATABASE}
+                  alt=""
+                  className={styles.shelfBtnIcon}
+                  aria-hidden
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              </button>
+            </div>
           </div>
         </header>
 
@@ -199,13 +213,6 @@ export function WelcomeScreen({
               />
             </button>
           </div>
-          <button
-            type="button"
-            className={styles.shoppingListBtn}
-            onClick={onOpenShoppingList}
-          >
-            🛒 Список покупок
-          </button>
         </div>
       </div>
 

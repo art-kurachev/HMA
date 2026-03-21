@@ -127,8 +127,9 @@ class GigaChatProvider(BaseProvider):
                 )
             )
 
+        limit = 10 if input_data.params.get("_shopping_list") else 3
         return SuggestResponse(
-            mixes=mixes[:3],
+            mixes=mixes[:limit],
             clarify=data.get("clarify", []),
         )
 

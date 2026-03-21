@@ -70,6 +70,12 @@
   width: 100%;
 }
 
+.headerBtns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .logo {
   width: 65px;
   height: 30px;
@@ -102,6 +108,10 @@
   height: 24px;
   flex-shrink: 0;
   display: block;
+}
+
+.shelfBtnIconOnly {
+  padding: 16px;
 }
 
 /* Bottom block — gradient strip + content */
@@ -262,26 +272,6 @@
   height: 24px;
   flex-shrink: 0;
   display: block;
-}
-
-.shoppingListBtn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 24px;
-  border-radius: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  color: rgba(255, 255, 255, 0.8);
-  font-family: var(--font-family);
-  font-size: 14px;
-  font-weight: 200;
-  line-height: 16px;
-  cursor: pointer;
-  transition: opacity 0.2s;
-  align-self: flex-start;
 }
 
 /* Packages modal (Stars) */

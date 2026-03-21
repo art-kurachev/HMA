@@ -245,7 +245,15 @@ export default function App() {
         <ShelfSheet telegramId={uid} onClose={() => setShelfOpen(false)} />
       )}
       {step === 'shopping-list' && (
-        <ShoppingListScreen telegramId={uid} onBack={() => setStep('welcome')} />
+        <ShoppingListScreen
+          telegramId={uid}
+          onBack={() => setStep('welcome')}
+          onSelectMix={(mix) => {
+            setSelectedMix(mix)
+            setMixesFromStep('direction')
+            handleMixSelect(mix)
+          }}
+        />
       )}
       {['welcome', 'direction', 'setup', 'mixes', 'instruction', 'feedback'].includes(step) && (
         <div className={styles.fullScreenBg} aria-hidden>

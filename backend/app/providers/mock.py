@@ -81,8 +81,32 @@ _MOCK_QUICK_MIXES = {
 }
 
 
+# 5 табаков, 10 комбинаций из них
+_T1 = "Darkside Cherry"       # фруктовый
+_T2 = "MUSTHAVE Pinkman"      # ягодный
+_T3 = "Severniy Мята"         # свежесть
+_T4 = "Element Дыня"          # десертный
+_T5 = "Spectrum Арбуз"        # необычный
+
+_MOCK_SHOPPING_LIST = [
+    MixItem(id="mix_1",  title="Вишня и мята",       tobaccos=[_T1, _T3],           flavor="Классика: вишня с холодком"),
+    MixItem(id="mix_2",  title="Ягодная свежесть",   tobaccos=[_T2, _T3],           flavor="Лёгкая ягода и мята"),
+    MixItem(id="mix_3",  title="Тропик",             tobaccos=[_T4, _T5],           flavor="Сладкая дыня с арбузом"),
+    MixItem(id="mix_4",  title="Летний день",        tobaccos=[_T1, _T4],           flavor="Вишня и мягкая дыня"),
+    MixItem(id="mix_5",  title="Арбуз-мята",         tobaccos=[_T3, _T5],           flavor="Свежий арбуз со льдом"),
+    MixItem(id="mix_6",  title="Ягода-дыня",         tobaccos=[_T2, _T4],           flavor="Сладкая пара без кислоты"),
+    MixItem(id="mix_7",  title="Тройка лето",        tobaccos=[_T1, _T2, _T3],      flavor="Вишня, ягода, свежесть"),
+    MixItem(id="mix_8",  title="Тропик плюс",        tobaccos=[_T3, _T4, _T5],      flavor="Арбуз, дыня, лёд"),
+    MixItem(id="mix_9",  title="Ягодный бум",        tobaccos=[_T1, _T2, _T5],      flavor="Тёмные ягоды с арбузом"),
+    MixItem(id="mix_10", title="Всё лето",           tobaccos=[_T1, _T2, _T3, _T4], flavor="Многослойный летний букет"),
+]
+
+
 class MockProvider(BaseProvider):
     async def generate_mixes(self, input_data: MixProviderInput) -> SuggestResponse:
+        if input_data.params.get("_shopping_list"):
+            return SuggestResponse(mixes=_MOCK_SHOPPING_LIST, clarify=[])
+
         direction = getattr(input_data, "direction", None)
         if direction in _MOCK_QUICK_MIXES:
             return SuggestResponse(mixes=_MOCK_QUICK_MIXES[direction], clarify=[])
