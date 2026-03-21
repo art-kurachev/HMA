@@ -135,7 +135,7 @@ export default function App() {
   }, [step])
 
   useEffect(() => {
-    if (step === 'welcome' || step === 'shopping-list') return
+    if (step === 'welcome') return
     saveDraft({
       step: step as import('./draftStorage').DraftStep,
       direction,

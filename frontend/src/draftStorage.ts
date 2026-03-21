@@ -4,7 +4,7 @@ import type { Direction } from './components/DirectionScreen'
 
 const DRAFT_KEY = 'hma_draft'
 
-export type DraftStep = 'direction' | 'setup' | 'mixes' | 'instruction' | 'feedback'
+export type DraftStep = 'direction' | 'setup' | 'mixes' | 'instruction' | 'feedback' | 'shopping-list'
 
 export type TimerStateStatus = 'idle' | 'running' | 'paused' | 'done' | 'dismissed'
 
