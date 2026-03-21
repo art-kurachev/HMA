@@ -111,11 +111,16 @@ export function ShoppingListScreen({ telegramId, onBack, onSelectMix, onOpenShel
       : checked.filter((t) => t !== name)
     setChecked(next)
 
+    const shelf = loadShelf(telegramId)
     if (isNowChecked) {
-      const shelf = loadShelf(telegramId)
       if (!shelf.includes(name)) {
         saveShelf(telegramId, [...shelf, name])
         showToast(`«${name}» добавлен на полку`)
+      }
+    } else {
+      if (shelf.includes(name)) {
+        saveShelf(telegramId, shelf.filter((t) => t !== name))
+        showToast(`«${name}» убран с полки`)
       }
     }
 
