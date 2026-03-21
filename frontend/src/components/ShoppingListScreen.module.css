@@ -254,6 +254,8 @@
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   transition: opacity 0.3s;
+  cursor: pointer;
+  user-select: none;
 }
 
 .tobaccoItem.bought {
@@ -266,15 +268,14 @@
   height: 24px;
   border: 2px solid rgba(255, 101, 68, 0.6);
   border-radius: 6px;
-  background: none;
   color: #ff6544;
   font-size: 14px;
   font-weight: 700;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.15s, border-color 0.15s;
+  pointer-events: none;
 }
 
 .tobaccoItem.bought .checkbox {

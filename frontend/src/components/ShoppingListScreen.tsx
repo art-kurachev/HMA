@@ -212,16 +212,19 @@ export function ShoppingListScreen({ telegramId, onBack, onSelectMix, onOpenShel
                       const isBought = checked.includes(item.name)
                       const flavor = parseFlavor(item.name, group.brand)
                       return (
-                        <li key={item.name} className={`${styles.tobaccoItem} ${isBought ? styles.bought : ''}`}>
-                          <button
-                            type="button"
-                            className={styles.checkbox}
-                            onClick={() => handleToggle(item.name)}
-                            aria-pressed={isBought}
-                            aria-label={isBought ? `Убрать ${item.name}` : `Отметить ${item.name}`}
-                          >
+                        <li
+                          key={item.name}
+                          className={`${styles.tobaccoItem} ${isBought ? styles.bought : ''}`}
+                          onClick={() => handleToggle(item.name)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => e.key === 'Enter' && handleToggle(item.name)}
+                          aria-pressed={isBought}
+                          aria-label={isBought ? `Убрать ${item.name}` : `Отметить ${item.name}`}
+                        >
+                          <span className={styles.checkbox} aria-hidden>
                             {isBought ? '✓' : ''}
-                          </button>
+                          </span>
                           <span className={styles.tobaccoFlavor}>{flavor}</span>
                           <span className={styles.tobaccoMixCount}>{item.mixCount} {item.mixCount === 1 ? 'микс' : 'микса'}</span>
                         </li>
