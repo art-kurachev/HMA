@@ -200,6 +200,7 @@ export function ShoppingListScreen({ telegramId, onBack, onSelectMix, onOpenShel
           )}
 
           {state === 'loaded' && (
+            <div className={styles.scrollWrapper}>
             <div className={styles.scrollContent}>
 
               {/* Табаки сгруппированные по бренду */}
@@ -283,6 +284,7 @@ export function ShoppingListScreen({ telegramId, onBack, onSelectMix, onOpenShel
                   })}
                 </ul>
               </div>
+            </div>
             </div>
           )}
         </div>

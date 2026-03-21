@@ -121,6 +121,8 @@ export default function App() {
     else root?.classList.remove('instruction-full-bleed')
     if (step === 'feedback') root?.classList.add('feedback-full-bleed')
     else root?.classList.remove('feedback-full-bleed')
+    if (step === 'shopping-list') root?.classList.add('shopping-list-full-bleed')
+    else root?.classList.remove('shopping-list-full-bleed')
     return () => {
       root?.classList.remove('welcome-full-bleed')
       root?.classList.remove('direction-full-bleed')
@@ -128,6 +130,7 @@ export default function App() {
       root?.classList.remove('mixes-full-bleed')
       root?.classList.remove('instruction-full-bleed')
       root?.classList.remove('feedback-full-bleed')
+      root?.classList.remove('shopping-list-full-bleed')
     }
   }, [step])
 

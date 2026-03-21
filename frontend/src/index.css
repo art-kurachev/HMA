@@ -55,7 +55,8 @@ body {
 #root.setup-full-bleed,
 #root.mixes-full-bleed,
 #root.instruction-full-bleed,
-#root.feedback-full-bleed {
+#root.feedback-full-bleed,
+#root.shopping-list-full-bleed {
   width: 100%;
   max-width: none;
   height: 100%;
