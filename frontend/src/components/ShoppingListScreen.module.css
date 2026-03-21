@@ -1,64 +1,99 @@
 .screen {
-  min-height: 100vh;
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0 0 40px;
   color: #fff;
+  padding-bottom: 88px;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 62px 0 16px;
+/* ─── Top bar ─────────────────────────────────────────────── */
+.topBar {
+  position: absolute;
+  top: 24px;
+  left: 0;
+  right: 0;
   z-index: 10;
-}
-
-.backBtn {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  color: #fff;
-  font-size: 18px;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 62px 16px 16px;
 }
 
-.title {
-  flex: 1;
-  margin: 0;
-  font-family: var(--font-family);
-  font-size: 20px;
-  font-weight: 200;
-  color: #fff;
-}
-
-.regenBtn {
+.topBarLogo {
+  width: 65px;
+  height: 30px;
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  display: block;
+  object-fit: contain;
+}
+
+.topBarShelfBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 16px 16px 24px;
+  border-radius: 50px;
   border: none;
-  border-radius: 50%;
-  background: rgba(255, 101, 68, 0.15);
+  background: rgba(255, 101, 68, 0.2);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   color: #ff6544;
-  font-size: 20px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 200;
+  line-height: 16px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: opacity 0.2s;
 }
 
+.topBarShelfBtnIcon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* ─── Main content area ───────────────────────────────────── */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding-top: 140px;
+}
+
+.pageTitle {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 24px 16px;
+  font-family: var(--font-family);
+  font-size: 32px;
+  font-weight: 100;
+  line-height: 32px;
+  color: #fff;
+}
+
+/* ─── Scrollable content ──────────────────────────────────── */
+.scrollContent {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  border-radius: 24px;
+}
+
+/* ─── Error ───────────────────────────────────────────────── */
 .error {
-  margin: 8px 16px;
+  margin: 0 8px 8px;
   padding: 12px 16px;
   background: rgba(239, 68, 68, 0.15);
   backdrop-filter: blur(4px);
@@ -70,6 +105,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .error button {
@@ -82,6 +118,7 @@
   padding: 0 4px;
 }
 
+/* ─── Centered (spinner) ──────────────────────────────────── */
 .centered {
   flex: 1;
   display: flex;
@@ -113,7 +150,7 @@
   margin: 0;
 }
 
-/* Onboarding */
+/* ─── Onboarding (empty state) ────────────────────────────── */
 .onboarding {
   flex: 1;
   display: flex;
@@ -173,17 +210,7 @@
   opacity: 0.8;
 }
 
-/* Content */
-.content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  gap: 16px;
-}
-
-
-/* Brand group */
+/* ─── Brand group ─────────────────────────────────────────── */
 .brandGroup {
   display: flex;
   flex-direction: column;
@@ -201,7 +228,7 @@
   letter-spacing: 0.08em;
 }
 
-/* Tobacco list */
+/* ─── Tobacco list ────────────────────────────────────────── */
 .tobaccoList {
   list-style: none;
   margin: 0;
@@ -263,7 +290,7 @@
   white-space: nowrap;
 }
 
-/* Mixes */
+/* ─── Mixes section ───────────────────────────────────────── */
 .mixesSection {
   display: flex;
   flex-direction: column;
@@ -305,7 +332,6 @@
   background: rgba(34, 34, 34, 0.4);
 }
 
-
 .mixHeader {
   display: flex;
   align-items: flex-start;
@@ -318,7 +344,7 @@
   flex-direction: column;
   gap: 2px;
   min-width: 0;
-  padding: 4px 0 0 4px;
+  padding: 8px 0 0 8px;
 }
 
 .mixTitle {
@@ -340,7 +366,7 @@
   font-size: 10px;
   color: #ff6544;
   font-weight: 200;
-  padding: 10px 12px;
+  padding: 8px;
   border: 1px solid rgba(255, 101, 68, 0.1);
   border-radius: 50px;
   white-space: nowrap;
@@ -364,6 +390,8 @@
   transition: opacity 0.2s;
   line-height: 1;
   white-space: nowrap;
+  min-width: 30px;
+  min-height: 30px;
 }
 
 .mixReadyBtn:active {
@@ -394,25 +422,29 @@
   background: rgba(255, 101, 68, 0.2);
 }
 
-.instructionBtn {
-  align-self: flex-start;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 50px;
-  background: #ff6544;
-  color: #fff;
-  font-family: var(--font-family);
-  font-size: 14px;
-  font-weight: 300;
-  cursor: pointer;
-  transition: opacity 0.2s;
+/* ─── Footer (shared pattern: welcomeStyles.bottom + bottomShopping) ─ */
+.bottomShopping {
+  background: unset;
+  background-color: unset;
+  background-image: none;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 0;
 }
 
-.instructionBtn:active {
-  opacity: 0.8;
+.bottomBlock {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
 }
 
-/* Toast */
+.backBtn {
+  padding: 16px 24px;
+}
+
+/* ─── Toast ───────────────────────────────────────────────── */
 .toast {
   position: fixed;
   top: 108px;
@@ -434,7 +466,7 @@
   z-index: 200;
 }
 
-/* Confirm modal */
+/* ─── Confirm modal ───────────────────────────────────────── */
 .overlay {
   position: fixed;
   inset: 0;

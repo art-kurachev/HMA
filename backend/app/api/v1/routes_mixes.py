@@ -173,11 +173,41 @@ async def get_instruction(
             row = (gm, session)
             break
     if not row:
-        raise HTTPException(status_code=404, detail="mix_not_found")
+        # Fallback: look up mix in the user's shopping list
+        from app.db.models import ShoppingList
 
-    gm, session = row
-    params = session.params or {}
-    mix_data = gm.mix_json
+        sl_result = await db.execute(
+            select(ShoppingList).where(ShoppingList.user_id == user.id)
+        )
+        shopping_list = sl_result.scalar_one_or_none()
+        sl_mix = None
+        if shopping_list:
+            sl_mix = next(
+                (m for m in (shopping_list.mixes or []) if m.get("id") == mix_id),
+                None,
+            )
+        if not sl_mix:
+            raise HTTPException(status_code=404, detail="mix_not_found")
+
+        # Consume quota — shopping list mixes weren't charged at suggest time
+        allowed, _, _ = await check_and_consume_quota(db, user)
+        if not allowed:
+            raise HTTPException(status_code=429, detail="quota_exceeded")
+
+        # Use latest session params for bowl/heat settings
+        latest_session = await db.execute(
+            select(Session)
+            .where(Session.user_id == user.id)
+            .order_by(Session.created_at.desc())
+            .limit(1)
+        )
+        latest_sess = latest_session.scalar_one_or_none()
+        params = latest_sess.params if latest_sess else {}
+        mix_data = sl_mix
+    else:
+        gm, session = row
+        params = session.params or {}
+        mix_data = gm.mix_json
 
     # Используем текущие настройки из админки (модель, провайдер), а не сохранённые в миксе
     provider, input_data = await generate_instruction_input(

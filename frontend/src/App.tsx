@@ -248,6 +248,7 @@ export default function App() {
         <ShoppingListScreen
           telegramId={uid}
           onBack={() => setStep('welcome')}
+          onOpenShelf={() => setShelfOpen(true)}
           onSelectMix={(mix) => {
             setSelectedMix(mix)
             setMixesFromStep('direction')
@@ -255,7 +256,7 @@ export default function App() {
           }}
         />
       )}
-      {['welcome', 'direction', 'setup', 'mixes', 'instruction', 'feedback'].includes(step) && (
+      {['welcome', 'direction', 'setup', 'mixes', 'instruction', 'feedback', 'shopping-list'].includes(step) && (
         <div className={styles.fullScreenBg} aria-hidden>
           <div className={styles.fullScreenBgGradient} />
           <div className={styles.fullScreenBgOverlay}>
