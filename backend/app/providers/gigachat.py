@@ -102,12 +102,19 @@ class GigaChatProvider(BaseProvider):
     def _extract_json(raw: str) -> dict:
         """Извлекает JSON из ответа, даже если модель обернула его в ```json...```."""
         text = raw.strip()
+        # Убрать markdown-блок
         if text.startswith("```"):
             lines = text.split("\n", 1)
             text = lines[1] if len(lines) > 1 else text[3:]
             if text.endswith("```"):
                 text = text[:-3]
-        return json.loads(text.strip())
+        text = text.strip()
+        # Вырезать первый JSON-объект по фигурным скобкам
+        start = text.find("{")
+        end = text.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            text = text[start : end + 1]
+        return json.loads(text)
 
     async def generate_mixes(self, input_data: MixProviderInput) -> SuggestResponse:
         prompt = input_data.custom_prompt or build_mixes_prompt(input_data.params, input_data.available_tobaccos)
