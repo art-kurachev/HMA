@@ -29,32 +29,60 @@ interface BrandGroup {
 
 const TWO_WORD_BRANDS = ['Black Burn', 'Daily Hookah', 'Black Horse']
 
-function parseBrand(tobacco: string): string {
-  for (const brand of TWO_WORD_BRANDS) {
-    if (tobacco.startsWith(brand + ' ')) return brand
-  }
-  return tobacco.split(' ')[0]
+const BRAND_ALIASES: Record<string, string> = {
+  'Sattyr': 'Satyr', 'SATYR': 'Satyr', 'sattyr': 'Satyr', 'satyr': 'Satyr',
+  'musthave': 'MUSTHAVE', 'Musthave': 'MUSTHAVE',
+  'darkside': 'Darkside', 'DARKSIDE': 'Darkside',
+  'bonche': 'Bonche', 'BONCHE': 'Bonche',
+  'spectrum': 'Spectrum', 'SPECTRUM': 'Spectrum', 'Specturm': 'Spectrum', 'specturm': 'Spectrum',
 }
 
-function parseFlavor(tobacco: string, brand: string): string {
-  return tobacco.slice(brand.length).trim()
+function parseBrand(tobacco: string): string {
+  for (const brand of TWO_WORD_BRANDS) {
+    if (tobacco.startsWith(brand + ' ')) return BRAND_ALIASES[brand] ?? brand
+  }
+  const raw = tobacco.split(' ')[0]
+  return BRAND_ALIASES[raw] ?? raw
+}
+
+function parseFlavor(tobacco: string, _brand: string): string {
+  const spaceIdx = tobacco.indexOf(' ')
+  if (spaceIdx === -1) return tobacco
+  // для двухсловных брендов пропустить второе слово тоже
+  for (const b of TWO_WORD_BRANDS) {
+    if (tobacco.startsWith(b + ' ')) return tobacco.slice(b.length).trim()
+  }
+  return tobacco.slice(spaceIdx).trim()
+}
+
+function normalizeTobacco(t: string): string {
+  const cleaned = t.trim().replace(/\s+/g, ' ')
+  const firstWord = cleaned.split(' ')[0]
+  const normalized = BRAND_ALIASES[firstWord]
+  if (normalized) return normalized + cleaned.slice(firstWord.length)
+  return cleaned
 }
 
 function buildBrandGroups(mixes: ShoppingMix[]): BrandGroup[] {
   const counts: Record<string, number> = {}
+  const canonical: Record<string, string> = {} // normalized → first seen original
   for (const mix of mixes) {
     for (const t of mix.tobaccos) {
-      counts[t] = (counts[t] ?? 0) + 1
+      const key = normalizeTobacco(t).toLowerCase()
+      if (!canonical[key]) canonical[key] = normalizeTobacco(t)
+      counts[key] = (counts[key] ?? 0) + 1
     }
   }
-  const byBrand: Record<string, { name: string; mixCount: number }[]> = {}
-  for (const [name, mixCount] of Object.entries(counts)) {
+  const byBrand: Record<string, { brand: string; items: { name: string; mixCount: number }[] }> = {}
+  for (const [key, mixCount] of Object.entries(counts)) {
+    const name = canonical[key]
     const brand = parseBrand(name)
-    if (!byBrand[brand]) byBrand[brand] = []
-    byBrand[brand].push({ name, mixCount })
+    const brandKey = brand.toLowerCase()
+    if (!byBrand[brandKey]) byBrand[brandKey] = { brand, items: [] }
+    byBrand[brandKey].items.push({ name, mixCount })
   }
-  return Object.entries(byBrand)
-    .map(([brand, items]) => ({
+  return Object.values(byBrand)
+    .map(({ brand, items }) => ({
       brand,
       items: items.sort((a, b) => b.mixCount - a.mixCount),
     }))

@@ -40,7 +40,7 @@ def build_mixes_prompt(params: dict, available_tobaccos: list[str]) -> str:
     else:
         tobacco_block = """
 У пользователя нет своих табаков. Предложи миксы из реальных, существующих табаков.
-Используй ТОЛЬКО табаки от этих производителей: Darkside, MUSTHAVE, Spectrum, Daily Hookah, Element, Satyr, Sebero, Black Burn, Bonche, Hype, Severniy, Jent, Deus, Nash, Trofimoff's.
+Используй ТОЛЬКО табаки от этих производителей: Darkside, MUSTHAVE, Spectrum, Daily Hookah, Element, Satyr, Sebero, Black Burn, Severniy, Nash, Trofimoff's.
 Указывай полное название: «Бренд Вкус» (например: «Darkside Hola», «MUSTHAVE Pinkman», «Element Земляника»).
 НЕ ИСПОЛЬЗУЙ табаки других брендов. НЕ ВЫДУМЫВАЙ несуществующие вкусы."""
 
@@ -100,7 +100,7 @@ def build_shopping_list_prompt() -> str:
 ШАГ 1. Выбери 5 табаков. Требования:
 - Только фруктовые, ягодные, десертные, цитрусовые, экзотические вкусы. Мята, ментол, холодящие вкусы — ЗАПРЕЩЕНЫ.
 - Как можно меньше разных производителей (лучше 2-3 вкуса одного бренда, чем по одному от разных).
-- Только от производителей: Darkside, MUSTHAVE, Spectrum, Daily Hookah, Element, Satyr, Sebero, Black Burn, Bonche, Hype, Severniy, Jent, Deus, Nash, Trofimoff's.
+- Только от производителей: Darkside, MUSTHAVE, Spectrum, Daily Hookah, Element, Satyr, Sebero, Black Burn, Severniy, Nash, Trofimoff's.
 - Называй полностью: «Бренд Вкус». НЕ ВЫДУМЫВАЙ несуществующие вкусы.
 
 ШАГ 2. Составь 10 миксов из этих 5 табаков. Жёсткие правила:
@@ -146,7 +146,7 @@ def build_quick_mixes_prompt(direction: str, no_tobacco: bool) -> str:
     if no_tobacco:
         tobacco_block = """
 У пользователя нет своих табаков. Предложи миксы из реальных, существующих табаков.
-Используй ТОЛЬКО табаки от этих производителей: Darkside, MUSTHAVE, Spectrum, Daily Hookah, Element, Satyr, Sebero, Black Burn, Bonche, Hype, Severniy, Jent, Deus, Nash, Trofimoff's.
+Используй ТОЛЬКО табаки от этих производителей: Darkside, MUSTHAVE, Spectrum, Daily Hookah, Element, Satyr, Sebero, Black Burn, Severniy, Nash, Trofimoff's.
 Указывай полное название: «Бренд Вкус». НЕ ИСПОЛЬЗУЙ табаки других брендов. НЕ ВЫДУМЫВАЙ несуществующие вкусы."""
     else:
         tobacco_block = """
