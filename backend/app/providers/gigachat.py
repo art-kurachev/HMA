@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import json
 import logging
 import time
@@ -114,7 +115,14 @@ class GigaChatProvider(BaseProvider):
         end = text.rfind("}")
         if start != -1 and end != -1 and end > start:
             text = text[start : end + 1]
-        return json.loads(text)
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            # GigaChat иногда возвращает одинарные кавычки вместо двойных
+            result = ast.literal_eval(text)
+            if isinstance(result, dict):
+                return result
+            raise
 
     async def generate_mixes(self, input_data: MixProviderInput) -> SuggestResponse:
         prompt = input_data.custom_prompt or build_mixes_prompt(input_data.params, input_data.available_tobaccos)
