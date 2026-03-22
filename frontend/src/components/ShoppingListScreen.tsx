@@ -38,8 +38,9 @@ const BRAND_ALIASES: Record<string, string> = {
 }
 
 function parseBrand(tobacco: string): string {
+  const lower = tobacco.toLowerCase()
   for (const brand of TWO_WORD_BRANDS) {
-    if (tobacco.startsWith(brand + ' ')) return BRAND_ALIASES[brand] ?? brand
+    if (lower.startsWith(brand.toLowerCase() + ' ')) return BRAND_ALIASES[brand] ?? brand
   }
   const raw = tobacco.split(' ')[0]
   return BRAND_ALIASES[raw] ?? raw
@@ -48,9 +49,9 @@ function parseBrand(tobacco: string): string {
 function parseFlavor(tobacco: string, _brand: string): string {
   const spaceIdx = tobacco.indexOf(' ')
   if (spaceIdx === -1) return tobacco
-  // для двухсловных брендов пропустить второе слово тоже
+  const lower = tobacco.toLowerCase()
   for (const b of TWO_WORD_BRANDS) {
-    if (tobacco.startsWith(b + ' ')) return tobacco.slice(b.length).trim()
+    if (lower.startsWith(b.toLowerCase() + ' ')) return tobacco.slice(b.length).trim()
   }
   return tobacco.slice(spaceIdx).trim()
 }

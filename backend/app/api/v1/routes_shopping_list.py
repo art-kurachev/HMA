@@ -80,9 +80,25 @@ async def generate_shopping_list(
         custom_prompt=prompt,
     )
 
-    response = await run_through_llm_queue(provider.generate_mixes(input_data))
+    def is_valid(mixes_list: list) -> bool:
+        counts: dict[str, int] = {}
+        for m in mixes_list:
+            for t in m["tobaccos"]:
+                counts[t] = counts.get(t, 0) + 1
+        return all(v >= 2 for v in counts.values())
 
-    mixes = [m.model_dump() for m in response.mixes]
+    mixes = []
+    for attempt in range(3):
+        try:
+            response = await run_through_llm_queue(provider.generate_mixes(input_data))
+            mixes = [m.model_dump() for m in response.mixes]
+        except Exception as e:
+            logger.warning("Shopping list attempt %d: ошибка парсинга — %s, повторяем", attempt + 1, e)
+            continue
+        if is_valid(mixes):
+            break
+        logger.warning("Shopping list attempt %d: табаки с 1 миксом, повторяем", attempt + 1)
+
     if len(mixes) < 10:
         logger.warning("Shopping list: got %d mixes instead of 10", len(mixes))
 
