@@ -116,21 +116,21 @@ def build_shopping_list_prompt() -> str:
 Название микса — короткое (2–3 слова). Описание вкуса — ровно 4–6 слов.
 
 Верни ТОЛЬКО валидный JSON, без комментариев и markdown:
-{{
+{
   "mixes": [
-    {{ "id": "mix_1", "title": "...", "tobaccos": ["...", "...", "..."], "flavor": "..." }},
-    {{ "id": "mix_2", "title": "...", "tobaccos": ["...", "...", "..."], "flavor": "..." }},
-    {{ "id": "mix_3", "title": "...", "tobaccos": ["...", "...", "..."], "flavor": "..." }},
-    {{ "id": "mix_4", "title": "...", "tobaccos": ["...", "...", "..."], "flavor": "..." }},
-    {{ "id": "mix_5", "title": "...", "tobaccos": ["...", "...", "..."], "flavor": "..." }},
-    {{ "id": "mix_6", "title": "...", "tobaccos": ["...", "...", "...", "..."], "flavor": "..." }},
-    {{ "id": "mix_7", "title": "...", "tobaccos": ["...", "...", "...", "..."], "flavor": "..." }},
-    {{ "id": "mix_8", "title": "...", "tobaccos": ["...", "...", "...", "..."], "flavor": "..." }},
-    {{ "id": "mix_9", "title": "...", "tobaccos": ["...", "...", "...", "..."], "flavor": "..." }},
-    {{ "id": "mix_10", "title": "...", "tobaccos": ["...", "...", "...", "..."], "flavor": "..." }}
+    { "id": "mix_1", "title": "...", "tobaccos": ["...", "...", "..."], "flavor": "..." },
+    { "id": "mix_2", "title": "...", "tobaccos": ["...", "...", "..."], "flavor": "..." },
+    { "id": "mix_3", "title": "...", "tobaccos": ["...", "...", "..."], "flavor": "..." },
+    { "id": "mix_4", "title": "...", "tobaccos": ["...", "...", "..."], "flavor": "..." },
+    { "id": "mix_5", "title": "...", "tobaccos": ["...", "...", "..."], "flavor": "..." },
+    { "id": "mix_6", "title": "...", "tobaccos": ["...", "...", "...", "..."], "flavor": "..." },
+    { "id": "mix_7", "title": "...", "tobaccos": ["...", "...", "...", "..."], "flavor": "..." },
+    { "id": "mix_8", "title": "...", "tobaccos": ["...", "...", "...", "..."], "flavor": "..." },
+    { "id": "mix_9", "title": "...", "tobaccos": ["...", "...", "...", "..."], "flavor": "..." },
+    { "id": "mix_10", "title": "...", "tobaccos": ["...", "...", "...", "..."], "flavor": "..." }
   ],
   "clarify": []
-}}"""
+}"""
 
 
 DIRECTION_HINTS = {
