@@ -10,7 +10,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1 import api_router
 from app.api.webhook_telegram import router as webhook_router
 from app.config import settings
-from app.core.announcements import run_announcements
 from app.core.app_settings import init_app_settings
 from app.core.friday_refill import run_friday_refill
 from app.db.session import async_session_maker, init_db
@@ -62,8 +61,7 @@ async def lifespan(app: FastAPI):
             await session.rollback()
             raise
     # _start_friday_scheduler()  # TODO: включить когда будет готово к запуску
-    await run_announcements()
-    await _register_telegram_webhook()
+await _register_telegram_webhook()
     yield
 
 
