@@ -54,6 +54,6 @@
 }
 
 .primaryBtn.accent {
-  background: var(--accent, #e85d2a);
+  background: var(--accent, #ff6544);
   color: #fff;
 }

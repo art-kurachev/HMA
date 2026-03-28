@@ -69,7 +69,6 @@ export function MixesStep({ mixes, onSelect, onBack }: MixesStepProps) {
                           key={t}
                           className={styles.tobaccoTag}
                           role="listitem"
-                          style={{ border: '1px solid rgba(255, 101, 68, 0.2)' }}
                         >
                           {t}
                         </span>
@@ -97,7 +96,6 @@ export function MixesStep({ mixes, onSelect, onBack }: MixesStepProps) {
                           key={t}
                           className={styles.tobaccoTag}
                           role="listitem"
-                          style={{ border: '1px solid rgba(255, 101, 68, 0.2)' }}
                         >
                           {t}
                         </span>
@@ -123,7 +121,6 @@ export function MixesStep({ mixes, onSelect, onBack }: MixesStepProps) {
                           key={t}
                           className={styles.tobaccoTag}
                           role="listitem"
-                          style={{ border: '1px solid rgba(255, 101, 68, 0.2)' }}
                         >
                           {t}
                         </span>

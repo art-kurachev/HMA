@@ -36,10 +36,10 @@
   padding: 16px 16px 16px 24px;
   border-radius: 50px;
   border: none;
-  background: rgba(255, 101, 68, 0.2);
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  color: #ff6544;
+  color: var(--accent);
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 200;
@@ -138,8 +138,8 @@
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(255, 101, 68, 0.2);
-  border-top-color: #ff6544;
+  border: 3px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -195,7 +195,7 @@
 .onboardingQuota {
   margin: 4px 0 0;
   font-size: 13px;
-  color: rgba(255, 101, 68, 0.8);
+  color: color-mix(in srgb, var(--accent) 80%, transparent);
 }
 
 .generateBtn {
@@ -203,7 +203,7 @@
   padding: 16px 32px;
   border: none;
   border-radius: 50px;
-  background: #ff6544;
+  background: var(--accent);
   color: #fff;
   font-family: var(--font-family);
   font-size: 16px;
@@ -266,9 +266,9 @@
   flex-shrink: 0;
   width: 24px;
   height: 24px;
-  border: 2px solid rgba(255, 101, 68, 0.6);
+  border: 2px solid color-mix(in srgb, var(--accent) 60%, transparent);
   border-radius: 6px;
-  color: #ff6544;
+  color: var(--accent);
   font-size: 14px;
   font-weight: 700;
   display: flex;
@@ -279,8 +279,8 @@
 }
 
 .tobaccoItem.bought .checkbox {
-  background: rgba(255, 101, 68, 0.3);
-  border-color: #ff6544;
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  border-color: var(--accent);
 }
 
 .tobaccoFlavor {
@@ -293,7 +293,7 @@
 
 .tobaccoMixCount {
   font-size: 12px;
-  color: rgba(255, 101, 68, 0.7);
+  color: color-mix(in srgb, var(--accent) 70%, transparent);
   white-space: nowrap;
 }
 
@@ -371,10 +371,10 @@
 .mixProgress {
   flex-shrink: 0;
   font-size: 10px;
-  color: #ff6544;
+  color: var(--accent);
   font-weight: 200;
   padding: 8px;
-  border: 1px solid rgba(255, 101, 68, 0.1);
+  border: 1px solid color-mix(in srgb, var(--accent) 10%, transparent);
   border-radius: 50px;
   white-space: nowrap;
 }
@@ -385,7 +385,7 @@
   gap: 4px;
   border: none;
   border-radius: 16px;
-  background: #ff6544;
+  background: var(--accent);
   color: #f6f8ff;
   font-family: var(--font-family);
   font-size: 10px;
@@ -425,8 +425,8 @@
 }
 
 .mixTobaccoBought {
-  color: #ff6544;
-  background: rgba(255, 101, 68, 0.2);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 /* ─── Footer (shared pattern: welcomeStyles.bottom + bottomShopping) ─ */
@@ -477,7 +477,9 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -487,7 +489,11 @@
 
 .modal {
   width: 100%;
-  background: linear-gradient(180deg, rgba(34, 34, 34, 1) 0%, rgba(54, 22, 15, 1) 100%);
+  background: linear-gradient(
+    180deg,
+    #222 0%,
+    color-mix(in srgb, var(--accent) 28%, #0a0a0a) 100%
+  );
   border-radius: 32px 32px 44px 44px;
   padding: 24px;
   display: flex;
@@ -495,6 +501,7 @@
   align-items: center;
   text-align: center;
   gap: 12px;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
 }
 
 .modalTitle {
@@ -509,7 +516,7 @@
   margin: 0;
   font-size: 14px;
   font-weight: 200;
-  color: #ff6544;
+  color: var(--accent);
 }
 
 .modalActions {
@@ -537,7 +544,7 @@
   padding: 14px;
   border: none;
   border-radius: 50px;
-  background: #ff6544;
+  background: var(--accent);
   color: #fff;
   font-family: var(--font-family);
   font-size: 15px;

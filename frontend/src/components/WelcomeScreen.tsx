@@ -7,6 +7,8 @@ import {
   type StarsPackage,
 } from '../api'
 import { openInvoice } from '../telegram'
+import { AccentPaletteSheet } from './AccentPaletteSheet'
+import { DatabaseIcon } from './Icons'
 import { ScreenLayout } from './ScreenLayout'
 import progressRowStyles from './ProgressRow.module.css'
 import styles from './WelcomeScreen.module.css'
@@ -14,7 +16,6 @@ import styles from './WelcomeScreen.module.css'
 /* Локальные SVG из frontend/public/icons/ (имена как в макете) */
 const ICON_LOGO = '/icons/Union.svg'
 const ICON_ADD_CIRCLE = '/icons/add-circle.svg'
-const ICON_DATABASE = '/icons/Database.svg'
 const ICON_SHARE_CIRCLE = '/icons/ShareCircle.svg'
 const ICON_ROUND_GRAPH = '/icons/RoundGraph.svg'
 
@@ -38,6 +39,7 @@ export function WelcomeScreen({
   const [remaining, setRemaining] = useState<number | null>(null)
   const [packages, setPackages] = useState<StarsPackage[]>([])
   const [showPackages, setShowPackages] = useState(false)
+  const [showAccentPalette, setShowAccentPalette] = useState(false)
   const [loading, setLoading] = useState(false)
   const [buyError, setBuyError] = useState<string | null>(null)
 
@@ -125,6 +127,26 @@ export function WelcomeScreen({
               <button
                 type="button"
                 className={`${styles.shelfBtn} ${styles.shelfBtnIconOnly}`}
+                onClick={() => setShowAccentPalette(true)}
+                aria-label="Цвет интерфейса"
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden
+                  className={styles.shelfBtnIcon}
+                >
+                  <circle cx="8" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+                  <circle cx="16" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+                  <circle cx="8" cy="16" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+                  <circle cx="16" cy="16" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                className={`${styles.shelfBtn} ${styles.shelfBtnIconOnly}`}
                 onClick={onOpenShoppingList}
                 aria-label="Список покупок"
               >
@@ -141,15 +163,9 @@ export function WelcomeScreen({
                 aria-label="Моя полка"
               >
                 Моя полка
-                <img
-                  src={ICON_DATABASE}
-                  alt=""
-                  className={styles.shelfBtnIcon}
-                  aria-hidden
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none'
-                  }}
-                />
+                <span className={styles.shelfBtnIcon} aria-hidden>
+                  <DatabaseIcon size={24} />
+                </span>
               </button>
             </div>
           </div>
@@ -198,7 +214,6 @@ export function WelcomeScreen({
               type="button"
               className={styles.secondaryBtn}
               onClick={onSetup}
-              title="Сетап"
               aria-label="Сетап"
             >
               Сетап
@@ -215,6 +230,10 @@ export function WelcomeScreen({
           </div>
         </div>
       </div>
+
+      {showAccentPalette && (
+        <AccentPaletteSheet onClose={() => setShowAccentPalette(false)} />
+      )}
 
       {showPackages && (
         <div className={styles.packagesOverlay} onClick={() => setShowPackages(false)}>

@@ -26,6 +26,6 @@
 
 /* Setup: заполнена при выборе данных в блоке — без прозрачности */
 .progressBarFilled {
-  background: rgb(255, 101, 68);
+  background: var(--accent);
   opacity: 1;
 }

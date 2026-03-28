@@ -227,7 +227,7 @@
 }
 
 .input:focus {
-  outline: 1px solid #FF6544;
+  outline: 1px solid var(--accent);
 }
 
 /* Белая кнопка «Отправить» */

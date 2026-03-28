@@ -217,7 +217,7 @@
   width: fit-content;
   padding: 6px 8px;
   border-radius: 50px;
-  border: 1px solid rgba(255, 101, 68, 0.2);
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
   background: transparent;
   max-width: min(160px, 100%);
   min-width: 0;
@@ -228,7 +228,7 @@
   font-size: 12px;
   font-weight: 200;
   line-height: 14px;
-  color: rgba(255, 101, 68, 0.9);
+  color: color-mix(in srgb, var(--accent) 90%, transparent);
 }
 
 .flavor {

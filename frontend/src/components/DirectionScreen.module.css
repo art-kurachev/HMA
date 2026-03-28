@@ -169,8 +169,8 @@
 }
 
 .card.selected {
-  background: rgba(255, 101, 68, 0.2);
-  box-shadow: 0 0 0 2px rgba(255, 101, 68, 0.5);
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 50%, transparent);
 }
 
 /* Под фильм — скругление сверху слева больше */
@@ -198,8 +198,8 @@
   width: 52px;
   height: 52px;
   border-radius: 50px;
-  background: rgba(255, 101, 68, 0.1);
-  color: #ff6544;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;

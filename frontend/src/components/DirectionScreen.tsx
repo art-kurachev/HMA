@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import { ScreenLayout } from './ScreenLayout'
 import progressRowStyles from './ProgressRow.module.css'
-import { ArrowLeftIcon } from './Icons'
+import {
+  ArrowLeftIcon,
+  DirectionFlameIcon,
+  DirectionMeditationIcon,
+  DirectionPlayIcon,
+} from './Icons'
 import styles from './DirectionScreen.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
 
@@ -14,9 +19,6 @@ interface DirectionScreenProps {
 
 const ICON_LOGO = '/icons/Union.svg'
 const ICON_SHARE_CIRCLE = '/icons/ShareCircle.svg'
-const ICON_PLAY = '/icons/Play.svg'
-const ICON_MEDITATION = '/icons/Meditation.svg'
-const ICON_FLAME = '/icons/Flame.svg'
 
 export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
   const [selected, setSelected] = useState<Direction>(null)
@@ -58,7 +60,9 @@ export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
               onClick={() => handleCardClick('movie')}
             >
               <div className={styles.cardIconWrap}>
-                <img src={ICON_PLAY} alt="" width={24} height={24} aria-hidden />
+                <span aria-hidden>
+                  <DirectionPlayIcon size={24} />
+                </span>
               </div>
               <div className={styles.cardText}>
                 <span className={styles.cardLabel}>Под фильм</span>
@@ -75,7 +79,9 @@ export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
                 <span className={styles.cardDesc}>Средние и крепкие<br />вариации табака</span>
               </div>
               <div className={styles.cardIconWrap}>
-                <img src={ICON_MEDITATION} alt="" width={24} height={24} aria-hidden />
+                <span aria-hidden>
+                  <DirectionMeditationIcon size={24} />
+                </span>
               </div>
             </button>
           </div>
@@ -87,7 +93,9 @@ export function DirectionScreen({ onBack, onNext }: DirectionScreenProps) {
             >
               <div className={styles.cardIconTop}>
                 <div className={styles.cardIconWrap}>
-                  <img src={ICON_FLAME} alt="" width={24} height={24} aria-hidden />
+                  <span aria-hidden>
+                    <DirectionFlameIcon size={24} />
+                  </span>
                 </div>
               </div>
               <div className={styles.cardText}>

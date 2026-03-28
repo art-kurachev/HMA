@@ -8,12 +8,12 @@ import {
   type Mix,
 } from '../api'
 import { loadShelf, saveShelf } from '../shelfStorage'
+import { DatabaseIcon } from './Icons'
 import { ScreenLayout } from './ScreenLayout'
 import styles from './ShoppingListScreen.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
 
 const ICON_LOGO = '/icons/Union.svg'
-const ICON_DATABASE = '/icons/Database.svg'
 
 interface Props {
   telegramId: number
@@ -191,13 +191,9 @@ export function ShoppingListScreen({ telegramId, onBack, onSelectMix, onOpenShel
             aria-label="Моя полка"
           >
             Моя полка
-            <img
-              src={ICON_DATABASE}
-              alt=""
-              className={styles.topBarShelfBtnIcon}
-              aria-hidden
-              onError={(e) => { e.currentTarget.style.display = 'none' }}
-            />
+            <span className={styles.topBarShelfBtnIcon} aria-hidden>
+              <DatabaseIcon size={24} />
+            </span>
           </button>
         </header>
 

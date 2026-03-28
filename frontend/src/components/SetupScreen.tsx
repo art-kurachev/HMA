@@ -4,7 +4,7 @@ import { BOWL_OPTIONS, PROFILE_OPTIONS } from '../types'
 import { loadShelf, shelfToText } from '../shelfStorage'
 import { ScreenLayout } from './ScreenLayout'
 import progressRowStyles from './ProgressRow.module.css'
-import { ArrowLeftIcon, BlackHoleIcon } from './Icons'
+import { AccentTickCircleIcon, ArrowLeftIcon, BlackHoleIcon } from './Icons'
 import { ShelfSheet } from './ShelfSheet'
 import instructionStyles from './InstructionStep.module.css'
 import welcomeStyles from './WelcomeScreen.module.css'
@@ -14,7 +14,6 @@ import styles from './SetupScreen.module.css'
 
 const ICON_LOGO = '/icons/Union.svg'
 const ICON_ROUND_GRAPH = '/icons/RoundGraph.svg'
-const ICON_TICK_CIRCLE = '/icons/tick-circle.svg'
 
 const PROFILE_LABELS: Record<string, string> = {
   tea: 'Чайные',
@@ -160,13 +159,13 @@ export function SetupScreen({ telegramId, onBack, onSubmit, loading, initialForm
             >
               <img src="/bowl.png" alt="" width={193} height={224} className={directionStyles.bowlImage} />
               {hasCap && (
-                <img
-                  src={ICON_TICK_CIRCLE}
-                  alt=""
+                <span
                   className={styles.kolpakTick}
                   style={{ transform: `rotate(${-rotationDeg}deg)` }}
                   aria-hidden
-                />
+                >
+                  <AccentTickCircleIcon size={44} className="accentStroke" />
+                </span>
               )}
             </button>
           </div>

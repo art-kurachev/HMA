@@ -3,10 +3,10 @@
   --tg-theme-bg-color: #1a1a2e;
   --tg-theme-text-color: #eee;
   --tg-theme-hint-color: #999;
-  --tg-theme-button-color: #e85d2a;
+  --tg-theme-button-color: #ff6544;
   --tg-theme-button-text-color: #fff;
-  --accent: #e85d2a;
-  --accent-light: rgba(232, 93, 42, 0.15);
+  --accent: #ff6544;
+  --accent-light: color-mix(in srgb, var(--accent) 15%, transparent);
   --card-bg: rgba(255, 255, 255, 0.06);
   --card-border: rgba(255, 255, 255, 0.12);
   --text-hero: 43px;
@@ -17,6 +17,11 @@
   --text-body: 16px;
   --font-thin: 100;
   --font-extralight: 200;
+}
+
+/* Для inline-SVG с stroke/fill = currentColor — наследует акцент */
+.accentStroke {
+  color: var(--accent);
 }
 
 * {
