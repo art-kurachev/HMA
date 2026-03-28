@@ -275,6 +275,46 @@
 }
 
 /* Packages modal (Stars) */
+@keyframes packagesOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes packagesModalSlideUp {
+  from {
+    opacity: 0.96;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes packagesOverlayFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes packagesModalSlideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0.96;
+    transform: translateY(100%);
+  }
+}
+
 .packagesOverlay {
   position: fixed;
   inset: 0;
@@ -286,6 +326,22 @@
   justify-content: center;
   z-index: 100;
   padding: 0 8px 8px;
+}
+
+.packagesOverlayEnter {
+  animation: packagesOverlayFadeIn 0.28s ease-out forwards;
+}
+
+.packagesOverlayEnter .packagesModal {
+  animation: packagesModalSlideUp 0.38s cubic-bezier(0.22, 1, 0.32, 1) forwards;
+}
+
+.packagesOverlayLeave {
+  animation: packagesOverlayFadeOut 0.28s ease-in forwards;
+}
+
+.packagesOverlayLeave .packagesModal {
+  animation: packagesModalSlideDown 0.38s cubic-bezier(0.32, 0, 0.67, -0.02) forwards;
 }
 
 .packagesModal {
@@ -300,6 +356,16 @@
   border-radius: 32px 32px 44px 44px;
   padding: 12px;
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .packagesOverlayEnter,
+  .packagesOverlayLeave,
+  .packagesOverlayEnter .packagesModal,
+  .packagesOverlayLeave .packagesModal {
+    animation: none;
+  }
 }
 
 .packagesHeader {

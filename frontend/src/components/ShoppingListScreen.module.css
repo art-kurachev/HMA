@@ -474,6 +474,46 @@
 }
 
 /* ─── Confirm modal ───────────────────────────────────────── */
+@keyframes shoppingConfirmOverlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shoppingConfirmModalUp {
+  from {
+    opacity: 0.96;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shoppingConfirmOverlayOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes shoppingConfirmModalDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0.96;
+    transform: translateY(100%);
+  }
+}
+
 .overlay {
   position: fixed;
   inset: 0;
@@ -485,6 +525,22 @@
   justify-content: center;
   z-index: 100;
   padding: 0 8px 8px;
+}
+
+.overlayEnter {
+  animation: shoppingConfirmOverlayIn 0.28s ease-out forwards;
+}
+
+.overlayEnter .modal {
+  animation: shoppingConfirmModalUp 0.38s cubic-bezier(0.22, 1, 0.32, 1) forwards;
+}
+
+.overlayLeave {
+  animation: shoppingConfirmOverlayOut 0.28s ease-in forwards;
+}
+
+.overlayLeave .modal {
+  animation: shoppingConfirmModalDown 0.38s cubic-bezier(0.32, 0, 0.67, -0.02) forwards;
 }
 
 .modal {
@@ -502,6 +558,16 @@
   text-align: center;
   gap: 12px;
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlayEnter,
+  .overlayLeave,
+  .overlayEnter .modal,
+  .overlayLeave .modal {
+    animation: none;
+  }
 }
 
 .modalTitle {

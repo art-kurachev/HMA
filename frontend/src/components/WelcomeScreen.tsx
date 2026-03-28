@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import {
   createStarsInvoice,
@@ -21,6 +21,8 @@ const ICON_ROUND_GRAPH = '/icons/RoundGraph.svg'
 
 const IMG_HOOKAH = '/hookah.png'
 
+type PackagesModal = 'closed' | 'open' | 'closing'
+
 interface WelcomeScreenProps {
   telegramId: number
   onStart: () => void
@@ -38,7 +40,14 @@ export function WelcomeScreen({
 }: WelcomeScreenProps) {
   const [remaining, setRemaining] = useState<number | null>(null)
   const [packages, setPackages] = useState<StarsPackage[]>([])
-  const [showPackages, setShowPackages] = useState(false)
+  const [packagesModal, setPackagesModal] = useState<PackagesModal>('closed')
+  const packagesModalRef = useRef<PackagesModal>('closed')
+  const afterPackagesCloseRef = useRef<(() => void) | null>(null)
+  const closingPackagesRef = useRef(false)
+
+  useEffect(() => {
+    packagesModalRef.current = packagesModal
+  }, [packagesModal])
   const [showAccentPalette, setShowAccentPalette] = useState(false)
   const [loading, setLoading] = useState(false)
   const [buyError, setBuyError] = useState<string | null>(null)
@@ -53,6 +62,42 @@ export function WelcomeScreen({
     refreshQuota()
   }, [telegramId])
 
+  const finishPackagesClose = useCallback(() => {
+    if (!closingPackagesRef.current) return
+    closingPackagesRef.current = false
+    setPackagesModal('closed')
+    const fn = afterPackagesCloseRef.current
+    afterPackagesCloseRef.current = null
+    fn?.()
+  }, [])
+
+  const closePackages = (after?: () => void) => {
+    if (closingPackagesRef.current) return
+    if (packagesModalRef.current === 'closed') {
+      after?.()
+      return
+    }
+    afterPackagesCloseRef.current = after ?? null
+    closingPackagesRef.current = true
+    setPackagesModal('closing')
+  }
+
+  useEffect(() => {
+    if (packagesModal !== 'closing') return
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const id = window.setTimeout(finishPackagesClose, 0)
+    return () => window.clearTimeout(id)
+  }, [packagesModal, finishPackagesClose])
+
+  const handlePackagesModalAnimEnd = (
+    e: React.AnimationEvent<HTMLDivElement>
+  ) => {
+    if (e.target !== e.currentTarget) return
+    if (!closingPackagesRef.current) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    finishPackagesClose()
+  }
+
   const handleBuyClick = async () => {
     setBuyError(null)
     setLoading(true)
@@ -63,7 +108,9 @@ export function WelcomeScreen({
         return
       }
       setPackages(pkgs)
-      setShowPackages(true)
+      afterPackagesCloseRef.current = null
+      closingPackagesRef.current = false
+      setPackagesModal('open')
     } catch (e) {
       setBuyError(e instanceof Error ? e.message : 'Ошибка загрузки пакетов')
     } finally {
@@ -80,11 +127,12 @@ export function WelcomeScreen({
         pkg.generations,
         pkg.stars
       )
-      setShowPackages(false)
-      openInvoice(invoice_link, (status) => {
-        if (status === 'paid') {
-          refreshQuota()
-        }
+      closePackages(() => {
+        openInvoice(invoice_link, (status) => {
+          if (status === 'paid') {
+            refreshQuota()
+          }
+        })
       })
     } catch (e) {
       setBuyError(e instanceof Error ? e.message : 'Ошибка оплаты')
@@ -235,18 +283,26 @@ export function WelcomeScreen({
         <AccentPaletteSheet onClose={() => setShowAccentPalette(false)} />
       )}
 
-      {showPackages && (
-        <div className={styles.packagesOverlay} onClick={() => setShowPackages(false)}>
+      {packagesModal !== 'closed' && (
+        <div
+          className={`${styles.packagesOverlay} ${
+            packagesModal === 'closing'
+              ? styles.packagesOverlayLeave
+              : styles.packagesOverlayEnter
+          }`}
+          onClick={() => closePackages()}
+        >
           <div
             className={styles.packagesModal}
             onClick={(e) => e.stopPropagation()}
+            onAnimationEnd={handlePackagesModalAnimEnd}
           >
             <div className={styles.packagesHeader}>
               <h3>Добавить</h3>
               <button
                 type="button"
                 className={styles.packagesClose}
-                onClick={() => setShowPackages(false)}
+                onClick={() => closePackages()}
                 aria-label="Закрыть"
               >
                 ×

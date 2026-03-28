@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   getShoppingList,
   generateShoppingList,
@@ -94,12 +94,21 @@ function isMixReady(mix: ShoppingMix, checked: string[]): boolean {
   return mix.tobaccos.every((t) => checked.includes(t))
 }
 
+type ConfirmModal = 'closed' | 'open' | 'closing'
+
 export function ShoppingListScreen({ telegramId, onBack, onSelectMix, onOpenShelf }: Props) {
   const [state, setState] = useState<'loading' | 'empty' | 'loaded' | 'generating' | 'error'>('loading')
   const [mixes, setMixes] = useState<ShoppingMix[]>([])
   const [checked, setChecked] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
-  const [showConfirm, setShowConfirm] = useState(false)
+  const [confirmModal, setConfirmModal] = useState<ConfirmModal>('closed')
+  const confirmModalRef = useRef<ConfirmModal>('closed')
+  const afterConfirmCloseRef = useRef<(() => void) | null>(null)
+  const closingConfirmRef = useRef(false)
+
+  useEffect(() => {
+    confirmModalRef.current = confirmModal
+  }, [confirmModal])
   const [toast, setToast] = useState<string | null>(null)
 
   const showToast = (msg: string) => {
@@ -119,8 +128,43 @@ export function ShoppingListScreen({ telegramId, onBack, onSelectMix, onOpenShel
       .catch(() => setState('empty'))
   }, [telegramId])
 
-  const handleGenerate = useCallback(async () => {
-    setShowConfirm(false)
+  const finishConfirmClose = useCallback(() => {
+    if (!closingConfirmRef.current) return
+    closingConfirmRef.current = false
+    setConfirmModal('closed')
+    const fn = afterConfirmCloseRef.current
+    afterConfirmCloseRef.current = null
+    fn?.()
+  }, [])
+
+  const closeConfirm = (after?: () => void) => {
+    if (closingConfirmRef.current) return
+    if (confirmModalRef.current === 'closed') {
+      after?.()
+      return
+    }
+    afterConfirmCloseRef.current = after ?? null
+    closingConfirmRef.current = true
+    setConfirmModal('closing')
+  }
+
+  useEffect(() => {
+    if (confirmModal !== 'closing') return
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const id = window.setTimeout(finishConfirmClose, 0)
+    return () => window.clearTimeout(id)
+  }, [confirmModal, finishConfirmClose])
+
+  const handleConfirmModalAnimEnd = (
+    e: React.AnimationEvent<HTMLDivElement>
+  ) => {
+    if (e.target !== e.currentTarget) return
+    if (!closingConfirmRef.current) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    finishConfirmClose()
+  }
+
+  const runGenerate = useCallback(async () => {
     setError(null)
     setState('generating')
     try {
@@ -223,7 +267,7 @@ export function ShoppingListScreen({ telegramId, onBack, onSelectMix, onOpenShel
                 Сгенерирую 10 миксов из 5–6 табаков. Купи их все — и у тебя будет набор на несколько вечеров.
               </p>
               <p className={styles.onboardingQuota}>Будет использована 1 генерация</p>
-              <button type="button" className={styles.generateBtn} onClick={handleGenerate}>
+              <button type="button" className={styles.generateBtn} onClick={() => void runGenerate()}>
                 Сгенерировать список
               </button>
             </div>
@@ -337,7 +381,7 @@ export function ShoppingListScreen({ telegramId, onBack, onSelectMix, onOpenShel
               <button
                 type="button"
                 className={welcomeStyles.secondaryBtn}
-                onClick={() => setShowConfirm(true)}
+                onClick={() => setConfirmModal('open')}
                 aria-label="Обновить список"
               >
                 Обновить
@@ -351,14 +395,35 @@ export function ShoppingListScreen({ telegramId, onBack, onSelectMix, onOpenShel
         </div>
 
         {/* Confirm modal */}
-        {showConfirm && (
-          <div className={styles.overlay} onClick={() => setShowConfirm(false)}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        {confirmModal !== 'closed' && (
+          <div
+            className={`${styles.overlay} ${
+              confirmModal === 'closing' ? styles.overlayLeave : styles.overlayEnter
+            }`}
+            onClick={() => closeConfirm()}
+          >
+            <div
+              className={styles.modal}
+              onClick={(e) => e.stopPropagation()}
+              onAnimationEnd={handleConfirmModalAnimEnd}
+            >
               <h3 className={styles.modalTitle}>Обновить список?</h3>
               <p className={styles.modalQuota}>Будет использована 1 генерация.</p>
               <div className={styles.modalActions}>
-                <button type="button" className={styles.modalCancel} onClick={() => setShowConfirm(false)}>Отмена</button>
-                <button type="button" className={styles.modalConfirm} onClick={handleGenerate}>Обновить</button>
+                <button
+                  type="button"
+                  className={styles.modalCancel}
+                  onClick={() => closeConfirm()}
+                >
+                  Отмена
+                </button>
+                <button
+                  type="button"
+                  className={styles.modalConfirm}
+                  onClick={() => closeConfirm(() => void runGenerate())}
+                >
+                  Обновить
+                </button>
               </div>
             </div>
           </div>
