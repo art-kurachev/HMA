@@ -222,6 +222,9 @@ async def admin_users_list(
         select(
             User.id,
             User.telegram_id,
+            User.telegram_first_name,
+            User.telegram_last_name,
+            User.telegram_username,
             User.provider_group,
             User.created_at,
             User.paid_generations,
@@ -249,6 +252,9 @@ async def admin_users_list(
         {
             "id": r.id,
             "telegram_id": r.telegram_id,
+            "telegram_first_name": r.telegram_first_name,
+            "telegram_last_name": r.telegram_last_name,
+            "telegram_username": r.telegram_username,
             "provider_group": r.provider_group,
             "created_at": r.created_at.isoformat() if r.created_at else None,
             "attempts": int(r.attempts),

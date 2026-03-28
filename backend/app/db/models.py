@@ -18,6 +18,9 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False, index=True)
+    telegram_first_name: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    telegram_last_name: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    telegram_username: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     provider_group: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     welcome_requests_used: Mapped[int] = mapped_column(Integer, default=0)  # 0–3
     last_weekly_refill: Mapped[Optional[date]] = mapped_column(Date, nullable=True)

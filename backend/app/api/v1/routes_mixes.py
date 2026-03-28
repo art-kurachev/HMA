@@ -52,7 +52,7 @@ async def get_quota(
 ):
     """Return remaining requests: -1 = unlimited (creator), else 0–3 (welcome) or 0–1 (weekly)."""
     uid = resolve_telegram_id(x_telegram_init_data, telegram_id, settings.BOT_TOKEN)
-    user = await ensure_user_and_provider_group(db, uid)
+    user = await ensure_user_and_provider_group(db, uid, init_data=x_telegram_init_data)
     remaining, is_creator = await get_remaining_quota(db, user)
     return {"remaining": remaining, "is_creator": is_creator}
 
@@ -64,7 +64,7 @@ async def suggest_mixes(
     db: AsyncSession = Depends(get_db),
 ):
     uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
-    user = await ensure_user_and_provider_group(db, uid)
+    user = await ensure_user_and_provider_group(db, uid, init_data=x_telegram_init_data)
     allowed, provider_name, model_name = await check_and_consume_quota(db, user)
     if not allowed:
         raise HTTPException(status_code=429, detail="quota_exceeded")
@@ -109,7 +109,7 @@ async def quick_suggest_mixes(
 ):
     """Быстрый совет: 3 рандомных микса по цели вечера (без полного сетапа)."""
     uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
-    user = await ensure_user_and_provider_group(db, uid)
+    user = await ensure_user_and_provider_group(db, uid, init_data=x_telegram_init_data)
     allowed, provider_name, model_name = await check_and_consume_quota(db, user)
     if not allowed:
         raise HTTPException(status_code=429, detail="quota_exceeded")
@@ -155,7 +155,7 @@ async def get_instruction(
     db: AsyncSession = Depends(get_db),
 ):
     uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
-    user = await ensure_user_and_provider_group(db, uid)
+    user = await ensure_user_and_provider_group(db, uid, init_data=x_telegram_init_data)
 
     from sqlalchemy import select
 

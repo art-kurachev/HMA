@@ -35,7 +35,7 @@ async def get_shopping_list(
 ):
     """Получить текущий список покупок пользователя."""
     uid = resolve_telegram_id(x_telegram_init_data, telegram_id, settings.BOT_TOKEN)
-    user = await ensure_user_and_provider_group(db, uid)
+    user = await ensure_user_and_provider_group(db, uid, init_data=x_telegram_init_data)
 
     row = await db.execute(select(ShoppingList).where(ShoppingList.user_id == user.id))
     shopping_list = row.scalar_one_or_none()
@@ -58,7 +58,7 @@ async def generate_shopping_list(
 ):
     """Сгенерировать список покупок (10 миксов). Расходует квоту."""
     uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
-    user = await ensure_user_and_provider_group(db, uid)
+    user = await ensure_user_and_provider_group(db, uid, init_data=x_telegram_init_data)
 
     allowed, provider_name, model_name = await check_and_consume_quota(db, user)
     if not allowed:
@@ -133,7 +133,7 @@ async def update_checked(
 ):
     """Обновить список отмеченных (купленных) табаков."""
     uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
-    user = await ensure_user_and_provider_group(db, uid)
+    user = await ensure_user_and_provider_group(db, uid, init_data=x_telegram_init_data)
 
     row = await db.execute(select(ShoppingList).where(ShoppingList.user_id == user.id))
     shopping_list = row.scalar_one_or_none()

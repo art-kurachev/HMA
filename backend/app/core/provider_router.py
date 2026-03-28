@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import logging
+from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
+from app.utils.telegram_auth import merge_telegram_profile_from_init_data
 from app.core.app_settings import get_app_settings
 from app.core.prompt_builder import build_quick_mixes_prompt
 from app.db.models import User
@@ -34,7 +36,12 @@ def _get_provider_by_name(name: str, llm_model: str = "") -> BaseProvider:
     return MockProvider()
 
 
-async def ensure_user_and_provider_group(db: AsyncSession, telegram_id: int) -> User:
+async def ensure_user_and_provider_group(
+    db: AsyncSession,
+    telegram_id: int,
+    *,
+    init_data: Optional[str] = None,
+) -> User:
     from sqlalchemy import select
 
     row = await db.execute(select(User).where(User.telegram_id == telegram_id))
@@ -43,6 +50,8 @@ async def ensure_user_and_provider_group(db: AsyncSession, telegram_id: int) -> 
         user = User(telegram_id=telegram_id)
         db.add(user)
         await db.flush()
+    if init_data:
+        merge_telegram_profile_from_init_data(user, init_data, settings.BOT_TOKEN)
     return user
 
 

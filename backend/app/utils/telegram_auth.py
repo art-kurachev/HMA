@@ -1,10 +1,14 @@
 """Telegram WebApp initData validator and user extraction."""
 
+from __future__ import annotations
+
 import hashlib
 import hmac
 import json
 from typing import Optional
 from urllib.parse import parse_qs
+
+from app.db.models import User
 
 
 def validate_init_data(init_data: str, bot_token: Optional[str]) -> bool:
@@ -39,6 +43,31 @@ def extract_user_id_from_init_data(init_data: str) -> Optional[int]:
         return int(uid) if isinstance(uid, (int, float)) else None
     except Exception:
         return None
+
+
+def merge_telegram_profile_from_init_data(user: User, init_data: Optional[str], bot_token: Optional[str]) -> None:
+    """Обновляет имя/username из валидного WebApp initData (если есть)."""
+    if not init_data or not bot_token:
+        return
+    if not validate_init_data(init_data, bot_token):
+        return
+    try:
+        parsed = parse_qs(init_data, keep_blank_values=True)
+        user_str = (parsed.get("user") or [None])[0]
+        if not user_str:
+            return
+        u = json.loads(user_str)
+        if "first_name" in u:
+            fn = u.get("first_name")
+            user.telegram_first_name = (str(fn).strip()[:128] if fn is not None else None) or None
+        if "last_name" in u:
+            ln = u.get("last_name")
+            user.telegram_last_name = (str(ln).strip()[:128] if ln is not None else None) or None
+        if "username" in u:
+            un = u.get("username")
+            user.telegram_username = (str(un).strip()[:64] if un is not None else None) or None
+    except Exception:
+        return
 
 
 def resolve_telegram_id(init_data: Optional[str], fallback: int, bot_token: Optional[str]) -> int:

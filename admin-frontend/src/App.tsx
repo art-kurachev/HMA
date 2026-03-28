@@ -541,6 +541,16 @@ function SettingsPage() {
   )
 }
 
+function formatTelegramUserName(r: api.UserItem): string {
+  const parts = [r.telegram_first_name, r.telegram_last_name].filter(Boolean)
+  const name = parts.join(' ').trim()
+  const un = r.telegram_username
+  if (name && un) return `${name} (@${un})`
+  if (un) return `@${un}`
+  if (name) return name
+  return '—'
+}
+
 function UsersPage() {
   const [items, setItems] = useState<api.UserItem[]>([])
   const [err, setErr] = useState<string | null>(null)
@@ -550,9 +560,35 @@ function UsersPage() {
   }, [])
 
   const exportCsv = () => {
-    const headers = ['id', 'telegram_id', 'provider_group', 'attempts', 'sessions_count', 'feedback_count', 'paid_generations', 'purchases_count', 'total_stars', 'created_at', 'last_activity']
+    const headers = [
+      'id',
+      'telegram_id',
+      'name',
+      'provider_group',
+      'attempts',
+      'sessions_count',
+      'feedback_count',
+      'paid_generations',
+      'purchases_count',
+      'total_stars',
+      'created_at',
+      'last_activity',
+    ]
     const rows = items.map((r) =>
-      [r.id, r.telegram_id, r.provider_group || '', r.attempts, r.sessions_count, r.feedback_count, r.paid_generations, r.purchases_count, r.total_stars, r.created_at || '', r.last_activity || ''].join(';')
+      [
+        r.id,
+        r.telegram_id,
+        formatTelegramUserName(r),
+        r.provider_group || '',
+        r.attempts,
+        r.sessions_count,
+        r.feedback_count,
+        r.paid_generations,
+        r.purchases_count,
+        r.total_stars,
+        r.created_at || '',
+        r.last_activity || '',
+      ].join(';')
     )
     const csv = [headers.join(';'), ...rows].join('\n')
     const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' })
@@ -579,6 +615,7 @@ function UsersPage() {
             <tr>
               <th>ID</th>
               <th>Telegram ID</th>
+              <th>Имя</th>
               <th>Провайдер</th>
               <th>Попыток</th>
               <th>Сессий</th>
@@ -595,6 +632,7 @@ function UsersPage() {
               <tr key={row.id}>
                 <td data-label="ID">{row.id}</td>
                 <td data-label="Telegram ID">{row.telegram_id}</td>
+                <td data-label="Имя">{formatTelegramUserName(row)}</td>
                 <td data-label="Провайдер">{row.provider_group || '—'}</td>
                 <td data-label="Попыток">{row.attempts}</td>
                 <td data-label="Сессий">{row.sessions_count}</td>

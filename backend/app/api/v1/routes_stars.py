@@ -49,7 +49,7 @@ async def create_stars_invoice(
     if not settings.BOT_TOKEN:
         raise HTTPException(status_code=503, detail="BOT_TOKEN not configured")
     uid = resolve_telegram_id(x_telegram_init_data, body.telegram_id, settings.BOT_TOKEN)
-    await ensure_user_and_provider_group(db, uid)
+    await ensure_user_and_provider_group(db, uid, init_data=x_telegram_init_data)
 
     # Проверить, что пакет есть в настройках
     cfg = await get_app_settings(db)

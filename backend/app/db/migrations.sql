@@ -17,6 +17,10 @@ CREATE TABLE IF NOT EXISTS users (
 -- ALTER TABLE users ADD COLUMN IF NOT EXISTS friday_bonus INTEGER DEFAULT 0;
 -- Migration: paid_generations (куплено за Telegram Stars)
 -- ALTER TABLE users ADD COLUMN IF NOT EXISTS paid_generations INTEGER DEFAULT 0;
+-- Имя/username из Telegram WebApp initData
+-- ALTER TABLE users ADD COLUMN IF NOT EXISTS telegram_first_name VARCHAR(128);
+-- ALTER TABLE users ADD COLUMN IF NOT EXISTS telegram_last_name VARCHAR(128);
+-- ALTER TABLE users ADD COLUMN IF NOT EXISTS telegram_username VARCHAR(64);
 CREATE INDEX IF NOT EXISTS ix_users_telegram_id ON users(telegram_id);
 
 CREATE TABLE IF NOT EXISTS daily_usage (

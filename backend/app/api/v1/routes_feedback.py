@@ -9,7 +9,7 @@ from app.db.models import Feedback as FeedbackModel
 from app.db.models import GeneratedMix, Session, User
 from app.db.session import get_db
 from app.schemas.feedback import FeedbackRequest
-from app.utils.telegram_auth import resolve_telegram_id
+from app.utils.telegram_auth import merge_telegram_profile_from_init_data, resolve_telegram_id
 
 router = APIRouter(prefix="/feedback", tags=["feedback"])
 
@@ -25,6 +25,8 @@ async def submit_feedback(
     user = user_row.scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail="user_not_found")
+    if x_telegram_init_data:
+        merge_telegram_profile_from_init_data(user, x_telegram_init_data, settings.BOT_TOKEN)
 
     mix_row = await db.execute(
         select(GeneratedMix)

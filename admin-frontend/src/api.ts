@@ -112,6 +112,9 @@ export function updateSettings(patch: Partial<Settings>): Promise<Settings> {
 export interface UserItem {
   id: number
   telegram_id: number
+  telegram_first_name: string | null
+  telegram_last_name: string | null
+  telegram_username: string | null
   provider_group: string | null
   created_at: string | null
   attempts: number
