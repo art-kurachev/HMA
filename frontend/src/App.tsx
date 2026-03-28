@@ -16,8 +16,6 @@ import { FeedbackStep } from './components/FeedbackStep'
 import { Loader } from './components/Loader'
 import styles from './App.module.css'
 
-const IMG_OVERLAY = '/texture-overlay.png'
-
 const LOADING_MESSAGES: Record<Step, string> = {
   welcome: 'Загрузка...',
   direction: 'Подбираю миксы...',
@@ -262,9 +260,8 @@ export default function App() {
       {['welcome', 'direction', 'setup', 'mixes', 'instruction', 'feedback', 'shopping-list'].includes(step) && (
         <div className={styles.fullScreenBg} aria-hidden>
           <div className={styles.fullScreenBgGradient} />
-          <div className={styles.fullScreenBgOverlay}>
-            <img src={IMG_OVERLAY} alt="" onError={(e) => { e.currentTarget.style.display = 'none' }} />
-          </div>
+          <div className={styles.fullScreenBgAccent} />
+          <div className={styles.fullScreenBgTopFade} />
         </div>
       )}
       {step === 'direction' && (
