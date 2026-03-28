@@ -1,16 +1,18 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.admin_auth import check_admin_credentials, create_admin_token, require_admin
 from app.core.app_settings import get_app_settings, set_setting
-from app.db.models import DailyUsage, Feedback, GeneratedMix, Purchase, Session, User
+from app.core.telegram import send_telegram_message
+from app.db.models import AppSetting, DailyUsage, Feedback, GeneratedMix, Purchase, Session, User
 from app.db.session import get_db
 
 logger = logging.getLogger(__name__)
@@ -39,11 +41,73 @@ class SettingsUpdate(BaseModel):
     stars_packages: Optional[list[StarsPackage]] = None
 
 
+class BroadcastRequest(BaseModel):
+    """Разовая рассылка всем пользователям из БД (telegram_id)."""
+
+    text: str = Field(
+        ...,
+        min_length=1,
+        max_length=3900,
+        description="Текст; при parse_mode=HTML допустимы теги <b>, <i>, <a>.",
+    )
+    parse_mode: Optional[str] = Field(default=None, description="HTML | Markdown | MarkdownV2")
+    idempotency_key: str = Field(
+        default="accent_color_theme",
+        min_length=1,
+        max_length=64,
+        description="Ключ в app_settings: повтор с тем же ключом — 409, пока не force.",
+    )
+    force: bool = Field(
+        default=False,
+        description="Игнорировать флаг «уже отправляли» и снова разослать всем.",
+    )
+
+
 @router.post("/login", response_model=LoginResponse)
 async def admin_login(body: LoginRequest):
     if not check_admin_credentials(body.username, body.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     return LoginResponse(token=create_admin_token())
+
+
+@router.post("/broadcast")
+async def admin_broadcast(
+    body: BroadcastRequest,
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(require_admin),
+):
+    """
+    Рассылка сообщения всем `users.telegram_id`.
+    Один и тот же `idempotency_key` нельзя использовать повторно, пока в БД есть запись (кроме `force`).
+    """
+    setting_key = f"broadcast_{body.idempotency_key}"
+    if not body.force:
+        row = await db.execute(select(AppSetting).where(AppSetting.key == setting_key))
+        if row.scalar_one_or_none() is not None:
+            raise HTTPException(
+                status_code=409,
+                detail="broadcast_already_sent_for_this_key_use_force_true_to_repeat",
+            )
+
+    result = await db.execute(select(User.telegram_id))
+    telegram_ids = [r[0] for r in result.all()]
+    sent = 0
+    failed = 0
+    for tid in telegram_ids:
+        ok = await send_telegram_message(tid, body.text, parse_mode=body.parse_mode)
+        if ok:
+            sent += 1
+        else:
+            failed += 1
+        await asyncio.sleep(0.035)
+
+    if sent > 0:
+        await set_setting(db, setting_key, "1")
+        await db.commit()
+    else:
+        await db.rollback()
+
+    return {"sent": sent, "failed": failed, "total": len(telegram_ids)}
 
 
 @router.get("/stats")
