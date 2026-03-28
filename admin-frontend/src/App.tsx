@@ -2,7 +2,16 @@ import { useState, useEffect, useCallback } from 'react'
 import * as api from './api'
 import styles from './App.module.css'
 
-type Page = 'login' | 'dashboard' | 'settings' | 'feedback' | 'users' | 'mixes' | 'activity' | 'purchases'
+type Page =
+  | 'login'
+  | 'dashboard'
+  | 'settings'
+  | 'feedback'
+  | 'users'
+  | 'mixes'
+  | 'activity'
+  | 'purchases'
+  | 'broadcast'
 
 export default function App() {
   const [page, setPage] = useState<Page>('login')
@@ -87,6 +96,12 @@ export default function App() {
             Активность
           </button>
           <button
+            className={page === 'broadcast' ? styles.navActive : ''}
+            onClick={() => setPage('broadcast')}
+          >
+            Рассылка
+          </button>
+          <button
             className={page === 'settings' ? styles.navActive : ''}
             onClick={() => setPage('settings')}
           >
@@ -105,6 +120,7 @@ export default function App() {
         {page === 'mixes' && <MixesPage />}
         {page === 'purchases' && <PurchasesPage />}
         {page === 'activity' && <ActivityPage />}
+        {page === 'broadcast' && <BroadcastPage />}
       </main>
     </div>
   )
@@ -268,6 +284,97 @@ const GIGACHAT_MODELS = [
   { value: 'GigaChat-2-Pro', label: 'GigaChat 2 Pro' },
   { value: 'GigaChat-2-Lite', label: 'GigaChat 2 Lite' },
 ]
+
+function BroadcastPage() {
+  const [text, setText] = useState('')
+  const [parseMode, setParseMode] = useState<'plain' | 'HTML'>('plain')
+  const [campaignKey, setCampaignKey] = useState('')
+  const [force, setForce] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
+  const [result, setResult] = useState<api.BroadcastResult | null>(null)
+
+  const handleSend = async () => {
+    const trimmed = text.trim()
+    if (!trimmed) {
+      setErr('Введите текст сообщения')
+      return
+    }
+    setErr(null)
+    setResult(null)
+    setLoading(true)
+    try {
+      const res = await api.sendBroadcast({
+        text: trimmed,
+        parse_mode: parseMode === 'HTML' ? 'HTML' : null,
+        idempotency_key: campaignKey.trim() || null,
+        force,
+      })
+      setResult(res)
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Ошибка рассылки')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className={styles.broadcast}>
+      <h2>Рассылка в Telegram</h2>
+      <p className={styles.hint}>
+        Сообщение уйдёт всем пользователям из базы (у кого есть <code>telegram_id</code>). Один запуск — одна
+        рассылка; ключ кампании необязателен (если пусто — сервер сам создаст уникальный).
+      </p>
+      <label className={styles.broadcastLabel}>
+        Текст поста
+        <textarea
+          className={styles.broadcastTextarea}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Привет! …"
+          rows={12}
+          maxLength={3900}
+        />
+      </label>
+      <label className={styles.broadcastLabel}>
+        Формат
+        <select
+          className={styles.broadcastSelect}
+          value={parseMode}
+          onChange={(e) => setParseMode(e.target.value === 'HTML' ? 'HTML' : 'plain')}
+        >
+          <option value="plain">Обычный текст</option>
+          <option value="HTML">HTML (жирный: &lt;b&gt;…&lt;/b&gt;, ссылки: &lt;a href=&quot;…&quot;&gt;)</option>
+        </select>
+      </label>
+      <label className={styles.broadcastLabel}>
+        Ключ кампании (необязательно)
+        <input
+          type="text"
+          className={styles.broadcastInput}
+          value={campaignKey}
+          onChange={(e) => setCampaignKey(e.target.value)}
+          placeholder="Оставь пустым — или свой ключ, чтобы не задублировать случайно"
+          maxLength={64}
+        />
+      </label>
+      <label className={styles.broadcastCheckbox}>
+        <input type="checkbox" checked={force} onChange={(e) => setForce(e.target.checked)} />
+        Принудительно: отправить снова, даже если этот ключ уже использовали
+      </label>
+      {err && <div className={styles.error}>{err}</div>}
+      {result && (
+        <div className={styles.broadcastResult}>
+          Готово: отправлено <strong>{result.sent}</strong>, ошибок <strong>{result.failed}</strong>, всего в
+          базе <strong>{result.total}</strong>. Ключ: <code>{result.idempotency_key}</code>
+        </div>
+      )}
+      <button type="button" className={styles.broadcastBtn} onClick={handleSend} disabled={loading}>
+        {loading ? 'Отправка…' : 'Разослать'}
+      </button>
+    </div>
+  )
+}
 
 function SettingsPage() {
   const [settings, setSettings] = useState<api.Settings | null>(null)

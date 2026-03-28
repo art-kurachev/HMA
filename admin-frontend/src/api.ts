@@ -195,3 +195,28 @@ export function getPurchases(limit?: number, offset?: number, telegramId?: numbe
   if (telegramId != null) params.set('telegram_id', String(telegramId))
   return request<PurchaseItem[]>(`/admin/purchases?${params}`)
 }
+
+export interface BroadcastResult {
+  sent: number
+  failed: number
+  total: number
+  idempotency_key: string
+}
+
+export function sendBroadcast(payload: {
+  text: string
+  parse_mode?: string | null
+  idempotency_key?: string | null
+  force?: boolean
+}): Promise<BroadcastResult> {
+  return request<BroadcastResult>('/admin/broadcast', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      text: payload.text,
+      parse_mode: payload.parse_mode ?? null,
+      idempotency_key: payload.idempotency_key ?? null,
+      force: payload.force ?? false,
+    }),
+  })
+}

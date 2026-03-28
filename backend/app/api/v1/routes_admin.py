@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import uuid
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -51,11 +52,10 @@ class BroadcastRequest(BaseModel):
         description="Текст; при parse_mode=HTML допустимы теги <b>, <i>, <a>.",
     )
     parse_mode: Optional[str] = Field(default=None, description="HTML | Markdown | MarkdownV2")
-    idempotency_key: str = Field(
-        default="accent_color_theme",
-        min_length=1,
+    idempotency_key: Optional[str] = Field(
+        default=None,
         max_length=64,
-        description="Ключ в app_settings: повтор с тем же ключом — 409, пока не force.",
+        description="Если пусто — генерируется уникальный ключ (каждая рассылка независима).",
     )
     force: bool = Field(
         default=False,
@@ -79,8 +79,16 @@ async def admin_broadcast(
     """
     Рассылка сообщения всем `users.telegram_id`.
     Один и тот же `idempotency_key` нельзя использовать повторно, пока в БД есть запись (кроме `force`).
+    Пустой ключ — уникальный `auto_<uuid>` на каждый запрос.
     """
-    setting_key = f"broadcast_{body.idempotency_key}"
+    if body.parse_mode is not None and body.parse_mode not in ("HTML", "Markdown", "MarkdownV2"):
+        raise HTTPException(
+            status_code=400,
+            detail="parse_mode must be HTML, Markdown, MarkdownV2 or omitted",
+        )
+    raw_key = (body.idempotency_key or "").strip()
+    effective_key = raw_key if raw_key else f"auto_{uuid.uuid4().hex}"
+    setting_key = f"broadcast_{effective_key}"
     if not body.force:
         row = await db.execute(select(AppSetting).where(AppSetting.key == setting_key))
         if row.scalar_one_or_none() is not None:
@@ -107,7 +115,12 @@ async def admin_broadcast(
     else:
         await db.rollback()
 
-    return {"sent": sent, "failed": failed, "total": len(telegram_ids)}
+    return {
+        "sent": sent,
+        "failed": failed,
+        "total": len(telegram_ids),
+        "idempotency_key": effective_key,
+    }
 
 
 @router.get("/stats")
