@@ -56,7 +56,8 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export interface Stats {
   users_count: number
   total_requests: number
-  total_attempts: number
+  /** Всего записей generated_mixes (реальные генерации LLM) */
+  total_mix_generations: number
   feedback_count: number
   feedback_positive: number
   feedback_negative: number
@@ -117,13 +118,18 @@ export interface UserItem {
   telegram_username: string | null
   provider_group: string | null
   created_at: string | null
-  attempts: number
   sessions_count: number
   feedback_count: number
   last_activity: string | null
   paid_generations: number
   friday_bonus: number
   welcome_requests_used: number
+  last_weekly_refill: string | null
+  admin_bonus_generations: number
+  quota_exempt: boolean
+  /** Сколько доступно по текущей логике квоты; -1 = без лимита */
+  remaining: number
+  is_creator: boolean
   purchases_count: number
   total_stars: number
 }
@@ -133,6 +139,18 @@ export function getUsers(limit?: number, offset?: number): Promise<UserItem[]> {
   if (limit != null) params.set('limit', String(limit))
   if (offset != null) params.set('offset', String(offset))
   return request<UserItem[]>(`/admin/users?${params}`)
+}
+
+export function patchUsersQuota(body: {
+  user_ids: number[]
+  add_bonus_generations?: number
+  quota_exempt?: boolean
+}): Promise<{ updated: number }> {
+  return request<{ updated: number }>('/admin/users/quota', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
 }
 
 export interface BackfillProfilesResult {

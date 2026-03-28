@@ -26,6 +26,8 @@ class User(Base):
     last_weekly_refill: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     friday_bonus: Mapped[int] = mapped_column(Integer, default=0)  # +1 по пятницам 19:00, если остаток ≤3
     paid_generations: Mapped[int] = mapped_column(Integer, default=0)  # куплено за Stars
+    admin_bonus_generations: Mapped[int] = mapped_column(Integer, default=0)  # выдано из админки
+    quota_exempt: Mapped[bool] = mapped_column(Boolean, default=False)  # без лимита (как отключённый глобально)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
 

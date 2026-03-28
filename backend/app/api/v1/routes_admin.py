@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.admin_auth import check_admin_credentials, create_admin_token, require_admin
 from app.core.app_settings import get_app_settings, set_setting
+from app.core.quota import get_remaining_quota
 from app.core.telegram import get_telegram_chat, send_telegram_message
 from app.db.models import AppSetting, DailyUsage, Feedback, GeneratedMix, Purchase, Session, User
 from app.db.session import get_db
@@ -40,6 +41,22 @@ class SettingsUpdate(BaseModel):
     llm_provider: Optional[str] = None
     llm_model: Optional[str] = None
     stars_packages: Optional[list[StarsPackage]] = None
+
+
+class UsersQuotaPatch(BaseModel):
+    """Выдать бонусные генерации и/или переключить безлимит для выбранных пользователей."""
+
+    user_ids: list[int] = Field(..., min_length=1, max_length=500)
+    add_bonus_generations: Optional[int] = Field(
+        default=None,
+        ge=0,
+        le=100_000,
+        description="Добавить к admin_bonus_generations (расходуются как Stars).",
+    )
+    quota_exempt: Optional[bool] = Field(
+        default=None,
+        description="True — без лимита для пользователя; False — снять флаг.",
+    )
 
 
 class BroadcastRequest(BaseModel):
@@ -134,8 +151,8 @@ async def admin_stats(
     sessions_count = await db.execute(select(func.count(Session.id)))
     total_requests = sessions_count.scalar() or 0
 
-    usage_total = await db.execute(select(func.sum(DailyUsage.count)))
-    total_attempts = usage_total.scalar() or 0
+    mixes_total = await db.execute(select(func.count(GeneratedMix.id)))
+    total_mix_generations = mixes_total.scalar() or 0
 
     feedback_count = await db.execute(select(func.count(Feedback.id)))
     total_feedback = feedback_count.scalar() or 0
@@ -149,7 +166,7 @@ async def admin_stats(
     return {
         "users_count": total_users,
         "total_requests": total_requests,
-        "total_attempts": int(total_attempts),
+        "total_mix_generations": int(total_mix_generations),
         "feedback_count": total_feedback,
         "feedback_positive": feedback_positive,
         "feedback_negative": feedback_negative,
@@ -194,12 +211,6 @@ async def admin_users_list(
     limit: int = 200,
     offset: int = 0,
 ):
-    # Users with attempts (sum of daily_usage.count), sessions count, feedback count
-    attempts_subq = (
-        select(User.id, func.coalesce(func.sum(DailyUsage.count), 0).label("attempts"))
-        .outerjoin(DailyUsage, User.id == DailyUsage.user_id)
-        .group_by(User.id)
-    ).subquery()
     sessions_subq = (
         select(Session.user_id, func.count(Session.id).label("sessions_count")).group_by(Session.user_id)
     ).subquery()
@@ -230,14 +241,15 @@ async def admin_users_list(
             User.paid_generations,
             User.friday_bonus,
             User.welcome_requests_used,
-            func.coalesce(attempts_subq.c.attempts, 0).label("attempts"),
+            User.last_weekly_refill,
+            User.quota_exempt,
+            User.admin_bonus_generations,
             func.coalesce(sessions_subq.c.sessions_count, 0).label("sessions_count"),
             func.coalesce(feedback_subq.c.feedback_count, 0).label("feedback_count"),
             last_session_subq.c.last_activity,
             func.coalesce(purchases_subq.c.purchases_count, 0).label("purchases_count"),
             func.coalesce(purchases_subq.c.total_stars, 0).label("total_stars"),
         )
-        .outerjoin(attempts_subq, User.id == attempts_subq.c.id)
         .outerjoin(sessions_subq, User.id == sessions_subq.c.user_id)
         .outerjoin(feedback_subq, User.id == feedback_subq.c.user_id)
         .outerjoin(last_session_subq, User.id == last_session_subq.c.user_id)
@@ -248,27 +260,68 @@ async def admin_users_list(
     )
     result = await db.execute(q)
     rows = result.all()
-    return [
-        {
-            "id": r.id,
-            "telegram_id": r.telegram_id,
-            "telegram_first_name": r.telegram_first_name,
-            "telegram_last_name": r.telegram_last_name,
-            "telegram_username": r.telegram_username,
-            "provider_group": r.provider_group,
-            "created_at": r.created_at.isoformat() if r.created_at else None,
-            "attempts": int(r.attempts),
-            "sessions_count": int(r.sessions_count),
-            "feedback_count": int(r.feedback_count),
-            "last_activity": r.last_activity.isoformat() if r.last_activity else None,
-            "paid_generations": r.paid_generations or 0,
-            "friday_bonus": r.friday_bonus or 0,
-            "welcome_requests_used": r.welcome_requests_used or 0,
-            "purchases_count": int(r.purchases_count),
-            "total_stars": int(r.total_stars),
-        }
-        for r in rows
-    ]
+    ids = [r.id for r in rows]
+    by_id: dict[int, User] = {}
+    if ids:
+        ur = await db.execute(select(User).where(User.id.in_(ids)))
+        by_id = {u.id: u for u in ur.scalars().all()}
+
+    out: list[dict] = []
+    for r in rows:
+        u = by_id.get(r.id)
+        if not u:
+            continue
+        rem, is_cr = await get_remaining_quota(db, u)
+        out.append(
+            {
+                "id": r.id,
+                "telegram_id": r.telegram_id,
+                "telegram_first_name": r.telegram_first_name,
+                "telegram_last_name": r.telegram_last_name,
+                "telegram_username": r.telegram_username,
+                "provider_group": r.provider_group,
+                "created_at": r.created_at.isoformat() if r.created_at else None,
+                "sessions_count": int(r.sessions_count),
+                "feedback_count": int(r.feedback_count),
+                "last_activity": r.last_activity.isoformat() if r.last_activity else None,
+                "paid_generations": r.paid_generations or 0,
+                "friday_bonus": r.friday_bonus or 0,
+                "welcome_requests_used": r.welcome_requests_used or 0,
+                "last_weekly_refill": r.last_weekly_refill.isoformat() if r.last_weekly_refill else None,
+                "admin_bonus_generations": r.admin_bonus_generations or 0,
+                "quota_exempt": bool(r.quota_exempt),
+                "remaining": rem,
+                "is_creator": is_cr,
+                "purchases_count": int(r.purchases_count),
+                "total_stars": int(r.total_stars),
+            }
+        )
+    return out
+
+
+@router.patch("/users/quota")
+async def admin_patch_users_quota(
+    body: UsersQuotaPatch,
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(require_admin),
+):
+    if body.add_bonus_generations is None and body.quota_exempt is None:
+        raise HTTPException(
+            status_code=400,
+            detail="specify add_bonus_generations and/or quota_exempt",
+        )
+    updated = 0
+    for uid in body.user_ids:
+        user = await db.get(User, uid)
+        if not user:
+            continue
+        if body.add_bonus_generations is not None:
+            user.admin_bonus_generations = (user.admin_bonus_generations or 0) + body.add_bonus_generations
+        if body.quota_exempt is not None:
+            user.quota_exempt = body.quota_exempt
+        updated += 1
+    await db.commit()
+    return {"updated": updated}
 
 
 @router.post("/users/backfill-profiles")

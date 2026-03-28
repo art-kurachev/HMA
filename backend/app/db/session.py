@@ -44,6 +44,8 @@ async def _run_migrations() -> None:
         "ALTER TABLE users ADD COLUMN telegram_first_name VARCHAR(128)",
         "ALTER TABLE users ADD COLUMN telegram_last_name VARCHAR(128)",
         "ALTER TABLE users ADD COLUMN telegram_username VARCHAR(64)",
+        "ALTER TABLE users ADD COLUMN admin_bonus_generations INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN quota_exempt BOOLEAN DEFAULT 0",
         "ALTER TABLE generated_mixes ADD COLUMN llm_model_used VARCHAR(64)",
     ]:
         try:

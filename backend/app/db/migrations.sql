@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS users (
 -- ALTER TABLE users ADD COLUMN IF NOT EXISTS telegram_first_name VARCHAR(128);
 -- ALTER TABLE users ADD COLUMN IF NOT EXISTS telegram_last_name VARCHAR(128);
 -- ALTER TABLE users ADD COLUMN IF NOT EXISTS telegram_username VARCHAR(64);
+-- ALTER TABLE users ADD COLUMN IF NOT EXISTS admin_bonus_generations INTEGER DEFAULT 0;
+-- ALTER TABLE users ADD COLUMN IF NOT EXISTS quota_exempt BOOLEAN DEFAULT FALSE;
 CREATE INDEX IF NOT EXISTS ix_users_telegram_id ON users(telegram_id);
 
 CREATE TABLE IF NOT EXISTS daily_usage (

@@ -1,5 +1,6 @@
-"""Quota: 3 welcome requests (GigaChat-max) + 1/week (admin model). Creator unlimited.
-Лимит отключается через DISABLE_DAILY_LIMIT в .env или disable_daily_limit в админке."""
+"""Quota: 3 welcome + 1/week + friday_bonus + paid + admin_bonus_generations. Creator unlimited.
+Глобально: DISABLE_DAILY_LIMIT / disable_daily_limit в админке.
+По пользователю: quota_exempt — без лимита; admin_bonus_generations — как платные, расходуются первыми после friday/paid."""
 
 from datetime import date
 
@@ -42,6 +43,11 @@ async def check_and_consume_quota(
         m = _admin_model(app_cfg)
         return True, _admin_provider(app_cfg, user), m if m else None
 
+    if getattr(user, "quota_exempt", False):
+        app_cfg = await get_app_settings(db)
+        m = _admin_model(app_cfg)
+        return True, _admin_provider(app_cfg, user), m if m else None
+
     if is_creator(user.telegram_id):
         app_cfg = await get_app_settings(db)
         llm_provider = app_cfg.get("llm_provider", "gigachat")
@@ -62,6 +68,13 @@ async def check_and_consume_quota(
     paid = getattr(user, "paid_generations", 0) or 0
     if paid > 0:
         user.paid_generations = paid - 1
+        await db.flush()
+        app_cfg = await get_app_settings(db)
+        return True, _admin_provider(app_cfg, user), _admin_model(app_cfg)
+
+    admin_bonus = getattr(user, "admin_bonus_generations", 0) or 0
+    if admin_bonus > 0:
+        user.admin_bonus_generations = admin_bonus - 1
         await db.flush()
         app_cfg = await get_app_settings(db)
         return True, _admin_provider(app_cfg, user), _admin_model(app_cfg)
@@ -94,7 +107,8 @@ async def check_and_consume_quota(
 async def get_remaining_quota(db: AsyncSession, user: User) -> tuple[int, bool]:
     """
     Returns (remaining, is_creator).
-    remaining: -1 = unlimited (creator или лимит отключён), else 0–3 (welcome) or 0–1 (weekly)
+    remaining: -1 = unlimited (creator, quota_exempt, или лимит отключён глобально).
+    Иначе — сумма доступных генераций по welcome/weekly/friday/paid/admin_bonus.
     """
     from app.core.app_settings import get_app_settings
 
@@ -103,22 +117,27 @@ async def get_remaining_quota(db: AsyncSession, user: User) -> tuple[int, bool]:
     if limit_disabled:
         return -1, False
 
+    if getattr(user, "quota_exempt", False):
+        return -1, False
+
     if is_creator(user.telegram_id):
         return -1, True
 
     bonus = getattr(user, "friday_bonus", 0) or 0
     paid = getattr(user, "paid_generations", 0) or 0
+    admin_b = getattr(user, "admin_bonus_generations", 0) or 0
+    extra = bonus + paid + admin_b
 
     if user.welcome_requests_used < WELCOME_QUOTA:
-        return bonus + paid + (WELCOME_QUOTA - user.welcome_requests_used), False
+        return extra + (WELCOME_QUOTA - user.welcome_requests_used), False
 
     today = date.today()
     if user.last_weekly_refill is None:
-        return bonus + paid + 1, False
+        return extra + 1, False
     days_since = (today - user.last_weekly_refill).days
     if days_since >= WEEKLY_REFILL_DAYS:
-        return bonus + paid + 1, False
-    return bonus + paid + 0, False
+        return extra + 1, False
+    return extra + 0, False
 
 
 def _admin_provider(app_cfg: dict, user: User) -> str:

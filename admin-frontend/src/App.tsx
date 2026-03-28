@@ -216,8 +216,8 @@ function DashboardPage() {
           <span className={styles.cardLabel}>Запросов (сессий)</span>
         </div>
         <div className={styles.card}>
-          <span className={styles.cardValue}>{stats.total_attempts}</span>
-          <span className={styles.cardLabel}>Попыток (по лимиту)</span>
+          <span className={styles.cardValue}>{stats.total_mix_generations}</span>
+          <span className={styles.cardLabel}>Сгенерировано миксов</span>
         </div>
         <div className={styles.card}>
           <span className={styles.cardValue}>{stats.feedback_count}</span>
@@ -551,11 +551,26 @@ function formatTelegramUserName(r: api.UserItem): string {
   return '—'
 }
 
+function formatQuotaRemaining(r: api.UserItem): string {
+  if (r.remaining < 0) return '∞'
+  return String(r.remaining)
+}
+
+function formatLimitCell(r: api.UserItem): string {
+  if (r.is_creator) return 'creator'
+  if (r.quota_exempt) return 'без лимита'
+  return 'квота'
+}
+
 function UsersPage() {
   const [items, setItems] = useState<api.UserItem[]>([])
   const [err, setErr] = useState<string | null>(null)
   const [backfillLoading, setBackfillLoading] = useState(false)
   const [backfillMsg, setBackfillMsg] = useState<string | null>(null)
+  const [selected, setSelected] = useState<Set<number>>(() => new Set())
+  const [bonusInput, setBonusInput] = useState('5')
+  const [quotaActionLoading, setQuotaActionLoading] = useState(false)
+  const [quotaMsg, setQuotaMsg] = useState<string | null>(null)
 
   const loadUsers = useCallback(() => {
     return api.getUsers(200, 0).then(setItems)
@@ -564,6 +579,58 @@ function UsersPage() {
   useEffect(() => {
     loadUsers().catch((e) => setErr(e instanceof Error ? e.message : 'Ошибка'))
   }, [loadUsers])
+
+  const toggleRow = (id: number) => {
+    setSelected((prev) => {
+      const n = new Set(prev)
+      if (n.has(id)) n.delete(id)
+      else n.add(id)
+      return n
+    })
+  }
+
+  const allSelected = items.length > 0 && items.every((r) => selected.has(r.id))
+  const toggleAll = () => {
+    if (allSelected) setSelected(new Set())
+    else setSelected(new Set(items.map((r) => r.id)))
+  }
+
+  const selectedIds = () => [...selected]
+
+  const handleGrantBonus = async () => {
+    const n = parseInt(bonusInput, 10)
+    if (selected.size === 0 || Number.isNaN(n) || n < 1) return
+    setErr(null)
+    setQuotaMsg(null)
+    setQuotaActionLoading(true)
+    try {
+      const r = await api.patchUsersQuota({ user_ids: selectedIds(), add_bonus_generations: n })
+      setQuotaMsg(`Обновлено записей: ${r.updated}`)
+      setSelected(new Set())
+      await loadUsers()
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Ошибка')
+    } finally {
+      setQuotaActionLoading(false)
+    }
+  }
+
+  const handleSetExempt = async (exempt: boolean) => {
+    if (selected.size === 0) return
+    setErr(null)
+    setQuotaMsg(null)
+    setQuotaActionLoading(true)
+    try {
+      const r = await api.patchUsersQuota({ user_ids: selectedIds(), quota_exempt: exempt })
+      setQuotaMsg(`Обновлено записей: ${r.updated}`)
+      setSelected(new Set())
+      await loadUsers()
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Ошибка')
+    } finally {
+      setQuotaActionLoading(false)
+    }
+  }
 
   const handleBackfillProfiles = async () => {
     setErr(null)
@@ -588,7 +655,11 @@ function UsersPage() {
       'telegram_id',
       'name',
       'provider_group',
-      'attempts',
+      'remaining',
+      'welcome_used',
+      'admin_bonus',
+      'quota_exempt',
+      'is_creator',
       'sessions_count',
       'feedback_count',
       'paid_generations',
@@ -603,7 +674,11 @@ function UsersPage() {
         r.telegram_id,
         formatTelegramUserName(r),
         r.provider_group || '',
-        r.attempts,
+        formatQuotaRemaining(r),
+        r.welcome_requests_used,
+        r.admin_bonus_generations,
+        r.quota_exempt ? '1' : '0',
+        r.is_creator ? '1' : '0',
         r.sessions_count,
         r.feedback_count,
         r.paid_generations,
@@ -644,39 +719,101 @@ function UsersPage() {
         </div>
       </div>
       {backfillMsg && <p className={styles.hint}>{backfillMsg}</p>}
+      <div className={styles.usersToolbar}>
+        <span className={styles.usersToolbarHint}>
+          Выбрано: {selected.size}. Осталось / welcome / адм. бонус — по текущей логике квоты (не старый daily_usage).
+        </span>
+        <div className={styles.usersToolbarRow}>
+          <label className={styles.usersToolbarLabel}>
+            + генераций
+            <input
+              type="number"
+              min={1}
+              max={100000}
+              value={bonusInput}
+              onChange={(e) => setBonusInput(e.target.value)}
+              className={styles.usersToolbarInput}
+            />
+          </label>
+          <button
+            type="button"
+            className={styles.secondaryBtn}
+            disabled={selected.size === 0 || quotaActionLoading}
+            onClick={handleGrantBonus}
+          >
+            Выдать выбранным
+          </button>
+          <button
+            type="button"
+            className={styles.secondaryBtn}
+            disabled={selected.size === 0 || quotaActionLoading}
+            onClick={() => handleSetExempt(true)}
+          >
+            Без лимита
+          </button>
+          <button
+            type="button"
+            className={styles.secondaryBtn}
+            disabled={selected.size === 0 || quotaActionLoading}
+            onClick={() => handleSetExempt(false)}
+          >
+            Вернуть лимит
+          </button>
+        </div>
+      </div>
+      {quotaMsg && <p className={styles.hint}>{quotaMsg}</p>}
       <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>
             <tr>
+              <th className={styles.thCheckbox}>
+                <input type="checkbox" checked={allSelected} onChange={toggleAll} aria-label="Выбрать всех" />
+              </th>
               <th>ID</th>
               <th>Telegram ID</th>
               <th>Имя</th>
               <th>Провайдер</th>
-              <th>Попыток</th>
+              <th>Осталось</th>
+              <th>Welcome</th>
+              <th>Адм</th>
+              <th>Режим</th>
               <th>Сессий</th>
               <th>Feedback</th>
               <th>Оплачено</th>
               <th>Покупок</th>
               <th>Stars</th>
               <th>Регистрация</th>
-              <th>Последняя активность</th>
+              <th>Активность</th>
             </tr>
           </thead>
           <tbody>
             {items.map((row) => (
               <tr key={row.id}>
+                <td className={styles.thCheckbox} data-label="">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(row.id)}
+                    onChange={() => toggleRow(row.id)}
+                    aria-label={`Выбрать пользователя ${row.id}`}
+                  />
+                </td>
                 <td data-label="ID">{row.id}</td>
                 <td data-label="Telegram ID">{row.telegram_id}</td>
                 <td data-label="Имя">{formatTelegramUserName(row)}</td>
                 <td data-label="Провайдер">{row.provider_group || '—'}</td>
-                <td data-label="Попыток">{row.attempts}</td>
+                <td data-label="Осталось">{formatQuotaRemaining(row)}</td>
+                <td data-label="Welcome">
+                  {row.welcome_requests_used}/3
+                </td>
+                <td data-label="Адм">{row.admin_bonus_generations}</td>
+                <td data-label="Режим">{formatLimitCell(row)}</td>
                 <td data-label="Сессий">{row.sessions_count}</td>
                 <td data-label="Feedback">{row.feedback_count}</td>
                 <td data-label="Оплачено">{row.paid_generations}</td>
                 <td data-label="Покупок">{row.purchases_count}</td>
                 <td data-label="Stars">{row.total_stars}</td>
                 <td data-label="Регистрация">{row.created_at ? new Date(row.created_at).toLocaleString('ru') : '—'}</td>
-                <td data-label="Последняя активность">{row.last_activity ? new Date(row.last_activity).toLocaleString('ru') : '—'}</td>
+                <td data-label="Активность">{row.last_activity ? new Date(row.last_activity).toLocaleString('ru') : '—'}</td>
               </tr>
             ))}
           </tbody>

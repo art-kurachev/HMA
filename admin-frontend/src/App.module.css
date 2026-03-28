@@ -473,6 +473,52 @@
   cursor: not-allowed;
 }
 
+.usersToolbar {
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 10px;
+}
+
+.usersToolbarHint {
+  display: block;
+  font-size: 0.8rem;
+  color: #71717a;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.usersToolbarRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.usersToolbarLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #a1a1aa;
+}
+
+.usersToolbarInput {
+  width: 72px;
+  padding: 8px 10px;
+  border: 1px solid #3f3f46;
+  border-radius: 8px;
+  background: #0f0f14;
+  color: #e4e4e7;
+  font-size: 0.875rem;
+}
+
+.thCheckbox {
+  width: 36px;
+  text-align: center;
+}
+
 .exportBtn {
   padding: 8px 16px;
   border: 1px solid #3f3f46;
