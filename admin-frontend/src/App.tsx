@@ -554,10 +554,33 @@ function formatTelegramUserName(r: api.UserItem): string {
 function UsersPage() {
   const [items, setItems] = useState<api.UserItem[]>([])
   const [err, setErr] = useState<string | null>(null)
+  const [backfillLoading, setBackfillLoading] = useState(false)
+  const [backfillMsg, setBackfillMsg] = useState<string | null>(null)
+
+  const loadUsers = useCallback(() => {
+    return api.getUsers(200, 0).then(setItems)
+  }, [])
 
   useEffect(() => {
-    api.getUsers(200, 0).then(setItems).catch((e) => setErr(e instanceof Error ? e.message : 'Ошибка'))
-  }, [])
+    loadUsers().catch((e) => setErr(e instanceof Error ? e.message : 'Ошибка'))
+  }, [loadUsers])
+
+  const handleBackfillProfiles = async () => {
+    setErr(null)
+    setBackfillMsg(null)
+    setBackfillLoading(true)
+    try {
+      const r = await api.backfillUserProfiles(true)
+      setBackfillMsg(
+        `Обработано: ${r.processed}, обновлено: ${r.updated}, не удалось (нет чата / бот заблокирован): ${r.errors}`
+      )
+      await loadUsers()
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Ошибка')
+    } finally {
+      setBackfillLoading(false)
+    }
+  }
 
   const exportCsv = () => {
     const headers = [
@@ -605,10 +628,22 @@ function UsersPage() {
     <div className={styles.page}>
       <div className={styles.pageHeader}>
         <h2>Пользователи</h2>
-        <button className={styles.exportBtn} onClick={exportCsv}>
-          Экспорт CSV
-        </button>
+        <div className={styles.pageHeaderActions}>
+          <button
+            type="button"
+            className={styles.secondaryBtn}
+            onClick={handleBackfillProfiles}
+            disabled={backfillLoading}
+            title="Запросить имена у Telegram (getChat). У кого уже есть имя в БД — пропускаются."
+          >
+            {backfillLoading ? 'Запрос…' : 'Подтянуть имена из Telegram'}
+          </button>
+          <button className={styles.exportBtn} onClick={exportCsv}>
+            Экспорт CSV
+          </button>
+        </div>
       </div>
+      {backfillMsg && <p className={styles.hint}>{backfillMsg}</p>}
       <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>

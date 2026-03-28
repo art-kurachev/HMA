@@ -135,6 +135,22 @@ export function getUsers(limit?: number, offset?: number): Promise<UserItem[]> {
   return request<UserItem[]>(`/admin/users?${params}`)
 }
 
+export interface BackfillProfilesResult {
+  processed: number
+  updated: number
+  errors: number
+  only_missing: boolean
+}
+
+/** Имена из Telegram getChat (бот должен иметь диалог с пользователем). */
+export function backfillUserProfiles(onlyMissing = true): Promise<BackfillProfilesResult> {
+  const params = new URLSearchParams()
+  params.set('only_missing', onlyMissing ? 'true' : 'false')
+  return request<BackfillProfilesResult>(`/admin/users/backfill-profiles?${params}`, {
+    method: 'POST',
+  })
+}
+
 export interface MixDetail {
   id: number
   mix_json: { title?: string; tobaccos?: Array<{ name: string; percent?: number }>; flavor?: string }

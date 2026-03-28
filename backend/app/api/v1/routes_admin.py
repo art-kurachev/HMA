@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.admin_auth import check_admin_credentials, create_admin_token, require_admin
 from app.core.app_settings import get_app_settings, set_setting
-from app.core.telegram import send_telegram_message
+from app.core.telegram import get_telegram_chat, send_telegram_message
 from app.db.models import AppSetting, DailyUsage, Feedback, GeneratedMix, Purchase, Session, User
 from app.db.session import get_db
 
@@ -269,6 +269,56 @@ async def admin_users_list(
         }
         for r in rows
     ]
+
+
+@router.post("/users/backfill-profiles")
+async def admin_backfill_user_profiles(
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(require_admin),
+    only_missing: bool = True,
+):
+    """
+    Подтянуть имя/username через Bot API getChat (личный чат: chat_id = telegram_id).
+    only_missing=true — только у кого в БД ещё нет имени (telegram_first_name пусто).
+    only_missing=false — обновить всех (осторожно: много запросов к Telegram).
+    """
+    from app.config import settings as app_settings
+
+    if not app_settings.BOT_TOKEN:
+        raise HTTPException(status_code=503, detail="BOT_TOKEN not configured")
+
+    q = select(User)
+    if only_missing:
+        q = q.where(User.telegram_first_name.is_(None))
+    result = await db.execute(q)
+    users = result.scalars().all()
+
+    updated = 0
+    errors = 0
+    for user in users:
+        chat = await get_telegram_chat(user.telegram_id)
+        await asyncio.sleep(0.035)
+        if not chat:
+            errors += 1
+            continue
+        if chat.get("type") != "private":
+            errors += 1
+            continue
+        fn = chat.get("first_name")
+        ln = chat.get("last_name")
+        un = chat.get("username")
+        user.telegram_first_name = (str(fn).strip()[:128] if fn is not None else None) or None
+        user.telegram_last_name = (str(ln).strip()[:128] if ln is not None else None) or None
+        user.telegram_username = (str(un).strip()[:64] if un is not None else None) or None
+        updated += 1
+
+    await db.commit()
+    return {
+        "processed": len(users),
+        "updated": updated,
+        "errors": errors,
+        "only_missing": only_missing,
+    }
 
 
 @router.get("/purchases")
