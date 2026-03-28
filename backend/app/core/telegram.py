@@ -28,9 +28,7 @@ async def get_telegram_chat(chat_id: int) -> Optional[dict[str, Any]]:
             return None
 
 
-async def send_telegram_message(
-    chat_id: int, text: str, *, parse_mode: Optional[str] = None
-) -> bool:
+async def send_telegram_message(chat_id: int, text: str, *, parse_mode: Optional[str] = None) -> bool:
     """Send message via Telegram Bot API. parse_mode: HTML | Markdown | MarkdownV2."""
     if not settings.BOT_TOKEN:
         return False
