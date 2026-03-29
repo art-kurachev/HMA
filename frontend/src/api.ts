@@ -229,6 +229,19 @@ export async function updateShoppingListChecked(
   })
 }
 
+// ─── Shelf: фото → GigaChat — временно отключено; см. README ─────────────────
+//
+// export interface ShelfRecognizeResponse {
+//   tobaccos: string[]
+// }
+//
+// export async function recognizeShelfFromPhoto(
+//   telegramId: number,
+//   file: File
+// ): Promise<ShelfRecognizeResponse> {
+//   ...
+// }
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function submitFeedback(

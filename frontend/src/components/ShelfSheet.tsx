@@ -1,8 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { loadShelf, saveShelf } from '../shelfStorage'
-import { CloseIcon, MinusCircleIcon, AddCircleIcon } from './Icons'
+import { AddCircleIcon, CloseIcon, MinusCircleIcon } from './Icons'
 import styles from './ShelfSheet.module.css'
+
+/**
+ * Распознавание табаков по фото (GigaChat) отключено — см. README.
+ * Вернуть: импорты recognizeShelfFromPhoto, compressShelfImageForUpload,
+ * ref file input, кнопку «Сделать фото», обработчик onPhotoSelected.
+ */
 
 interface ShelfSheetProps {
   telegramId: number
@@ -54,7 +60,7 @@ export function ShelfSheet({ telegramId, onClose }: ShelfSheetProps) {
           </button>
         </div>
 
-        <div className={styles.list}>
+        <div className={styles.listScroll}>
           {tobaccos.map((name, index) => (
             <div key={index} className={styles.row}>
               <input
@@ -75,10 +81,15 @@ export function ShelfSheet({ telegramId, onClose }: ShelfSheetProps) {
               </button>
             </div>
           ))}
-          <button type="button" className={styles.addRow} onClick={add}>
-            <span>Добавить табак</span>
-            <AddCircleIcon className={styles.addRowIcon} size={16} />
-          </button>
+        </div>
+
+        <div className={styles.sheetFooter}>
+          <div className={styles.actionsRow}>
+            <button type="button" className={styles.addRow} onClick={add}>
+              <span>Добавить табак</span>
+              <AddCircleIcon className={styles.addRowIcon} size={16} />
+            </button>
+          </div>
         </div>
       </div>
     </div>

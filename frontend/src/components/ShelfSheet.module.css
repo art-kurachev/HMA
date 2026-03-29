@@ -36,6 +36,8 @@
   max-height: 85vh;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  align-self: flex-end;
   background: linear-gradient(
     180deg,
     #222 0%,
@@ -45,6 +47,9 @@
   padding: 12px 12px 24px;
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
   animation: sheetSlideUp 0.35s ease-out;
+  height: fit-content;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .header {
@@ -69,6 +74,82 @@
   margin: 0;
 }
 
+.hiddenFileInput {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.actionsRow {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+}
+
+@keyframes shelfSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.photoBtn {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 12px 10px;
+  border-radius: 50px;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 200;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.photoBtnSpinner {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 2px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: shelfSpin 0.75s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photoBtnSpinner {
+    animation: none;
+    border-top-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+}
+
+.photoBtn:disabled {
+  opacity: 0.85;
+  cursor: wait;
+}
+
+.photoBtn:active:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.photoError {
+  margin: 0;
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 200;
+  line-height: 1.35;
+  color: #fca5a5;
+}
+
 .closeBtn {
   width: fit-content;
   height: fit-content;
@@ -89,14 +170,27 @@
   background: rgba(246, 248, 255, 0.08);
 }
 
-.list {
+/* только строки табаков; высота по содержимому, с потолком под шит */
+.listScroll {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  overflow-x: hidden;
   overflow-y: auto;
-  padding-bottom: 24px;
   min-height: 0;
+  max-height: calc(85vh - 10.5rem);
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sheetFooter {
+  flex-shrink: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
 }
 
 .row {
@@ -150,15 +244,16 @@
 }
 
 .addRow {
+  flex: 1 1 0;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 12px 12px 12px 16px;
+  gap: 8px;
+  padding: 12px 10px 12px 14px;
   border-radius: 50px;
   background: color-mix(in srgb, var(--accent) 10%, transparent);
   border: none;
-  width: 100%;
   cursor: pointer;
   color: var(--accent);
   font-family: var(--font-family);
@@ -169,8 +264,13 @@
   transition: background 0.2s;
 }
 
-.addRow:active {
+.addRow:active:not(:disabled) {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.addRow:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .addRowIcon {

@@ -88,6 +88,18 @@ pgAdmin: http://localhost:5050 (admin@local / admin)
 | POST | /v1/mixes/{id}/instruction | Инструкция для микса |
 | POST | /v1/feedback/ | Отправка фидбека |
 
+### Полка по фото (распознавание табаков) — **сейчас отключено**
+
+Функционал: снимок полки → нейросеть (GigaChat vision) → список строк в «Моя полка». Отключён до смены/настройки модели.
+
+**Код (чтобы снова включить):**
+
+1. **Backend** — в `backend/app/api/v1/__init__.py` раскомментировать импорт `shelf_router` и строку `api_router.include_router(shelf_router)`.
+2. **Frontend** — в `frontend/src/api.ts` раскомментировать блок `recognizeShelfFromPhoto` / `ShelfRecognizeResponse`; в `frontend/src/components/ShelfSheet.tsx` вернуть UI кнопки «Сделать фото», скрытый `input[type=file]`, вызов сжатия (`compressShelfImageForUpload`) и API (см. историю git или комментарий в начале `ShelfSheet.tsx`).
+3. При необходимости подправить промпт и модели в `backend/app/providers/gigachat.py` (`SHELF_*`, `recognize_tobaccos_from_photo`).
+
+Эндпоинт при включении: `POST /v1/shelf/recognize-photo` (multipart, см. `routes_shelf.py`). Нужен `python-multipart` в `requirements.txt`.
+
 ## Переменные окружения
 
 См. `backend/.env.example` и документацию в `DEPLOY.md`.
