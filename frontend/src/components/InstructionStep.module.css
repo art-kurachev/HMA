@@ -592,7 +592,7 @@
 .tag { border-color: rgba(89, 96, 71, 0.2); }
 .tagText, .tagIconSvg, .title, .flavor { color: var(--ink); }
 .tagIconSvg { filter: brightness(0); width: 24px; height: 24px; }
-.mainContent { padding-top: 162px; }
+.mainContent { padding-top: calc(162px + var(--header-offset)); }
 .timerBtn { color: var(--ink); background: rgba(202, 187, 159, 0.3); }
 .timerBtn.timerRunning, .timerResumeBtn, .timerResetBtn { background: var(--sand); color: var(--ink); }
 .sheetTitle { opacity: 1; }
