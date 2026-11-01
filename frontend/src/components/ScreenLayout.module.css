@@ -18,12 +18,12 @@
   width: 24px;
   height: 4px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(202, 187, 159, 0.2);
   transition: background 0.2s;
 }
 
 .progressDot.active {
-  background: var(--accent, #ff6544);
+  background: var(--accent, #8c987c);
 }
 
 .back {
@@ -35,7 +35,7 @@
   border-radius: 50%;
   border: none;
   background: rgba(0, 0, 0, 0.4);
-  color: #fff;
+  color: var(--sand);
   font-size: 1.25rem;
   cursor: pointer;
   z-index: 10;

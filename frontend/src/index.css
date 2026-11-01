@@ -1,14 +1,17 @@
 :root {
+  --sand: #cabb9f;
+  --ink: #242629;
+  --olive-dark: #596047;
   --font-family: 'Geologica', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --tg-theme-bg-color: #1a1a2e;
-  --tg-theme-text-color: #eee;
+  --tg-theme-bg-color: #55575a;
+  --tg-theme-text-color: var(--ink);
   --tg-theme-hint-color: #999;
-  --tg-theme-button-color: #ff6544;
-  --tg-theme-button-text-color: #fff;
-  --accent: #ff6544;
+  --tg-theme-button-color: #8c987c;
+  --tg-theme-button-text-color: var(--sand);
+  --accent: #8c987c;
   --accent-light: color-mix(in srgb, var(--accent) 15%, transparent);
-  --card-bg: rgba(255, 255, 255, 0.06);
-  --card-border: rgba(255, 255, 255, 0.12);
+  --card-bg: rgba(202, 187, 159, 0.06);
+  --card-border: rgba(202, 187, 159, 0.12);
   --text-hero: 43px;
   --text-card-title: 36px;
   --text-subtitle: 22px;
@@ -36,8 +39,8 @@ body {
 body {
   margin: 0;
   font-family: var(--font-family);
-  background: url("/bg.png") center center / cover no-repeat fixed, #1a1522;
-  color: #fff;
+  background: linear-gradient(180deg, var(--sand) 0%, #55575a 100%) fixed;
+  color: var(--sand);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
@@ -52,7 +55,7 @@ body {
   margin: 0 auto;
   padding: 8px;
   padding-bottom: 16px;
-  color: #fff;
+  color: var(--sand);
 }
 
 #root.welcome-full-bleed,
@@ -70,3 +73,16 @@ body {
   padding: 0;
   padding-bottom: 0;
 }
+
+/* Figma New UI: the texture is a separate paint above the gradient. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url('/texture-overlay.png') center / cover no-repeat;
+  filter: grayscale(1);
+  opacity: 0.1;
+  mix-blend-mode: hard-light;
+  pointer-events: none;
+}
+body, #root { color: var(--ink); }

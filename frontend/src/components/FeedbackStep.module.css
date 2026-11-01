@@ -83,7 +83,7 @@
   flex: 1;
   padding: 8px;
   border-radius: 40px 24px 24px 24px;
-  background: rgba(34, 34, 34, 0.7);
+  background: rgba(36, 38, 41, 0.8);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -108,7 +108,7 @@
   font-size: 22px;
   font-weight: 200;
   line-height: 24px;
-  color: #fff;
+  color: var(--sand);
   margin: 0 0 0;
   padding: 8px 8px 8px 8px;
   text-align: left;
@@ -119,7 +119,7 @@
   font-size: 14px;
   font-weight: 200;
   line-height: 16px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(202, 187, 159, 0.6);
   margin: 0 0 8px;
   padding: 0 8px 0 8px;
   text-align: left;
@@ -150,8 +150,8 @@
 }
 
 .ratingBtn.active {
-  background: rgba(255, 255, 255, 0.95);
-  color: #292d32;
+  background: rgba(202, 187, 159, 0.95);
+  color: var(--ink);
   border-color: transparent;
 }
 
@@ -191,7 +191,7 @@
   border-radius: 50px;
   border: none;
   background: rgba(0, 0, 0, 0.2);
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(202, 187, 159, 0.6);
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 200;
@@ -201,8 +201,8 @@
 }
 
 .chip.active {
-  background: rgba(255, 255, 255, 0.95);
-  color: #292d32;
+  background: rgba(202, 187, 159, 0.95);
+  color: var(--ink);
   border-color: transparent;
 }
 
@@ -214,7 +214,7 @@
   border-radius: 24px;
   border: 1px solid rgba(0, 0, 0, 0.2);
   background: rgba(0, 0, 0, 0.2);
-  color: #fff;
+  color: var(--sand);
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 200;
@@ -223,7 +223,7 @@
 }
 
 .input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(202, 187, 159, 0.5);
 }
 
 .input:focus {
@@ -240,7 +240,7 @@
   padding: 16px 24px 16px 16px;
   border-radius: 50px;
   border: none;
-  background: rgba(246, 248, 255, 1);
+  background: rgba(202, 187, 159, 1);
   color: rgba(41, 45, 50, 1);
   font-family: var(--font-family);
   font-size: 14px;
@@ -258,8 +258,8 @@
 
 /* Стили кнопки «Отправить» только на экране фидбека */
 .wrapFeedback .submitBtnWhite {
-  background: rgba(246, 248, 255, 0.2);
-  color: #F6F8FF;
+  background: rgba(202, 187, 159, 0.2);
+  color: var(--sand);
 }
 
 .wrapFeedback .submitBtnWhite img {
@@ -267,10 +267,24 @@
 }
 
 .wrapFeedback .submitBtnWhite:not(:disabled) {
-  background: #F6F8FF;
-  color: #292D32;
+  background: var(--sand);
+  color: var(--ink);
 }
 
 .wrapFeedback .submitBtnWhite:not(:disabled) img {
   filter: brightness(0);
 }
+
+/* New UI — Figma 1157:4617. */
+.ratingBtn { color: var(--sand); }
+.ratingBtn.active, .chip.active { background: var(--accent); color: var(--ink); }
+.ratingBtn.active .ratingIcon img { filter: brightness(0); }
+.submitBtnWhite { background: var(--sand); color: var(--ink); }
+.wrapFeedback .submitBtnWhite { color: var(--ink); }
+.wrapFeedback div:has(> img[src="/hand-thumbs-up.png"]) { top: -162px; right: -90.66px; width: 328.66px; height: 435.23px; }
+.blockSubtitle { font-size: 12px; line-height: 14px; }
+.chip { font-size: 10px; line-height: 14px; }
+
+.wrapFeedback .mainContentFront { overflow: visible; }
+
+.wrapFeedback .mainContentFront > div:first-child { padding-left: 16px; padding-right: 16px; }

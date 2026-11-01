@@ -193,7 +193,7 @@
   flex: 1;
   padding: 8px;
   border-radius: 40px 24px 24px 24px;
-  background: rgba(34, 34, 34, 0.7);
+  background: rgba(36, 38, 41, 0.8);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -229,7 +229,7 @@
   font-size: 22px;
   font-weight: 200;
   line-height: 24px;
-  color: #fff;
+  color: var(--sand);
   margin: 0;
   padding: 8px;
   text-align: left;
@@ -240,7 +240,7 @@
   font-size: 14px;
   font-weight: 200;
   line-height: 16px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(202, 187, 159, 0.6);
   margin: 0;
   padding: 0 8px 0;
   text-align: left;
@@ -305,7 +305,7 @@
   border-radius: 16px;
   border: none;
   background: rgba(0, 0, 0, 0.2);
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(202, 187, 159, 0.8);
   font-size: 14px;
   font-weight: 200;
   font-family: inherit;
@@ -315,7 +315,7 @@
 
 .pill.active {
   background: var(--accent);
-  color: rgba(246, 248, 255, 1);
+  color: rgba(202, 187, 159, 1);
 }
 
 /* Чипы вкусов */
@@ -332,7 +332,7 @@
   border-radius: 50px;
   border: none;
   background: rgba(0, 0, 0, 0.2);
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(202, 187, 159, 0.6);
   font-size: 12px;
   font-weight: 200;
   font-family: inherit;
@@ -342,7 +342,7 @@
 
 .chip.active {
   background: color-mix(in srgb, var(--accent) 95%, transparent);
-  color: rgba(246, 248, 255, 1);
+  color: rgba(202, 187, 159, 1);
 }
 
 /* Текстареа для табаков */
@@ -353,7 +353,7 @@
   border-radius: 24px;
   border: 1px solid rgba(0, 0, 0, 0.2);
   background: rgba(0, 0, 0, 0.2);
-  color: #fff;
+  color: var(--sand);
   font-size: 14px;
   font-family: inherit;
   resize: vertical;
@@ -362,7 +362,7 @@
 }
 
 .textarea::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(202, 187, 159, 0.5);
 }
 
 .textarea:focus {
@@ -381,6 +381,33 @@
 }
 
 .bottomSetup .submitBtnSetup:disabled {
-  background: rgba(246, 248, 255, 0.2);
-  color: #F6F8FF;
+  background: rgba(202, 187, 159, 0.2);
+  color: var(--sand);
 }
+
+/* New UI — Figma 1157:4091. */
+.kolpakTick { display: none; }
+.pill.active, .chip.active { color: var(--ink); }
+.bottomSetup .submitBtnSetup:disabled { color: var(--ink); background: rgba(202, 187, 159, 0.2); }
+.kolpakWrap { top: -76px; right: 0; width: 217px; height: 398.11px; transform: none !important; }
+/* Rotate the image inside a stable hit area; the asset includes a 15deg tilt. */
+.kolpakWrap img {
+  transform: rotate(-30deg);
+  /* Center of the metal body, excluding the handle and transparent shadow padding. */
+  transform-origin: 62% 35%;
+  transition: transform 0.3s ease;
+}
+.kolpakWrap.kolpakActive img { transform: rotate(0deg); }
+.blockHeader { padding: 8px; gap: 4px; }
+.blockCard .blockTitle, .blockCard .blockSubtitle { padding: 0; }
+.blockSubtitle { font-size: 12px; line-height: 14px; }
+.blocksRow:not(.blocksRowBottom) .blockCard { height: 247px; }
+.blocksRowBottom .blockCard { height: 146px; }
+.chips { margin-top: 0; }
+.chip { font-size: 10px; line-height: 14px; }
+.headerText > p { line-height: 16px; max-width: 170px; }
+
+.blocksRow:not(.blocksRowBottom) .blockCard:first-child .pill {
+  padding: 4px 24px 4px 4px;
+}
+.pill img { width: 40px; height: 40px; object-fit: contain; }

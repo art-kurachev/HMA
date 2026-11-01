@@ -17,7 +17,7 @@ from app.schemas.mix import MixItem, SuggestResponse
 logger = logging.getLogger(__name__)
 
 OAUTH_URL = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
-CHAT_URL = "https://gigachat.devices.sberbank.ru/api/v1/chat/completions"
+CHAT_URL = "https://api.giga.chat/v1/chat/completions"
 TOKEN_TTL = 25 * 60  # обновляем за 5 мин до истечения (токен живёт 30 мин)
 
 
@@ -71,7 +71,7 @@ class GigaChatProvider(BaseProvider):
 
     async def _chat(self, client: httpx.AsyncClient, prompt: str) -> str:
         token = await self._ensure_token(client)
-        # Только три модели: GigaChat-2-Max, GigaChat-2-Pro, GigaChat-2-Lite
+        # Keep the selected model first; retry older models if it is unavailable.
         fallbacks = ["GigaChat-2-Pro", "GigaChat-2-Lite", "GigaChat-2-Max"]
         models_to_try = [self._model] + [m for m in fallbacks if m != self._model]
 

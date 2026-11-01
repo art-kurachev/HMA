@@ -136,11 +136,11 @@
   margin-bottom: -16px; /* 32px (bottom gap) - 16px = 16px to quotaRow */
   padding: 8px 16px 8px 8px;
   border-radius: 50px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(202, 187, 159, 0.1);
   background: unset;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  color: #fff;
+  color: var(--sand);
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 200;
@@ -177,7 +177,7 @@
   font-size: 24px;
   font-weight: 500;
   line-height: 16px;
-  color: #f6f8ff;
+  color: var(--sand);
 }
 
 .quotaLabel {
@@ -185,7 +185,7 @@
   font-size: 12px;
   font-weight: 300;
   line-height: 16px;
-  color: #fff;
+  color: var(--sand);
   opacity: 0.6;
   white-space: nowrap;
 }
@@ -196,7 +196,7 @@
   font-size: 35px;
   font-weight: 100;
   line-height: 1.2;
-  color: #fff;
+  color: var(--sand);
   white-space: pre-wrap;
 }
 
@@ -217,10 +217,10 @@
   padding: 16px 24px 16px 16px;
   border-radius: 50px;
   border: none;
-  background: rgba(34, 34, 34, 0.6);
+  background: rgba(36, 38, 41, 0.8);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  color: #fff;
+  color: var(--sand);
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 200;
@@ -255,10 +255,10 @@
   padding: 16px 16px 16px 24px;
   border-radius: 50px;
   border: none;
-  background: rgba(246, 248, 255, 0.2);
+  background: rgba(202, 187, 159, 0.2);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  color: #fff;
+  color: var(--sand);
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 200;
@@ -350,8 +350,8 @@
   overflow-y: auto;
   background: linear-gradient(
     180deg,
-    #222 0%,
-    color-mix(in srgb, var(--accent) 28%, #0a0a0a) 100%
+    var(--ink) 0%,
+    #1c2015 100%
   );
   border-radius: 32px 32px 44px 44px;
   padding: 12px;
@@ -384,7 +384,7 @@
   font-size: 18px;
   font-weight: 200;
   line-height: 1.2;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(202, 187, 159, 0.6);
 }
 
 .packagesClose {
@@ -393,8 +393,8 @@
   padding: 8px 16px;
   border: none;
   border-radius: 50px;
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.84);
+  background: rgba(202, 187, 159, 0.05);
+  color: rgba(202, 187, 159, 0.84);
   font-size: 24px;
   line-height: 1;
   cursor: pointer;
@@ -424,7 +424,7 @@
   border: none;
   border-radius: 16px;
   background: color-mix(in srgb, var(--accent) 10%, transparent);
-  color: #fff;
+  color: var(--sand);
   font-family: var(--font-family);
   font-size: 15px;
   cursor: pointer;
@@ -451,3 +451,22 @@
   font-weight: 500;
   color: #ffd700;
 }
+
+/* New UI — Figma 1159:5167. */
+.welcome { min-height: 100%; }
+.topBar { top: 62px; gap: 4px; }
+.headerRow { padding: 0 24px; min-height: 56px; }
+.logo { width: 44.464px; height: 40px; object-position: left center; }
+.shelfBtn { background: rgba(89, 96, 71, 0.3); color: var(--olive-dark); }
+.bottom { background: linear-gradient(180deg, rgba(85, 87, 90, 0), #55575a); }
+.title { color: var(--ink); font-size: 31px; }
+.buyGenerationsBtn { background: rgba(36, 38, 41, 0.1); border: none; color: var(--ink); font-size: 12px; gap: 4px; backdrop-filter: blur(8px); }
+.quotaBadge { background: rgba(202, 187, 159, 0.4); border: none; color: var(--ink); }
+.quotaLabel { color: var(--ink); }
+.primaryBtn { background: rgba(36, 38, 41, 0.8); color: var(--sand); }
+.secondaryBtn { background: rgba(202, 187, 159, 0.2); color: var(--sand); }
+.heroWrap { inset: 0; overflow: hidden; }
+.heroInner { position: absolute; inset: 0; width: 100%; height: 100%; transform: none; aspect-ratio: auto; }
+.heroInner img { left: 0; top: auto; bottom: 0; width: 100%; height: auto; object-fit: contain; animation: hookahZoom 4s ease-in-out infinite; }
+.packagesHeader h3 { color: var(--sand); opacity: 1; }
+.packageStars { color: var(--sand); }

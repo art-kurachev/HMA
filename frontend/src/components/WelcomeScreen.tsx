@@ -7,7 +7,7 @@ import {
   type StarsPackage,
 } from '../api'
 import { openInvoice } from '../telegram'
-import { AccentPaletteSheet } from './AccentPaletteSheet'
+// import { AccentPaletteSheet } from './AccentPaletteSheet'
 import { DatabaseIcon } from './Icons'
 import { ScreenLayout } from './ScreenLayout'
 import progressRowStyles from './ProgressRow.module.css'
@@ -48,7 +48,7 @@ export function WelcomeScreen({
   useEffect(() => {
     packagesModalRef.current = packagesModal
   }, [packagesModal])
-  const [showAccentPalette, setShowAccentPalette] = useState(false)
+  // const [showAccentPalette, setShowAccentPalette] = useState(false)
   const [loading, setLoading] = useState(false)
   const [buyError, setBuyError] = useState<string | null>(null)
 
@@ -172,6 +172,7 @@ export function WelcomeScreen({
               }}
             />
             <div className={styles.headerBtns}>
+              {/* Color customization is paused for the new Figma theme.
               <button
                 type="button"
                 className={`${styles.shelfBtn} ${styles.shelfBtnIconOnly}`}
@@ -192,6 +193,7 @@ export function WelcomeScreen({
                   <circle cx="16" cy="16" r="2.5" stroke="currentColor" strokeWidth="1.5" />
                 </svg>
               </button>
+              */}
               <button
                 type="button"
                 className={`${styles.shelfBtn} ${styles.shelfBtnIconOnly}`}
@@ -279,9 +281,9 @@ export function WelcomeScreen({
         </div>
       </div>
 
-      {showAccentPalette && (
+      {/* {showAccentPalette && (
         <AccentPaletteSheet onClose={() => setShowAccentPalette(false)} />
-      )}
+      )} */}
 
       {packagesModal !== 'closed' && (
         <div

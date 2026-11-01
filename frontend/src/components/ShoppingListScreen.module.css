@@ -4,7 +4,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  color: #fff;
+  color: var(--sand);
   padding-bottom: 88px;
 }
 
@@ -73,7 +73,7 @@
   font-size: 32px;
   font-weight: 100;
   line-height: 32px;
-  color: #fff;
+  color: var(--sand);
 }
 
 /* ─── Scrollable content ──────────────────────────────────── */
@@ -152,7 +152,7 @@
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 200;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(202, 187, 159, 0.5);
   margin: 0;
 }
 
@@ -179,7 +179,7 @@
   font-family: var(--font-family);
   font-size: 24px;
   font-weight: 200;
-  color: #fff;
+  color: var(--sand);
 }
 
 .onboardingText {
@@ -187,7 +187,7 @@
   font-family: var(--font-family);
   font-size: 15px;
   font-weight: 200;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(202, 187, 159, 0.6);
   line-height: 1.5;
   max-width: 280px;
 }
@@ -204,7 +204,7 @@
   border: none;
   border-radius: 50px;
   background: var(--accent);
-  color: #fff;
+  color: var(--sand);
   font-family: var(--font-family);
   font-size: 16px;
   font-weight: 300;
@@ -229,7 +229,7 @@
   font-family: var(--font-family);
   font-size: 12px;
   font-weight: 200;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(202, 187, 159, 0.4);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -250,7 +250,7 @@
   gap: 12px;
   padding: 14px 16px;
   border-radius: 20px;
-  background: rgba(34, 34, 34, 0.7);
+  background: rgba(36, 38, 41, 0.8);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   transition: opacity 0.3s;
@@ -288,7 +288,7 @@
   font-family: var(--font-family);
   font-size: 15px;
   font-weight: 200;
-  color: #fff;
+  color: var(--sand);
 }
 
 .tobaccoMixCount {
@@ -310,7 +310,7 @@
   font-family: var(--font-family);
   font-size: 22px;
   font-weight: 200;
-  color: #fff;
+  color: var(--sand);
   line-height: 24px;
 }
 
@@ -325,7 +325,7 @@
 
 .mixItem {
   border-radius: 24px;
-  background: rgba(34, 34, 34, 0.7);
+  background: rgba(36, 38, 41, 0.8);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   padding: 8px;
@@ -358,13 +358,13 @@
   font-family: var(--font-family);
   font-size: 16px;
   font-weight: 200;
-  color: #fff;
+  color: var(--sand);
 }
 
 .mixFlavor {
   font-size: 12px;
   font-weight: 200;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(202, 187, 159, 0.6);
   line-height: 14px;
 }
 
@@ -386,7 +386,7 @@
   border: none;
   border-radius: 16px;
   background: var(--accent);
-  color: #f6f8ff;
+  color: var(--sand);
   font-family: var(--font-family);
   font-size: 10px;
   font-weight: 200;
@@ -415,7 +415,7 @@
 .mixTobacco {
   font-size: 10px;
   font-weight: 300;
-  color: rgba(246, 248, 255, 0.6);
+  color: rgba(202, 187, 159, 0.6);
   background: rgba(0, 0, 0, 0.2);
   border-radius: 24px;
   padding: 6px 8px;
@@ -463,7 +463,7 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
-  color: #fff;
+  color: var(--sand);
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 300;
@@ -547,8 +547,8 @@
   width: 100%;
   background: linear-gradient(
     180deg,
-    #222 0%,
-    color-mix(in srgb, var(--accent) 28%, #0a0a0a) 100%
+    var(--ink) 0%,
+    #1c2015 100%
   );
   border-radius: 32px 32px 44px 44px;
   padding: 24px;
@@ -575,7 +575,7 @@
   font-family: var(--font-family);
   font-size: 20px;
   font-weight: 200;
-  color: #fff;
+  color: var(--sand);
 }
 
 .modalQuota {
@@ -597,8 +597,8 @@
   padding: 14px;
   border: none;
   border-radius: 50px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.6);
+  background: rgba(202, 187, 159, 0.08);
+  color: rgba(202, 187, 159, 0.6);
   font-family: var(--font-family);
   font-size: 15px;
   font-weight: 200;
@@ -611,9 +611,17 @@
   border: none;
   border-radius: 50px;
   background: var(--accent);
-  color: #fff;
+  color: var(--sand);
   font-family: var(--font-family);
   font-size: 15px;
   font-weight: 300;
   cursor: pointer;
 }
+
+/* New UI — Figma 1157:4516. */
+.topBar { top: 82px; padding: 0 24px; }
+.topBarLogo { width: 44.464px; height: 40px; }
+.topBarShelfBtn { background: rgba(89, 96, 71, 0.2); color: var(--olive-dark); }
+.mainContent { padding-top: 162px; }
+.pageTitle, .mixesSectionTitle, .brandName, .onboardingTitle, .onboardingText, .hint { color: var(--ink); }
+.mixReadyBtn, .generateBtn, .modalConfirm { color: var(--ink); }

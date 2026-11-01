@@ -18,7 +18,7 @@
   border-radius: 50%;
   border: none;
   background: rgba(0, 0, 0, 0.5);
-  color: #fff;
+  color: var(--sand);
   font-size: 1.25rem;
   cursor: pointer;
   display: flex;
@@ -33,7 +33,7 @@
   padding: 14px 20px;
   border-radius: 24px;
   border: none;
-  background: #fff;
+  background: var(--sand);
   color: #1a1a2e;
   font-family: 'Geologica', sans-serif;
   font-size: var(--text-button, 14px);
@@ -54,6 +54,6 @@
 }
 
 .primaryBtn.accent {
-  background: var(--accent, #ff6544);
-  color: #fff;
+  background: var(--accent, #8c987c);
+  color: var(--sand);
 }
