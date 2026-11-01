@@ -263,7 +263,7 @@
 }
 
 .wrapFeedback .submitBtnWhite img {
-  filter: brightness(0) invert(1);
+  filter: brightness(0);
 }
 
 .wrapFeedback .submitBtnWhite:not(:disabled) {
