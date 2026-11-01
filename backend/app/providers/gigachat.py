@@ -3,8 +3,10 @@ from __future__ import annotations
 import ast
 import json
 import logging
+import os
 import time
 import uuid
+from pathlib import Path
 
 import httpx
 
@@ -30,6 +32,21 @@ class GigaChatProvider(BaseProvider):
     async def _ensure_token(self, client: httpx.AsyncClient) -> str:
         if self._access_token and time.time() < self._token_expires_at:
             return self._access_token
+
+        # Optional recovery token, provisioned by the operator with mode 0600.
+        # Expired tokens are ignored and normal OAuth remains the fallback.
+        cache_path = os.environ.get("GIGACHAT_TOKEN_CACHE")
+        if cache_path:
+            try:
+                cached = json.loads(Path(cache_path).read_text())
+                expires_at = float(cached["expires_at"]) / 1000
+                access_token = cached["access_token"]
+                if isinstance(access_token, str) and access_token and expires_at > time.time() + 60:
+                    self._access_token = access_token
+                    self._token_expires_at = expires_at - 60
+                    return access_token
+            except (OSError, ValueError, KeyError, TypeError):
+                logger.warning("GigaChat recovery token cache is unavailable")
 
         if not settings.GIGACHAT_AUTH_KEY:
             raise RuntimeError("GIGACHAT_AUTH_KEY не задан в .env")
