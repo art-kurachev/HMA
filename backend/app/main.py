@@ -1,11 +1,18 @@
+import asyncio
+import hmac
 import logging
+import os
+import ssl
+import time
 import traceback
+import uuid
 from contextlib import asynccontextmanager
 
 import httpx
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.api.v1 import api_router
 from app.api.webhook_telegram import router as webhook_router
@@ -122,3 +129,60 @@ async def unhandled_exception_handler(request, exc):
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+
+_broker_lock = asyncio.Lock()
+_broker_token = None
+
+
+def _broker_reply(body, status=200):
+    return JSONResponse(body, status_code=status, headers={"Cache-Control": "no-store", "Pragma": "no-cache"})
+
+
+@app.post("/internal/gigachat-token", include_in_schema=False)
+async def gigachat_token_broker(request: Request):
+    """Private server-to-server OAuth bridge; disabled unless explicitly configured."""
+    global _broker_token
+    secret = os.environ.get("HMA_BROKER_SECRET", "")
+    authorization = request.headers.get("authorization", "")
+    if len(secret) < 32:
+        return _broker_reply({"error": "not_found"}, 404)
+    if len(authorization) > 512 or not hmac.compare_digest(authorization.encode(), ("Bearer " + secret).encode()):
+        return _broker_reply({"error": "unauthorized"}, 401)
+    async with _broker_lock:
+        if _broker_token and _broker_token["expires_at"] > (time.time() + 300) * 1000:
+            return _broker_reply(_broker_token)
+        try:
+            ca = os.environ.get("GIGACHAT_OAUTH_CA_PEM", "")
+            if not ca or not settings.GIGACHAT_AUTH_KEY:
+                raise ValueError("missing_configuration")
+            context = ssl.create_default_context(cadata=ca)
+            async with httpx.AsyncClient(verify=context, timeout=15, trust_env=False) as client:
+                response = await client.post(
+                    "https://ngw.devices.sberbank.ru:9443/api/v2/oauth",
+                    headers={
+                        "Authorization": "Basic " + settings.GIGACHAT_AUTH_KEY,
+                        "RqUID": str(uuid.uuid4()),
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    data={"scope": settings.GIGACHAT_SCOPE},
+                )
+                response.raise_for_status()
+                data = response.json()
+            if not isinstance(data, dict):
+                raise ValueError("invalid_oauth_response")
+            access_token = data["access_token"]
+            expires_at = float(data["expires_at"])
+            if (
+                not isinstance(access_token, str)
+                or not 1 <= len(access_token) <= 20000
+                or not (time.time() + 60) * 1000 < expires_at < (time.time() + 3600) * 1000
+            ):
+                raise ValueError("invalid_oauth_response")
+            _broker_token = {"access_token": access_token, "expires_at": int(expires_at)}
+            logger.info("GigaChat broker: OAuth refresh succeeded")
+            return _broker_reply(_broker_token)
+        except (httpx.HTTPError, ValueError, KeyError, TypeError, OSError) as exc:
+            status = exc.response.status_code if isinstance(exc, httpx.HTTPStatusError) else None
+            logger.warning("GigaChat broker: OAuth failed (%s, status=%s)", type(exc).__name__, status)
+            return _broker_reply({"error": "oauth_unavailable"}, 503)
