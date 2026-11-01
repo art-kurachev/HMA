@@ -19,7 +19,7 @@
   height: 56px;
   padding: 16px 16px 16px 24px;
   border-radius: 50px;
-  border: 2px solid rgba(246, 248, 255, 0.2);
+  border: 2px solid rgba(202, 187, 159, 0.2);
   background: transparent;
   flex-shrink: 0;
 }
@@ -29,12 +29,12 @@
   font-size: 14px;
   font-weight: 200;
   line-height: 16px;
-  color: #fff;
+  color: var(--sand);
 }
 
 .tagIconSvg {
   flex-shrink: 0;
-  color: #fff;
+  color: var(--sand);
 }
 
 /* Контент: хедер фиксирован, скролл только у списка карточек — кнопки навигации внизу всегда видны */
@@ -66,7 +66,7 @@
   font-size: 32px;
   font-weight: 100;
   line-height: 32px;
-  color: #ffffff;
+  color: var(--sand);
   margin: 0;
   padding: 0;
 }
@@ -76,7 +76,7 @@
   font-size: 14px;
   font-weight: 200;
   line-height: 22.4px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(202, 187, 159, 0.6);
   margin: 0;
   padding: 0;
   width: 100%;
@@ -123,7 +123,7 @@
 .sectionCard {
   padding: 16px;
   border-radius: 24px;
-  background: rgba(34, 34, 34, 0.7);
+  background: rgba(36, 38, 41, 0.8);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -156,7 +156,7 @@
   font-size: 22px;
   font-weight: 200;
   line-height: 24px;
-  color: #ffffff;
+  color: var(--sand);
   margin: 0;
   padding: 0;
 }
@@ -204,7 +204,7 @@
   font-size: 14px;
   font-weight: 200;
   line-height: 1.4;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(202, 187, 159, 0.8);
   margin: 0;
   padding: 0;
 }
@@ -224,7 +224,7 @@
   font-size: 14px;
   font-weight: 200;
   line-height: 1.4;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(202, 187, 159, 0.8);
   padding: 2px 4px;
   margin-left: 8px;
 }
@@ -260,10 +260,10 @@
   padding: 16px 24px 16px 16px;
   border-radius: 50px;
   border: none;
-  background: rgba(34, 34, 34, 0.7);
+  background: rgba(36, 38, 41, 0.8);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  color: #fff;
+  color: var(--sand);
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 200;
@@ -273,7 +273,7 @@
 }
 
 .finishBtn:active {
-  background: rgba(34, 34, 34, 0.7);
+  background: rgba(36, 38, 41, 0.8);
 }
 
 .iconBtn {
@@ -282,8 +282,8 @@
   padding: 16px 24px;
   border-radius: 32px;
   border: none;
-  background: rgba(246, 248, 255, 0.2);
-  color: rgba(255, 255, 255, 1);
+  background: rgba(202, 187, 159, 0.2);
+  color: rgba(202, 187, 159, 1);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -294,13 +294,13 @@
 
 .iconBtn span {
   width: 100%;
-  color: rgba(255, 255, 255, 1);
+  color: rgba(202, 187, 159, 1);
 }
 
 .iconBtn svg {
   width: 24px;
   height: 24px;
-  color: rgba(255, 255, 255, 1);
+  color: rgba(202, 187, 159, 1);
 }
 
 .iconBtn:active {
@@ -315,8 +315,8 @@
   padding: 16px 24px 16px 16px;
   border-radius: 50px;
   border: none;
-  background: rgba(246, 248, 255, 0.2);
-  color: rgba(255, 255, 255, 1);
+  background: rgba(202, 187, 159, 0.2);
+  color: rgba(202, 187, 159, 1);
   cursor: pointer;
   font-family: var(--font-family);
   font-size: 14px;
@@ -332,7 +332,7 @@
 }
 
 .problemsBtn:active {
-  background: rgba(246, 248, 255, 0.3);
+  background: rgba(202, 187, 159, 0.3);
 }
 
 .timerBtn {
@@ -341,8 +341,8 @@
   height: 56px;
   border-radius: 50px;
   border: none;
-  background: rgba(246, 248, 255, 0.2);
-  color: rgba(246, 248, 255, 1);
+  background: rgba(202, 187, 159, 0.2);
+  color: rgba(202, 187, 159, 1);
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 200;
@@ -360,31 +360,31 @@
 }
 
 .timerBtn.timerRunning {
-  background: #F6F8FF;
-  color: #292D32;
+  background: var(--sand);
+  color: var(--ink);
   box-shadow: none;
 }
 
 .timerBtn.timerRunning span,
 .timerBtn.timerRunning svg {
-  color: #292D32;
+  color: var(--ink);
 }
 
 .timerBtn.timerDone {
-  background: #6FC135;
+  background: var(--accent);
   border: none;
-  color: #292D32;
+  color: var(--ink);
   box-shadow: none;
 }
 
 .timerBtn.timerDone span {
-  color: #292D32;
+  color: var(--ink);
 }
 
 .timerBtn.timerDone svg {
   width: 24px;
   height: 24px;
-  color: #292D32;
+  color: var(--ink);
 }
 
 .timerBtn:active {
@@ -401,7 +401,7 @@
   padding: 16px 24px;
   border-radius: 50px;
   border: none;
-  background: rgba(246, 248, 255, 1);
+  background: rgba(202, 187, 159, 1);
   color: rgba(41, 45, 50, 1);
   font-family: var(--font-family);
   font-size: 14px;
@@ -432,7 +432,7 @@
   padding: 16px 16px;
   border-radius: 50px;
   border: none;
-  background: rgba(246, 248, 255, 1);
+  background: rgba(202, 187, 159, 1);
   color: rgba(41, 45, 50, 1);
   cursor: pointer;
   display: flex;
@@ -445,7 +445,7 @@
 }
 
 .timerResetBtn:active {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(202, 187, 159, 0.15);
 }
 
 @keyframes pulse {
@@ -476,13 +476,13 @@
   flex-direction: column;
   background: linear-gradient(
     180deg,
-    #222 0%,
-    color-mix(in srgb, var(--accent) 28%, #0a0a0a) 100%
+    var(--ink) 0%,
+    #1c2015 100%
   );
   border-radius: 24px 24px 0 0;
   padding: 12px 12px 12px;
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
-  color: #fff;
+  color: var(--sand);
   overflow-y: auto;
   animation: slideUp 0.35s ease-out;
 }
@@ -491,7 +491,7 @@
   width: 40px;
   height: 4px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(202, 187, 159, 0.2);
   margin: 0 auto 20px;
 }
 
@@ -512,7 +512,7 @@
   font-size: 22px;
   font-weight: 200;
   margin: 0;
-  color: #fff;
+  color: var(--sand);
   opacity: 0.6;
 }
 
@@ -533,7 +533,7 @@
   line-height: 1.5;
   font-size: 14px;
   font-weight: 200;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(202, 187, 159, 0.6);
   display: flex;
   flex-flow: row;
   gap: 12px;
@@ -553,7 +553,7 @@
 
 .sheetTipText {
   font-weight: 200;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(202, 187, 159, 0.6);
   text-align: right;
   width: 100%;
 }
@@ -564,8 +564,8 @@
   padding: 8px 16px;
   border-radius: 24px;
   border: none;
-  background: rgba(246, 248, 255, 0.05);
-  color: rgba(255, 255, 255, 0.4);
+  background: rgba(202, 187, 159, 0.05);
+  color: rgba(202, 187, 159, 0.4);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -575,7 +575,7 @@
 }
 
 .sheetCloseBtn:active {
-  background: rgba(246, 248, 255, 0.08);
+  background: rgba(202, 187, 159, 0.08);
 }
 
 @keyframes fadeIn {
@@ -587,3 +587,12 @@
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
 }
+
+/* New UI — Figma 1157:4454. */
+.tag { border-color: rgba(89, 96, 71, 0.2); }
+.tagText, .tagIconSvg, .title, .flavor { color: var(--ink); }
+.tagIconSvg { filter: brightness(0); width: 24px; height: 24px; }
+.mainContent { padding-top: 162px; }
+.timerBtn { color: var(--ink); background: rgba(202, 187, 159, 0.3); }
+.timerBtn.timerRunning, .timerResumeBtn, .timerResetBtn { background: var(--sand); color: var(--ink); }
+.sheetTitle { opacity: 1; }

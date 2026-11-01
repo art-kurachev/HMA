@@ -280,6 +280,7 @@ function DashboardPage() {
 
 const GIGACHAT_MODELS = [
   { value: '', label: 'По умолчанию (.env)' },
+  { value: 'GigaChat-3-Ultra', label: 'GigaChat 3 Ultra' },
   { value: 'GigaChat-2-Max', label: 'GigaChat 2 Max' },
   { value: 'GigaChat-2-Pro', label: 'GigaChat 2 Pro' },
   { value: 'GigaChat-2-Lite', label: 'GigaChat 2 Lite' },

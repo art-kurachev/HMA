@@ -43,7 +43,7 @@
   height: 56px;
   padding: 16px 16px 16px 24px;
   border-radius: 50px;
-  border: 2px solid rgba(246, 248, 255, 0.2);
+  border: 2px solid rgba(202, 187, 159, 0.2);
   background: transparent;
   flex-shrink: 0;
 }
@@ -53,12 +53,12 @@
   font-size: 14px;
   font-weight: 200;
   line-height: 16px;
-  color: #fff;
+  color: var(--sand);
 }
 
 .tagIconSvg {
   flex-shrink: 0;
-  color: #fff;
+  color: var(--sand);
 }
 
 /* Контентный блок по макету (node 49:235): заголовок → карточки → кнопка */
@@ -78,7 +78,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 0 24px;
   flex-shrink: 0;
   width: 100%;
@@ -91,15 +91,15 @@
   font-size: 32px;
   font-weight: 100;
   line-height: 1;
-  color: #fff;
+  color: var(--sand);
   margin: 0;
   padding: 0;
   width: 100%;
 }
 
 @keyframes bowlFloat {
-  0%, 100% { transform: rotate(-15deg) translateY(0); }
-  50% { transform: rotate(-15deg) translateY(-24px); }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-24px); }
 }
 
 .bowlPlaceholder {
@@ -159,10 +159,10 @@
   padding: 16px;
   border: none;
   border-radius: 24px;
-  background: rgba(34, 34, 34, 0.7);
+  background: rgba(36, 38, 41, 0.8);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  color: #fff;
+  color: var(--sand);
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
   min-height: 0;
@@ -237,7 +237,7 @@
   font-size: 22px;
   font-weight: 200;
   line-height: 24px;
-  color: #fff;
+  color: var(--sand);
 }
 
 .cardDesc {
@@ -245,7 +245,7 @@
   font-size: 12px;
   font-weight: 200;
   line-height: 14px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(202, 187, 159, 0.6);
 }
 
 /* Нижний блок на экране «Твоя цель»: без градиента, выравнивание по макету */
@@ -258,3 +258,12 @@
   align-items: center;
   padding-top: 0;
 }
+
+/* New UI — Figma 1157:4355. */
+.wrap { min-height: 0; height: 100%; }
+.title { color: var(--ink); max-width: 248px; }
+.tag { border-color: rgba(89, 96, 71, 0.2); }
+.tagText, .tagIconSvg { color: var(--ink); }
+.tagIconSvg { filter: brightness(0); width: 24px; height: 24px; }
+.bowlPlaceholder { top: -73px; right: 0; width: 217.65px; height: 325.36px; transform: none; animation: bowlFloat 4s ease-in-out infinite; }
+.cardDesc { color: rgba(202, 187, 159, 0.6); }

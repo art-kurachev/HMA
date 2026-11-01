@@ -12,7 +12,7 @@
   min-width: 0;
   height: 4px;
   border-radius: 13px;
-  background: #fff;
+  background: var(--sand);
 }
 
 .progressBarInactive {
@@ -21,7 +21,7 @@
 
 /* Setup: полупрозрачная полоска по умолчанию */
 .progressBarEmpty {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(202, 187, 159, 0.3);
 }
 
 /* Setup: заполнена при выборе данных в блоке — без прозрачности */
