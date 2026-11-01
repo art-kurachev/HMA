@@ -254,7 +254,7 @@
 /* New UI — Figma 1157:4397. */
 .wrap { min-height: 0; height: 100%; }
 .title { color: var(--ink); max-width: 240px; }
-.tag { border-color: rgba(89, 96, 71, 0.2); }
+.tag { border-color: rgba(36, 38, 41, 0.1); }
 .tagText, .tagIconSvg { color: var(--ink); }
 .tagIconSvg { filter: brightness(0); width: 24px; height: 24px; }
 .bowlPlaceholder { top: -61px; right: 0; width: 195.82px; height: 318.58px; transform: none; animation: bowlFloat 4s ease-in-out infinite; }

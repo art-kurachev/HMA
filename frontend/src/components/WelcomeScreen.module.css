@@ -457,7 +457,7 @@
 .topBar { top: calc(62px + var(--header-offset)); gap: 4px; }
 .headerRow { padding: 0 24px; min-height: 56px; }
 .logo { width: 44.464px; height: 40px; object-position: left center; }
-.shelfBtn { background: rgba(89, 96, 71, 0.3); color: var(--olive-dark); }
+.shelfBtn { background: rgba(36, 38, 41, 0.1); color: var(--ink); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .bottom { background: linear-gradient(180deg, rgba(85, 87, 90, 0), #55575a); }
 .title { color: var(--ink); font-size: 31px; }
 .buyGenerationsBtn { background: rgba(36, 38, 41, 0.1); border: none; color: var(--ink); font-size: 12px; gap: 4px; backdrop-filter: blur(8px); }

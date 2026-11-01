@@ -621,7 +621,7 @@
 /* New UI — Figma 1157:4516. */
 .topBar { top: calc(82px + var(--header-offset)); padding: 0 24px; }
 .topBarLogo { width: 44.464px; height: 40px; }
-.topBarShelfBtn { background: rgba(89, 96, 71, 0.2); color: var(--olive-dark); }
+.topBarShelfBtn { background: rgba(36, 38, 41, 0.1); color: var(--ink); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .mainContent { padding-top: calc(162px + var(--header-offset)); }
 .pageTitle, .mixesSectionTitle, .brandName, .onboardingTitle, .onboardingText, .hint { color: var(--ink); }
 .mixReadyBtn, .generateBtn, .modalConfirm { color: var(--ink); }
