@@ -454,7 +454,7 @@
 
 /* New UI — Figma 1159:5167. */
 .welcome { min-height: 100%; }
-.topBar { top: 62px; gap: 4px; }
+.topBar { top: calc(62px + var(--header-offset)); gap: 4px; }
 .headerRow { padding: 0 24px; min-height: 56px; }
 .logo { width: 44.464px; height: 40px; object-position: left center; }
 .shelfBtn { background: rgba(89, 96, 71, 0.3); color: var(--olive-dark); }
